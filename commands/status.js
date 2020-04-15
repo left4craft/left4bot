@@ -7,7 +7,7 @@ module.exports = {
     description: 'Get server status information',
     usage: '',
     aliases: ['info', 'serverInfo'],
-    example: '',
+    example: 'status',
     args: false,
     cooldown: config.cooldown,
     guildOnly: true,

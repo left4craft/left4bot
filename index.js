@@ -64,9 +64,6 @@ client.on('ready', () => {
         updatePresence();
     }, 15000);
 
-
-    const stats_cat_id = config.stats_cat_id;
-    const players_cat_id = config.status_cat_id;
     const updateStatusInfo = () => {
         let host = config.query_cache_bypass[Math.floor(Math.random() * config.query_cache_bypass.length)];
         log.info(`Pinging ${host}`);
@@ -123,6 +120,7 @@ client.on('message', async message => {
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     if (!command) return;
+    if (commandName == "none") return;
 
     if (command.guildOnly && message.channel.type !== 'text') {
         return message.channel.send(`Sorry, this command can only be used in a server.`)
