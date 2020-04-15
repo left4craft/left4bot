@@ -27,26 +27,28 @@ module.exports = {
             if (typeof res !== "string") res = require("util").inspect(res);
 
         } catch (err) {
+            if(err.toString().length > 1000) return message.channel.send(`:x: **»** An error occured and the output is too big.`);
             return message.channel.send(
                 new Discord.MessageEmbed()
                 .setColor("#E74C3C")
                 .setTitle(`Evaluation Error`)
                 .setAuthor(message.author.username, message.author.avatarURL())
-                .addField(":keyboard: Input", `\`\`\`${code}\`\`\``)
-                .addField(":desktop: Output", `\`\`\`${err}\`\`\``)
+                .addField(":keyboard: Input", `\`\`\`js\n${code}\`\`\``)
+                .addField(":desktop: Output", `\`\`\`js\n${err}\`\`\``)
                 .setFooter(config.name, client.user.avatarURL())
                 .setTimestamp()
             );
         }
 
+        if(res.toString().length > 1000) return message.channel.send(`:x: **»** Output is too big.`);
 
         message.channel.send(
             new Discord.MessageEmbed()
             .setColor(config.colour)
             .setTitle(`Evaluation`)
             .setAuthor(message.author.username, message.author.avatarURL())
-            .addField(":keyboard: Input", `\`\`\`${code}\`\`\``)
-            .addField(":desktop: Output", `\`\`\`${res}\`\`\``)
+            .addField(":keyboard: Input", `\`\`\`js\n${code}\`\`\``)
+            .addField(":desktop: Output", `\`\`\`js\n${res}\`\`\``)
             .setFooter(config.name, client.user.avatarURL())
             .setTimestamp()
         );
