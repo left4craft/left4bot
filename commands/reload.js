@@ -58,6 +58,8 @@ module.exports = {
                 .setTimestamp()
             );
 
+            log.console(`[CMD] > Reloaded '${config.prefix}${command.name}' command (by ${message.author.tag})`);
+
 
         } catch (error) {
             console.log(error);

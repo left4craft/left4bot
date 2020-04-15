@@ -3,11 +3,11 @@ const config = require("../config.js");
 const log = require("leekslazylogger");
 const fetch = require('node-fetch');
 module.exports = {
-    name: 'ping',
-    description: 'Calculate latency',
+    name: 'links',
+    description: 'Useful pages',
     usage: '',
-    aliases: ['none'],
-    example: 'ping',
+    aliases: ['web', 'website', 'shop', 'store', 'donate', 'forums', 'invite', 'discord', 'bans'],
+    example: 'links',
     args: false,
     cooldown: 10,
     guildOnly: true,
@@ -19,20 +19,22 @@ module.exports = {
             message.delete()
         };
 
-        message.channel.startTyping();
-        const m = await message.channel.send("Calculating ping...");
-        m.edit("...");
-        m.delete();
+        const links = config.links; 
 
-        message.channel.send(
-            new Discord.MessageEmbed()
+
+        let embed = new Discord.MessageEmbed()
             .setColor(config.colour)
-            .setTitle(`Pong!`)
-            .addField("Latency", `\`${m.createdTimestamp - message.createdTimestamp}ms\``, true)
+            .setTitle(`Links`)
             .setFooter(config.name, client.user.avatarURL())
-            .setTimestamp()
-        );
-        message.channel.stopTyping();
+            .setTimestamp();
+
+        for (link of links) {
+            embed.addField(link.name, `[${link.pretty}](${link.url})`, true)
+        };
+
+
+        message.channel.send(embed);
+
 
 
     }

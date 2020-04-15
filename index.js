@@ -20,9 +20,8 @@ log.init({
     name: config.name
 });
 
-const now = () => {
-    return new Date();
-};
+
+const time = () => new Date();
 
 
 client.on('ready', () => {
@@ -34,7 +33,7 @@ client.on('ready', () => {
     for (const file of commands) {
         const command = require(`./commands/${file}`);
         client.commands.set(command.name, command);
-        log.console(`> Loaded '${config.prefix}${command.name}' command`);
+        log.console(`[CMD] > Loaded '${config.prefix}${command.name}' command`);
     };
 
     log.info(`Finished loading ${commands.length} commands`);
@@ -69,18 +68,18 @@ client.on('ready', () => {
         log.info(`Pinging ${host}`);
 
         fetch(`https://mcapi.ca/ping/players/${host}`).then(res => res.json())
-        .then(json => {
-            let status = json.status ? "online" : "offline";
-            let text = `${status} with ${json.players.online} players`;
+            .then(json => {
+                let status = json.status ? "online" : "offline";
+                let text = `${status} with ${json.players.online} players`;
 
-            log.console(`${config.name} is ${log.colour[status ? "greenBright" : "redBright"](status)}`);
+                log.console(`${config.name} is ${log.colour[status ? "greenBright" : "redBright"](status)}`);
 
-            client.channels.cache.get(config.status_cat_id).setName(text);
+                client.channels.cache.get(config.status_cat_id).setName(text);
 
-            log.info(`Updated status category: ${text}`);
+                log.info(`Updated status category: ${text}`);
 
-            client.user.setStatus(json.status ? "online" : "dnd");
-        });
+                client.user.setStatus(json.status ? "online" : "dnd");
+            });
 
     };
 
@@ -145,30 +144,40 @@ client.on('message', async message => {
         );
     };
 
+
+
+
     if (!cooldowns.has(command.name)) {
         cooldowns.set(command.name, new Discord.Collection());
     }
 
+    const now = Date.now();
     const timestamps = cooldowns.get(command.name);
     const cooldownAmount = (command.cooldown || config.cooldown) * 1000;
 
     if (timestamps.has(message.author.id)) {
         const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
 
-        if (now() < expirationTime) {
-            const timeLeft = (expirationTime - now()) / 1000;
+        if (now < expirationTime) {
+            const timeLeft = (expirationTime - now) / 1000;
+            log.console(`${message.author.tag} attempted to use the '${command.name}' command before the cooldown was over`)
             return message.channel.send(
                 new Discord.MessageEmbed()
                 .setColor("#E74C3C")
-                .setDescription(`:x: **Please do not spam commands** (wait ${timeLeft.toFixed(1)}s)`)
+                .setDescription(`:x: **Please do not spam commands.**\nWait ${timeLeft.toFixed(1)} second(s) before reusing the \`${command.name}\` command.`)
             );
         }
-    }
-    timestamps.set(message.author.id, now());
+    };
+
+    timestamps.set(message.author.id, now);
     setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
 
+
+
+
+
     try {
-        command.execute(message, args); // execute the command (*so much code just to get to this 1 line*)
+        command.execute(message, args); // execute the command *(so much code just to get to this 1 line)*
 
         log.console(`${message.author.tag} used the '${command.name}' command`)
     } catch (error) {

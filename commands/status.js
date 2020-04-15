@@ -9,7 +9,7 @@ module.exports = {
     aliases: ['info', 'serverInfo'],
     example: 'status',
     args: false,
-    cooldown: config.cooldown,
+    cooldown: 60,
     guildOnly: true,
     adminOnly: false,
     async execute(message, args) {
