@@ -11,6 +11,6 @@
   "dependencies": {
     "discord.js": "^12.1.1",
     "leekslazylogger": "^1.1.9",
-    "node-fetch": "^2.6.0"
+    "minecraft-server-util": "^1.1.0"
   }
 }

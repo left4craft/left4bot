@@ -9,7 +9,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client({
     autoReconnect: true
 });
-const fetch = require('node-fetch');
+const query = require('minecraft-server-util');
 const log = require('leekslazylogger');
 const config = require('./config.js');
 
@@ -64,21 +64,25 @@ client.on('ready', () => {
     }, 15000);
 
     const updateStatusInfo = () => {
-        let host = config.query_cache_bypass[Math.floor(Math.random() * config.query_cache_bypass.length)];
-        log.info(`Pinging ${host}`);
+        log.info(`Pinging ${config.ip}`);
 
-        fetch(`https://mcapi.ca/ping/players/${host}`).then(res => res.json())
-            .then(json => {
-                let status = json.status ? "online" : "offline";
-                let text = `${status} with ${json.players.online} players`;
+        query(config.ip, config.port)
+            .then((res) => {
+                // console.log(res);
+                log.console(`${config.name} is ${log.colour.greenBright(`online with ${res.onlinePlayers} players`)}${log.colour.white(", updating status category")}`); // log status - online
 
-                log.console(`${config.name} is ${log.colour[status ? "greenBright" : "redBright"](status)}`);
+                client.channels.cache.get(config.status_cat_id).setName(`online with ${res.onlinePlayers} players`); // cat name
 
-                client.channels.cache.get(config.status_cat_id).setName(text);
+                client.user.setStatus("online"); // green status
+            })
+            .catch((err) => {
+                log.console(`${config.name} is ${log.colour.redBright("offline")}`); // log status - offline
 
-                log.info(`Updated status category: ${text}`);
+                client.channels.cache.get(config.status_cat_id).setName('server is offline (!status)'); // cat name
 
-                client.user.setStatus(json.status ? "online" : "dnd");
+                client.user.setStatus("dnd"); // red status
+
+                throw err;
             });
 
     };
