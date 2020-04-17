@@ -69,9 +69,9 @@ client.on('ready', () => {
         query(config.ip, config.port)
             .then((res) => {
                 // console.log(res);
-                log.console(`${config.name} is ${log.colour.greenBright(`online with ${res.onlinePlayers} players`)}${log.colour.white(", updating status category")}`); // log status - online
+                log.console(`${config.name} is ${log.colour.greenBright(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? "player" : "players"}`)}${log.colour.white(", updating status category")}`); // log status - online
 
-                client.channels.cache.get(config.status_cat_id).setName(`online with ${res.onlinePlayers} players`); // cat name
+                client.channels.cache.get(config.status_cat_id).setName(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? "player" : "players"}`); // cat name
 
                 client.user.setStatus("online"); // green status
             })
@@ -82,7 +82,7 @@ client.on('ready', () => {
 
                 client.user.setStatus("dnd"); // red status
 
-                throw err;
+                // throw err;
             });
 
     };
