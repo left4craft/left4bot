@@ -32,7 +32,7 @@ module.exports = {
                     new Discord.MessageEmbed()
                     .setColor(config.colour)
                     .setTitle(`${config.name} is online`)
-                    .setDescription(`**${res.onlinePlayers}** ${res.onlinePlayers === 1 ? "person" : "people"} are playing on **${config.ip}**\n\nType \`list\` in <#${config.chat_bridge_chan_id}> for a list of online players.`)
+                    .setDescription(`**${res.onlinePlayers}** ${res.onlinePlayers === 1 ? "person" : "people"} ${res.onlinePlayers === 1 ? "is" : "are"} playing on **${config.ip}**\n\nType \`list\` in <#${config.chat_bridge_chan_id}> for a list of online players.`)
                     .setFooter(config.name, client.user.avatarURL())
                     .setTimestamp()
                 );
