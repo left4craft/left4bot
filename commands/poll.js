@@ -20,7 +20,7 @@ module.exports = {
 
         const alphabet = "abcdefghijklmnopqrstuvwxyz";
         // const unicode = "🇦🇧🇨🇩🇪🇫🇬🇭🇮🇯🇰🇱🇲🇳🇴🇵🇶🇷🇸🇹🇺🇻🇼🇽🇾🇿";
-        const unicode = '🇦 🇧 🇨 🇩 🇪 🇫 🇬 🇭 🇮 🇯 🇰 🇱 🇲 🇳 🇴 🇵 🇶 🇷 🇸 🇹 🇺 🇻 🇼 🇽 🇾 🇿'.split(' ')
+        const unicode = '🇦 🇧 🇨 🇩 🇪 🇫 🇬 🇭 🇮 🇯 🇰 🇱 🇲 🇳 🇴 🇵 🇶 🇷 🇸 🇹 🇺 🇻 🇼 🇽 🇾 🇿'.split(' ');
 
         let joined = args.join(" ") // make it a string again
 
@@ -84,7 +84,7 @@ module.exports = {
                 .setColor(config.colour)
                 .setTitle(question)
                 .setAuthor(message.author.username, message.author.avatarURL())
-                .setDescription(`Please react with your choice: \n\n${options_string}Unless otherwise specified, please only vote for 1 option.`)
+                .setDescription(`Please react with your choice: \n\n${options_string}`)
                 .setFooter(config.name, client.user.avatarURL())
                 .setTimestamp()
             );

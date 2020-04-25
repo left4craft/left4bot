@@ -5,9 +5,9 @@ const fetch = require('node-fetch');
 module.exports = {
     name: 'prune',
     description: 'Bulk-delete messages',
-    usage: '<1-99>',
+    usage: '<1-100>',
     aliases: ['purge'],
-    example: 'prune 99',
+    example: 'prune 100',
     args: true,
     cooldown: config.cooldown,
     guildOnly: true,
@@ -16,6 +16,7 @@ module.exports = {
         const client = message.client;
         // command starts here
         if (message.channel.permissionsFor(message.channel.guild.me).has('MANAGE_MESSAGES')) {
+            message.delete();
 
             let amount = parseInt(args[0])
 
@@ -27,16 +28,14 @@ module.exports = {
                     .setDescription(`:x: **»** Invalid number. Type \`${config.prefix}help prune\` for help.`)
                 );
 
-            } else if (amount < 1 || amount > 99) {
+            } else if (amount < 1 || amount > 100) {
                 return message.channel.send(
                     new Discord.MessageEmbed()
                     .setColor("#E74C3C")
                     .setTitle(`Error`)
-                    .setDescription(`:x: **»** Number of messages to delete must be 1-99 (\`1 < number < 100\`)`)
+                    .setDescription(`:x: **»** Number of messages to delete must be btween 1 and 100.`)
                 );
             }
-
-            amount+=1;
 
             message.channel.bulkDelete(amount, true).then(() => {
                 message.channel.send(

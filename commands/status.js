@@ -2,6 +2,8 @@ const Discord = require("discord.js");
 const config = require("../config.js");
 const log = require("leekslazylogger");
 const query = require('minecraft-server-util');
+const fetch = require('node-fetch');
+
 module.exports = {
     name: 'status',
     description: 'Get server status information',
@@ -15,10 +17,11 @@ module.exports = {
     async execute(message, args) {
         const client = message.client;
         // command starts here
-        if (message.channel.permissionsFor(message.channel.guild.me).has('MANAGE_MESSAGES')) {
-            message.delete()
-        };
+        // if (message.channel.permissionsFor(message.channel.guild.me).has('MANAGE_MESSAGES')) {
+        //     message.delete()
+        // };
 
+        // query bungee to update the status category
         query(config.ip, config.port)
             .then((res) => {
                 // console.log(res);
@@ -27,16 +30,6 @@ module.exports = {
                 client.channels.cache.get(config.status_cat_id).setName(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? "player" : "players"}`); // cat name
 
                 client.user.setStatus("online"); // green status
-
-                message.channel.send(
-                    new Discord.MessageEmbed()
-                    .setColor(config.colour)
-                    .setTitle(`${config.name} is online`)
-                    .setDescription(`**${res.onlinePlayers}** ${res.onlinePlayers === 1 ? "person" : "people"} ${res.onlinePlayers === 1 ? "is" : "are"} playing on **${config.ip}**\n\nType \`list\` in <#${config.chat_bridge_chan_id}> for a list of online players.`)
-                    .setFooter(config.name, client.user.avatarURL())
-                    .setTimestamp()
-                );
-
             })
             .catch((err) => {
                 log.console(`${config.name} is ${log.colour.redBright("offline")}`); // log status - offline
@@ -45,18 +38,54 @@ module.exports = {
 
                 client.user.setStatus("dnd"); // red status
 
-                message.channel.send(
-                    new Discord.MessageEmbed()
-                    .setColor(config.colour)
-                    .setTitle(`${config.name} is offline`)
-                    .setDescription(`${config.name} is currently offline. Check the status page [here](${config.status_page}) and alert staff if there are no incidents reported.`)
-                    .setFooter(config.name, client.user.avatarURL())
-                    .setTimestamp()
-                );
-
                 // throw err;
             });
 
+
+
+        // get data from api for embed
+        fetch('https://status.left4craft.org/api/status')
+            .then(res => res.json())
+            .then(json => {
+
+                let servers = json.services.minecraft;
+                let players = servers.proxy.player_count;
+                // Type \`list\` in <#${config.chat_bridge_chan_id}> for a list of online players.
+                let player_list = json.services.minecraft.proxy.players.replace(/,/g, ', ');
+
+                let description = [
+                    `**${players}** ${players === 1 ? "person" : "people"} ${players === 1 ? "is" : "are"} currently playing on **${config.ip}**:`,
+                    `\`${player_list}\`.\nCommunicate with these players in <#${config.chat_bridge_chan_id}>.`,
+                    `\nYou can subscribe to status update notifications by using \`${config.prefix}subscribe status\`.`,
+                    `View full system status at [${config.status_page_pretty}](${config.status_page}).`
+                ]
+
+                let embed = new Discord.MessageEmbed()
+                    .setAuthor(json.summary.description, `https://status.left4craft.org/img/${json.summary.status.short}.png`, config.status_page)
+                    .setColor(config.colour)
+                    .setTitle(`${config.name} is ${json.services.minecraft.proxy.status === 'operational' ? 'online' : 'offline'}`, config.status_page)
+                    .setDescription(description[0] + '\n' + description[1] + '\n' + description[2] + '\n' + description[3])
+                    .setFooter(`${config.name} | Data could be up to 1 minute old`, client.user.avatarURL())
+                    .setTimestamp();
+
+
+                for (server in servers) {
+                    let colour = servers[server].status === 'operational' ? 'green' : servers[server].status === 'degraded' ? 'orange' : 'red';
+                    let status = servers[server].status === 'operational' ? 'online' : servers[server].status === 'degraded' ? 'degraded' : 'offline';
+                    if (servers[server].id === 'proxy') servers[server].name = 'Bungee';
+                    let tps = '';
+                    if (servers[server].id !== 'proxy') tps = `**TPS:** \`${servers[server].tps}\`\n`;
+                    let info = `**Status:** \`${status}\`\n${tps}**Players:** \`${servers[server].player_count}\``;
+                    embed.addField(`:${colour}_square: **${servers[server].name}**`, info, true);
+                };
+
+
+
+
+                message.channel.send(embed);
+
+
+            });
 
     }
 }

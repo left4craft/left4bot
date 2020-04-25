@@ -14,9 +14,9 @@ module.exports = {
     execute(message, args) {
         const client = message.client;
         // command starts here
-        if (message.channel.permissionsFor(message.channel.guild.me).has('MANAGE_MESSAGES')) {
-            message.delete()
-        };
+        // if (message.channel.permissionsFor(message.channel.guild.me).has('MANAGE_MESSAGES')) {
+        //     message.delete()
+        // };
 
         const commands = Array.from(client.commands.values());
 

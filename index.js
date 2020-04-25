@@ -1,5 +1,5 @@
 /**
- * @name poll-bot
+ * @name left4bot
  * @author eartharoid
  * @license MIT
  */
@@ -17,7 +17,8 @@ client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 
 log.init({
-    name: config.name
+    name: config.name,
+    logToFile: false,
 });
 
 
