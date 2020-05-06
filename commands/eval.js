@@ -3,10 +3,10 @@ const config = require("../config.js");
 const log = require("leekslazylogger");
 module.exports = {
     name: 'eval',
-    description: 'Create an embedded message',
+    description: 'Evaluate javascript code',
     usage: '<statement>',
-    aliases: ['createEmbed'],
-    example: '5 + 5',
+    aliases: ['none'],
+    example: 'eval 5 + 5',
     args: true,
     cooldown: config.cooldown,
     guildOnly: true,

@@ -51,11 +51,11 @@ module.exports = {
                 let servers = json.services.minecraft;
                 let players = servers.proxy.player_count;
                 // Type \`list\` in <#${config.chat_bridge_chan_id}> for a list of online players.
-                let player_list = json.services.minecraft.proxy.players.replace(/,/g, ', ');
+                let player_list = json.services.minecraft.proxy.players.replace(/,/g, ', ').trim();
 
                 let description = [
                     `**${players}** ${players === 1 ? "person" : "people"} ${players === 1 ? "is" : "are"} currently playing on **${config.ip}**:`,
-                    `\`${player_list}\`.\nCommunicate with these players in <#${config.chat_bridge_chan_id}>.`,
+                    `\`${player_list || 'no one is online'}\`.\nCommunicate with these players in <#${config.chat_bridge_chan_id}>.`,
                     `\nYou can subscribe to status update notifications by using \`${config.prefix}subscribe status\`.`,
                     `View full system status at [${config.status_page_pretty}](${config.status_page}).`
                 ]
