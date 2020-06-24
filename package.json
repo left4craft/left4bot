@@ -9,6 +9,7 @@
   "author": "eartharoid",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.19.2",
     "discord.js": "^12.1.1",
     "leekslazylogger": "^1.1.9",
     "minecraft-server-util": "^1.1.0",

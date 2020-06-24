@@ -1,6 +1,7 @@
 module.exports = {
     name: "Left4Craft", // your server's name
     token: "...............................", // do NOT share
+    chat_webhook_url: "https://discordapp.com/api/webhooks/.........", // do NOT share
     prefix: "!", // prefix commands with this
     colour: "#4CAF50", // for embeds
     ip: "mc.left4craft.org",
