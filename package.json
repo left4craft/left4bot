@@ -12,6 +12,7 @@
     "discord.js": "^12.1.1",
     "leekslazylogger": "^1.1.9",
     "minecraft-server-util": "^1.1.0",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "redis": "^3.0.2"
   }
 }

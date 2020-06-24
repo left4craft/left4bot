@@ -9,6 +9,8 @@ const Discord = require('discord.js');
 const client = new Discord.Client({
     autoReconnect: true
 });
+
+const redis = require("redis");
 const query = require('minecraft-server-util');
 const log = require('leekslazylogger');
 const config = require('./config.js');
@@ -23,6 +25,20 @@ log.init({
 
 
 const time = () => new Date();
+
+const redis_client = redis.createClient();
+const redis_subscriber = redis.createClient();
+
+redis_client.on("error", (error) => {
+  log.error(error);
+});
+
+redis_subscriber.on("error", (error) => {
+    log.error(error);
+});
+
+redis_client.auth(config.redis.pass);
+redis_subscriber.auth(config.redis.pass);
 
 
 client.on('ready', () => {

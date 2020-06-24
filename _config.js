@@ -53,5 +53,8 @@ module.exports = {
             role: '701904205144653886',
             id: 'status'
         }
+    },
+    redis: {
+        password: 'supersecretpass'
     }
 };
