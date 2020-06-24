@@ -165,6 +165,25 @@ client.on('message', async message => {
     };
 
     const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|\\${config.prefix})\\s*`);
+
+    if (message.channel.id === chat_bridge_chan_id && !prefixRegex.test(message.content)) {
+        if(message.content.length > 256) {
+            message.channel.send(message.author.tag + ' Chat message not sent because the length is >256');
+        } else if (message.content.toLowerCase() === 'list') {
+
+            // TODO make formatting prettier
+            redis_client.get('minecraft.players', (players) => {
+                message.channel.send('Players: ' + players);
+                message.delete();
+            });
+        } else {
+            const role = message.member.roles.highest.name;
+            const name = message.member.displayName;
+            const content = "&3[Discord&r" + role + "&3]&r " + name + " &3&l»&r " + message.content;
+            redis_client.publish('minecraft.chat.global.in', content);
+        }
+    }
+
     if (!prefixRegex.test(message.content)) return;
     const [, matchedPrefix] = message.content.match(prefixRegex);
     const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
