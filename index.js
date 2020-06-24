@@ -74,7 +74,7 @@ client.on('ready', () => {
         log.console(`[SUB] > Loaded '${file}' subscriber`);
     };
 
-    subscriber.on('message', (channel, message) => {
+    redis_subscriber.on('message', (channel, message) => {
         for(const subscriber of subscribers) {
             if(subscriber.channels.includes(channel)) {
                 subscriber.execute(channel, message);
@@ -92,7 +92,7 @@ client.on('ready', () => {
     subscribe_channels = Set(subscribe_channels);
 
     for(channel of subscribe_channels) {
-        subscriber.subscribe(channel);
+        redis_subscriber.subscribe(channel);
     }
     log.console(`[SUB] > Subscribed to channels: '${subscribe_channels}'`);
 
