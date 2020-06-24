@@ -70,7 +70,7 @@ client.on('ready', () => {
     var subscribers = [];
 
     for (const file of subscriber_files) {
-        subscribers.push(require(`./commands/${file}`));
+        subscribers.push(require(`./subscribers/${file}`));
         log.console(`[SUB] > Loaded '${file}' subscriber`);
     };
 
