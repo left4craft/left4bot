@@ -166,7 +166,7 @@ client.on('message', async message => {
 
     const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|\\${config.prefix})\\s*`);
 
-    if (message.channel.id === chat_bridge_chan_id && !prefixRegex.test(message.content)) {
+    if (message.channel.id === config.chat_bridge_chan_id && !prefixRegex.test(message.content)) {
         if(message.content.length > 256) {
             message.channel.send(message.author.tag + ' Chat message not sent because the length is >256');
         } else if (message.content.toLowerCase() === 'list') {
