@@ -26,8 +26,8 @@ log.init({
 
 const time = () => new Date();
 
-const redis_client = redis.createClient();
-const redis_subscriber = redis.createClient();
+const redis_client = redis.createClient(config.redis.host, config.redis.port);
+const redis_subscriber = redis.createClient(config.redis.host, config.redis.port);
 
 redis_client.on("error", (error) => {
   log.error(error);
