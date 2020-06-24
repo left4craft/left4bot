@@ -77,7 +77,7 @@ client.on('ready', () => {
     redis_subscriber.on('message', (channel, message) => {
         for(const subscriber of subscribers) {
             if(subscriber.channels.includes(channel)) {
-                subscriber.execute(channel, message);
+                subscriber.execute(client, channel, message);
             }
         }
     });
