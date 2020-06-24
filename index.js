@@ -89,7 +89,7 @@ client.on('ready', () => {
         }
     }
 
-    subscribe_channels = Set(subscribe_channels);
+    subscribe_channels = new Set(subscribe_channels);
 
     for(channel of subscribe_channels) {
         redis_subscriber.subscribe(channel);
