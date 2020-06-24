@@ -65,6 +65,39 @@ client.on('ready', () => {
         );
     };
 
+    const subscriber_files = fs.readdirSync('./subscribers').filter(file => file.endsWith('.js'));
+    var subscribe_channels = [];
+    var subscribers = [];
+
+    for (const file of subscriber_files) {
+        subscribers.push(require(`./commands/${file}`));
+        log.console(`[SUB] > Loaded '${file}' subscriber`);
+    };
+
+    subscriber.on('message', (channel, message) => {
+        for(const subscriber of subscribers) {
+            if(subscriber.channels.includes(channel)) {
+                subscriber.execute(channel, message);
+            }
+        }
+    });
+
+    for(const subscriber of subscribers) {
+        for (const channel of subscriber.channels) {
+            subscribe_channels.push(channel);
+
+        }
+    }
+
+    subscribe_channels = Set(subscribe_channels);
+
+    for(channel of subscribe_channels) {
+        subscriber.subscribe(channel);
+    }
+    log.console(`[SUB] > Subscribed to channels: '${subscribe_channels}'`);
+
+    
+
     const updatePresence = () => {
         client.user.setPresence({
                 activity: {
