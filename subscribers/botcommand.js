@@ -23,7 +23,7 @@ module.exports = {
                     // step 1: add new role
                     member.roles.add(role_ids[commandObj['group']]).then((newMember) => {
                         // step 2: remove all other in game roles
-                        for(in_game_id of role_ids) {
+                        for(in_game_id of role_ids.keys()) {
                             if(in_game_id !== commandObj['id']) {
                                 member.roles.remove(in_game_id);
                             }
