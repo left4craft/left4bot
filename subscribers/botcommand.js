@@ -7,7 +7,7 @@ module.exports = {
     execute(discord_client, webhook, channel, message) {
         log.basic('[BOT CMD] ' + message);
 
-        try {
+        // try {
             commandObj = JSON.parse(message);
 
 			if(commandObj['command'] === 'setuser') {
@@ -42,10 +42,9 @@ module.exports = {
                 log.error(commandObj['command']);
             }
 
-        } catch (e) { // when not a json object, message is supposed to be directly sent
-            log.error('[BOT CMD] Error executing bot command:');
-            log.error(message);
-            log.error(new Error("Invalid Command").stack)
-        }
+        // } catch (e) { // when not a json object, message is supposed to be directly sent
+        //     log.error('[BOT CMD] Error executing bot command:');
+        //     log.error(message);
+        // }
     }
 };
