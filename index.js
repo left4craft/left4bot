@@ -14,6 +14,7 @@ const redis = require("redis");
 const query = require('minecraft-server-util');
 const log = require('leekslazylogger');
 const config = require('./config.js');
+const sync = require('./util/sync.js')
 
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
@@ -162,18 +163,21 @@ client.on('message', async message => {
                 );
             };
         };
+
+        sync.sync_message(redis_client, message.channel, message.author.id);
     };
 
     const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|\\${config.prefix})\\s*`);
 
     if (message.channel.id === config.chat_bridge_chan_id && !prefixRegex.test(message.content)) {
         if(message.content.length > 256) {
-            message.channel.send(message.author.tag + ' Chat message not sent because the length is >256');
+            message.channel.send(message.author.toString() + ' Chat message not sent because the length is >256');
         } else if (message.content.toLowerCase() === 'list') {
 
             // TODO make formatting prettier
-            redis_client.get('minecraft.players', (players) => {
-                message.channel.send('Players: ' + players);
+            redis_client.get('minecraft.players', (response) => {
+                if(response === null) response = 'No players online';
+                message.channel.send('Players: ' + response);
                 message.delete();
             });
         } else {
