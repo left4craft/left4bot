@@ -24,7 +24,7 @@ module.exports = {
                     member.roles.add(role_ids[commandObj['group']]).then((newMember) => {
                         // step 2: remove all other in game roles
                         for(const in_game_role in role_ids) {
-                            if(role_ids[in_game_role] !== commandObj['id']) {
+                            if(role_ids[in_game_role] !== commandObj['group']) {
                                 member.roles.remove(role_ids[in_game_role]);
                             }
                         }
