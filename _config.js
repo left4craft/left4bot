@@ -59,5 +59,24 @@ module.exports = {
 		host: '127.0.0.1',
 		port: 6379,
 		pass: 'supersecretpass'
+	},
+	guild_id: '424571587413540874',
+	in_game_ranks: {
+		'guest': '429026758692438038',
+		'user': '424866580141441026',
+		'user+': '424866910870437898',
+		'donor': '424867041426538496',
+		'patron': '426469168171319297',
+		'patron+': '424867110041288716',
+		'builder': '424867526481281024',
+		'helper': '424867726511570955',
+		'moderator': '424867915226021888',
+		'admin': '424868133967364096',
+		'owner': '424868296886583316'
+	},
+	staff_ranks: ['helper', 'moderator', 'admin', 'owner'],
+	special_ranks: {
+		'staff': '424867647381831690',
+		'status_subscriber': '701904205144653886'
 	}
 };
