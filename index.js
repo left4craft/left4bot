@@ -1,6 +1,6 @@
 /**
  * @name left4bot
- * @author eartharoid
+ * @author eartharoid, Captain_Sisko
  * @license MIT
  */
 
@@ -23,10 +23,7 @@ log.init({
     name: config.name,
     logToFile: false,
 });
-
-
-const time = () => new Date();
-
+const chat_bridge = new Discord.WebhookClient(config.chat_webhook_id, config.chat_webhook_token);
 const redis_client = redis.createClient({host: config.redis.host, port: config.redis.port});
 const redis_subscriber = redis.createClient({host: config.redis.host, port: config.redis.port});
 
@@ -78,7 +75,7 @@ client.on('ready', () => {
     redis_subscriber.on('message', (channel, message) => {
         for(const subscriber of subscribers) {
             if(subscriber.channels.includes(channel)) {
-                subscriber.execute(client, channel, message);
+                subscriber.execute(client, chat_bridge, channel, message);
             }
         }
     });

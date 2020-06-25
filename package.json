@@ -9,7 +9,6 @@
   "author": "eartharoid",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.19.2",
     "crypto-random-string": "^3.2.0",
     "discord.js": "^12.1.1",
     "leekslazylogger": "^1.1.9",
