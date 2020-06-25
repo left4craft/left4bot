@@ -1,4 +1,5 @@
 const config = require('../config.js');
+const log = require("leekslazylogger");
 
 module.exports = {
     channels: ['minecraft.chat.global.out'],
