@@ -51,7 +51,7 @@ module.exports = {
                         user.createDM().then((dm) => {
                             dm.send('Your account has been demoted on Discord because you linked another account from in game.\n'
                             + 'If this was not you, your Minecraft account may have been compromised.\n'
-                            + 'New ID: `' + oldId + '`');
+                            + 'New ID: `' + newId + '`');
                         });
                         // remove all roles from old account
                         discord_client.guilds.cache.get(config.guild_id).members.fetch(oldId).then((member) => {
