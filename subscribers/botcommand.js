@@ -16,14 +16,14 @@ module.exports = {
                 });
 
             } else if (commandObj['command'] === 'setgroup') {
-                const role_ids = config.in_game_ranks;
+                const role_ids = JSON.parse(config.in_game_ranks);
 
                 discord_client.guilds.cache.get(config.guild_id).members.fetch(commandObj['id']).then((member) => {
 
                     // step 1: add new role
                     member.roles.add(role_ids[commandObj['group']]).then((newMember) => {
                         // step 2: remove all other in game roles
-                        for(in_game_id of role_ids.keys()) {
+                        for(in_game_id of role_ids) {
                             if(in_game_id !== commandObj['id']) {
                                 member.roles.remove(in_game_id);
                             }
