@@ -45,6 +45,7 @@ module.exports = {
         } catch (e) { // when not a json object, message is supposed to be directly sent
             log.error('[BOT CMD] Error executing bot command:');
             log.error(message);
+            log.error(e)
         }
     }
 };
