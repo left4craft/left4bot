@@ -16,23 +16,23 @@ module.exports = {
                 });
 
             } else if (commandObj['command'] === 'setgroup') {
-                const role_ids = JSON.parse(config.in_game_ranks);
+                const role_ids = config.in_game_ranks;
 
                 discord_client.guilds.cache.get(config.guild_id).members.fetch(commandObj['id']).then((member) => {
 
                     // step 1: add new role
                     member.roles.add(role_ids[commandObj['group']]).then((newMember) => {
                         // step 2: remove all other in game roles
-                        for(in_game_id of role_ids) {
-                            if(in_game_id !== commandObj['id']) {
-                                member.roles.remove(in_game_id);
+                        for(const in_game_role in role_ids) {
+                            if(role_ids[in_game_role] !== commandObj['id']) {
+                                member.roles.remove(role_ids[in_game_role]);
                             }
                         }
                         // step 3: add staff role if applicable
                         if(config.staff_ranks.includes(commandObj['group'])) {
-                            member.roles.add(special_ranks['staff']);
+                            member.roles.add(config.special_ranks['staff']);
                         } else {
-                            member.roles.remove(special_ranks['staff']);
+                            member.roles.remove(config.special_ranks['staff']);
                         }
                     });
                 });
@@ -45,6 +45,7 @@ module.exports = {
         // } catch (e) { // when not a json object, message is supposed to be directly sent
         //     log.error('[BOT CMD] Error executing bot command:');
         //     log.error(message);
+        //        log.error(e);
         // }
     }
 };

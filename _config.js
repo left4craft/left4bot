@@ -61,7 +61,7 @@ module.exports = {
 		pass: 'supersecretpass'
 	},
 	guild_id: '424571587413540874',
-	in_game_ranks: JSON.stringify({
+	in_game_ranks: {
 		'guest': '429026758692438038',
 		'user:': '424866580141441026',
 		'user+': '424866910870437898',
@@ -73,7 +73,7 @@ module.exports = {
 		'moderator': '424867915226021888',
 		'admin': '424868133967364096',
 		'owner': '424868296886583316'
-	}),
+	},
 	staff_ranks: ['helper', 'moderator', 'admin', 'owner'],
 	special_ranks: {
 		'staff': '424867647381831690',
