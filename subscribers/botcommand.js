@@ -11,14 +11,14 @@ module.exports = {
             commandObj = JSON.parse(message);
 
 			if(commandObj['command'] === 'setuser') {
-                discord_client.guilds.cache.get(config.guild_id).members.fetch(commandObj['id']).then((member) => {
+                discord_client.guilds[config.guild_id].members.fetch(commandObj['id']).then((member) => {
                     member.setNickname(commandObj['nick']);
                 });
 
             } else if (commandObj['command'] === 'setgroup') {
                 const role_ids = config.in_game_ranks;
 
-                discord_client.guilds.cache.get(config.guild_id).members.fetch(commandObj['id']).then((member) => {
+                discord_client.guilds[config.guild_id].members.fetch(commandObj['id']).then((member) => {
 
                     // step 1: add new role
                     member.roles.add(role_ids[commandObj['group']]).then((newMember) => {
