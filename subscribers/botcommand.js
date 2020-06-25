@@ -36,7 +36,32 @@ module.exports = {
                         }
                     });
                 });
+            } else if (commandObj['command'] === 'unlink') {
+                const oldId = commandObj['oldId'];
+                const newId = commandObj['newId'];
 
+                if(oldId === newId) {
+                    discord_client.users.fetch(newId).then((user) => {
+                        user.createDM().then((dm) => {
+                            dm.send('This Discord account has already been linked to your in-game account.');
+                        });
+                    });
+                } else {
+                    discord_client.users.fetch(oldId).then((user) => {
+                        user.createDM().then((dm) => {
+                            dm.send('Your account has been demoted on Discord because you linked another account from in game.\n'
+                            + 'If this was not you, your Minecraft account may have been compromised.\n'
+                            + 'New ID: `' + oldId + '`');
+                        });
+                        // remove all roles from old account
+                        discord_client.guilds.cache.get(config.guild_id).members.fetch(oldId).then((member) => {
+                            member.roles.set([]);
+                        });
+
+                    }).catch((reason) => {
+                        log.basic('[BOT CMD] Failed to send message to old account, they probably left the server.')
+                    });
+                }
             } else {
                 log.error('[BOT CMD] Recieved invalid command!');
                 log.error(commandObj['command']);
