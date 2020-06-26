@@ -5,7 +5,7 @@ module.exports = {
     aliases: ['history', 'punishments'],
     example: 'mute Captain_Sisko 1m test',
     args: true,
-    cooldown: config.cooldown,
+    cooldown: 3,
     guildOnly: true,
     adminOnly: true,
     async execute(message, args, depend) {
