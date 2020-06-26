@@ -16,6 +16,8 @@ module.exports = {
         const client = message.client;
         const timeRegex = new RegExp('[1-9]+(?:\\.\\d+)?\\s*[s|sec|seconds|m|min|minutes|h|hours|d|days]');
         const log = depend['log'];
+        const redis_client = depend['redis_client'];
+        const config = depend['config'];
 
         if(message.content.length > 200) {
             message.channel.send(new Discord.MessageEmbed()
@@ -24,8 +26,7 @@ module.exports = {
         } else if (args.length < 2) {
             message.channel.send(new Discord.MessageEmbed()
             .setColor("#E74C3C")
-            .addField("Usage", `\`${config.prefix}mute <player> [time] <reason>\`\n`)
-            .addField("Help", `Type \`${config.prefix}help mute\` for more information`));
+            .setDescription(`\n:x: **You must specify a time and/or reason for punishment.**`));
         } else if (args.length === 2 && timeRegex.test(args[1])) {
             message.channel.send(new Discord.MessageEmbed()
             .setColor("#E74C3C")
@@ -39,7 +40,12 @@ module.exports = {
                     .setColor("#E74C3C")
                     .setDescription(`\n:x: **Player ${args[0]} was not found.**`));        
                 } else {
-                    depend['redis_client'].publish('minecraft.console.hub.in', 'mute ' + args.join(' ') + ' via Discord by ' + message.member.displayName);
+                    redis_client.publish('minecraft.console.hub.in', 'mute ' + args.join(' ') + ' via Discord by ' + message.member.displayName);
+                    message.channel.send(new Discord.MessageEmbed()
+                    .setColor(config.colour)
+                    .setDescription(`:white_check_mark: ** ${args[0]} has been muted.**`)
+                    .setTimestamp());
+        
                 }
             });
         }
