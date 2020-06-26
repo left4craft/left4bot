@@ -1,7 +1,7 @@
 module.exports = {
     channels: ['minecraft.chat.global.out'],
 
-    execute(discord_client, webhook, channel, message, depend) {
+    execute(unused, webhook, channel, message, depend) {
         const sql_pool = depend['sql_pool'];
         const log = depend['log'];
         const config = depend['config'];
