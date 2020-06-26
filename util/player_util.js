@@ -10,9 +10,9 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
         }
 
         // step 2: check for exact discord id match
-        sql_pool.query('SELECT uuid FROM discord_users WHERE discordID = ?', [Number(input)], (err, res) => {
+        sql_pool.query('SELECT uuid FROM discord_users WHERE discordID = ?', [Number(input) === NaN ? 0 : Number(input)], (err, res) => {
             if(err) log.error(err);
-            if(res !== undefined) {
+            if(res[0] !== undefined) {
                 callback(res[0]['uuid']);
                 return;
             }
@@ -20,7 +20,7 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
             // step 3: check for exact uuid match
             sql_pool.query('SELECT uuid FROM litebans_history WHERE uuid = ?', input, (err, res) => {
                 if(err) log.error(err);
-                if(res !== undefined) {
+                if(res[0] !== undefined) {
                     callback(res[0]['uuid']);
                     return;
                 }
@@ -28,9 +28,9 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
                 // step 4: check for discord tag match
                 input = input.slice(2, -1);
                 if(input.startsWith('!')) input = input.slice(1);
-                sql_pool.query('SELECT uuid FROM discord_users WHERE discordID = ?', [Number(input)], (err, res) => {
+                sql_pool.query('SELECT uuid FROM discord_users WHERE discordID = ?', [Number(input) === NaN ? 0 : Number(input)], (err, res) => {
                     if(err) log.error(err);
-                    if(res !== undefined) {
+                    if(res[0] !== undefined) {
                         callback(res[0]['uuid']);
                         return;
                     }
