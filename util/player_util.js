@@ -1,4 +1,4 @@
-exports.get_uuid = (input, sql_pool, callback) => {
+exports.get_uuid = (input, sql_pool, log, callback) => {
     // step 1: check for exact username match
     sql_pool.query('SELECT uuid FROM litebans_history WHERE name = ?', input, (err, res) => {
         input = input.trim();
@@ -54,7 +54,7 @@ Returns the user's info in an object with the following format:
 
 if user not found, returns null
 */
-exports.get_player_info = (uuid, sql_pool, redis_client, callback) => {
+exports.get_player_info = (uuid, sql_pool, redis_client, log, callback) => {
     // step 1: get most recent username
     sql_pool.query('SELECT name FROM litebans_history WHERE uuid = ? SORT BY date DESC', args[0], (err, res) => {
         if(err) log.error(err);

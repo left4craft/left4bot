@@ -9,7 +9,6 @@ module.exports = {
     guildOnly: true,
     adminOnly: true,
     async execute(message, args, depend) {
-        const client = message.client;
         const log = depend['log'];
         const pool = depend['sql_pool'];
         const config = depend['config'];
@@ -18,14 +17,14 @@ module.exports = {
 
         const lookup_query = args[0];
 
-        player_util.get_uuid(lookup_query, pool, (uuid) => {
+        player_util.get_uuid(lookup_query, pool, log, (uuid) => {
             if(uuid === null) {
                 message.channel.send(new Discord.MessageEmbed()
                 .setColor("#E74C3C")
                 .setDescription(`\n:x: **Could not find player by \`${lookup_query}\`.`
                  + `Please use a Minecraft username, Minecraft UUID, Discord tag, or Discord user id**`));    
             } else {
-                player_util.get_player_info(uuid, pool, redis_client, (player_data) => {
+                player_util.get_player_info(uuid, pool, redis_client, log, (player_data) => {
                     message.channel.send(new Discord.MessageEmbed()
                     .setColor(config.colour)
                     .setTitle('Player Information')
