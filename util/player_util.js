@@ -40,6 +40,8 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
                     });
                 } 
             });
+        }
+    });
 };
 /*
 Returns the user's info in an object with the following format:
