@@ -29,11 +29,17 @@ module.exports = {
                         .setColor("#E74C3C")
                         .setDescription(`\n:x: **Error getting data for uuid \`${uuid}\`.`));
                     } else {
-                        redis_client.publish('minecraft.console.hub.in', 'unmute ' + uuid);
-                        message.channel.send(new Discord.MessageEmbed()
-                        .setColor(config.colour)
-                        .setDescription(`:white_check_mark: ** ${player_data['username']} has been unmuted.**`)
-                        .setTimestamp());
+                        if(player_data['muted']) {
+                            redis_client.publish('minecraft.console.hub.in', 'unmute ' + uuid);
+                            message.channel.send(new Discord.MessageEmbed()
+                            .setColor(config.colour)
+                            .setDescription(`:white_check_mark: ** ${player_data['username']} has been unmuted.**`)
+                            .setTimestamp());
+                        } else {
+                            message.channel.send(new Discord.MessageEmbed()
+                            .setColor("#E74C3C")
+                            .setDescription(`\n:x: **Error: \`${player_data['username']}\` is not muted.`));    
+                        }
                     }
                 });
             }
