@@ -1,6 +1,4 @@
 const Discord = require("discord.js");
-const config = require("../config.js");
-const log = require("leekslazylogger");
 
 module.exports = {
     name: 'mute',

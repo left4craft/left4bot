@@ -10,48 +10,50 @@ module.exports = {
         // try {
             commandObj = JSON.parse(message);
 
-			if(commandObj['command'] === 'setuser') {
-                discord_client.guilds.cache.get(config.guild_id).members.fetch(commandObj['id']).then((member) => {
-                    member.setNickname(commandObj['nick']);
+			if(commandObj.command === 'setuser') {
+                discord_client.guilds.cache.get(config.guild_id).members.fetch(commandObj.id).then((member) => {
+                    member.setNickname(commandObj.nick);
                 });
 
-            } else if (commandObj['command'] === 'setgroup') {
+            } else if (commandObj.command === 'setgroup') {
                 const role_ids = config.in_game_ranks;
 
-                discord_client.guilds.cache.get(config.guild_id).members.fetch(commandObj['id']).then((member) => {
+                discord_client.guilds.cache.get(config.guild_id).members.fetch(commandObj.id).then((member) => {
 
                     // step 1: add new role
-                    member.roles.add(role_ids[commandObj['group']]).then((newMember) => {
+                    member.roles.add(role_ids[commandObj.group]).then((newMember) => {
                         // step 2: remove all other in game roles
                         for(const in_game_role in role_ids) {
-                            if(in_game_role !== commandObj['group']) {
+                            if(in_game_role !== commandObj.group) {
                                 member.roles.remove(role_ids[in_game_role]);
                             }
                         }
                         // step 3: add staff role if applicable
-                        if(config.staff_ranks.includes(commandObj['group'])) {
-                            member.roles.add(config.special_ranks['staff']);
+                        if(config.staff_ranks.includes(commandObj.group)) {
+                            member.roles.add(config.special_ranks.staff);
                         } else {
-                            member.roles.remove(config.special_ranks['staff']);
+                            member.roles.remove(config.special_ranks.staff);
                         }
                     });
                 });
-            } else if (commandObj['command'] === 'unlink') {
-                const oldId = commandObj['oldId'];
-                const newId = commandObj['newId'];
+            } else if (commandObj.command === 'unlink') {
+                const oldId = commandObj.oldId;
+                const newId = commandObj.newId;
 
                 if(oldId === newId) {
                     discord_client.users.fetch(newId).then((user) => {
                         user.createDM().then((dm) => {
                             dm.send('This Discord account has already been linked to your in-game account.');
-                        });
+                        }).catch((reason) => {
+							log.warn('[BOT CMD] Failed to send message user');
+						});
                     });
                 } else {
                     discord_client.users.fetch(oldId).then((user) => {
                         user.createDM().then((dm) => {
                             dm.send('Your account has been demoted on Discord because you linked another account from in game.\n'
                             + 'If this was not you, your Minecraft account may have been compromised.\n'
-                            + 'New ID: `' + newId + '`');
+                            + 'New account: `' + user.tag + '`');
                         });
                         // remove all roles from old account
                         discord_client.guilds.cache.get(config.guild_id).members.fetch(oldId).then((member) => {
@@ -59,7 +61,7 @@ module.exports = {
                         });
 
                     }).catch((reason) => {
-                        log.basic('[BOT CMD] Failed to send message to old account, they probably left the server.')
+                        log.warn('[BOT CMD] Failed to send message to old account, they probably left the server.')
                     });
                 }
             } else {

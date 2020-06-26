@@ -10,9 +10,9 @@ module.exports = {
         try {
             message = JSON.parse(message);
 
-			webhook.send(message['message'].replace('@everyone', '@ everyone').replace('@here', '@ here'), {
-				avatarURL: 'https://crafatar.com/avatars/' + message['uuid'],
-				username: message['name']
+			webhook.send(message.message.replace('@everyone', '@ everyone').replace('@here', '@ here'), {
+				avatarURL: 'https://crafatar.com/avatars/' + message.uuid,
+				username: message.name
 			});
 
         } catch (e) { // when not a json object, message is supposed to be directly sent
