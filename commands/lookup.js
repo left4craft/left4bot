@@ -26,18 +26,24 @@ module.exports = {
                  + ` Please use a Minecraft username, Minecraft UUID, Discord tag, or Discord user id**`));    
             } else {
                 player_util.get_player_info(uuid, pool, redis_client, log, (player_data) => {
-                    message.channel.send(new Discord.MessageEmbed()
-                    .setColor(config.colour)
-                    .setTitle('Player Information')
-                    .setURL(player_data['history_url'])
-                    .setAuthor(player_data['username'], 'https://crafatar.com/avatars/' + uuid, player_data['history_url'])
-                    .setDescription('Click name for detailed punishment history')
-                    .addField("Online (Minecraft)", player_data['online'] ? "Yes" : "No", true)
-                    .addField("Muted", player_data['muted'] ? "Yes" : "No", true)
-                    .addField("Banned", player_data['banned'] ? "Yes" : "No", true)
-                    .addField("UUID", uuid, false)
-                    .setTimestamp()
-                    );    
+                    if(player_data === null) {
+                        message.channel.send(new Discord.MessageEmbed()
+                        .setColor("#E74C3C")
+                        .setDescription(`\n:x: **Error getting data for uuid \`${uuid}\`.`));
+                    } else {
+                        message.channel.send(new Discord.MessageEmbed()
+                        .setColor(config.colour)
+                        .setTitle('Player Information')
+                        .setURL(player_data['history_url'])
+                        .setAuthor(player_data['username'], 'https://crafatar.com/avatars/' + uuid, player_data['history_url'])
+                        .setDescription('Click name for detailed punishment history')
+                        .addField("Online (Minecraft)", player_data['online'] ? "Yes" : "No", true)
+                        .addField("Muted", player_data['muted'] ? "Yes" : "No", true)
+                        .addField("Banned", player_data['banned'] ? "Yes" : "No", true)
+                        .addField("UUID", uuid, false)
+                        .setTimestamp()
+                    );
+                    }
                 });
             }
         });
