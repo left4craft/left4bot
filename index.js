@@ -15,7 +15,8 @@ const redis = require("redis");
 const query = require('minecraft-server-util');
 const log = require('leekslazylogger');
 const config = require('./config.js');
-const sync = require('./util/sync.js')
+const sync = require('./util/sync.js');
+const player_util = require('./util/player_util.js');
 
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
@@ -42,12 +43,13 @@ const sql_pool  = mysql.createPool({
 const dependancies = {
     fs: fs,
     discord_client: client,
-    discord_lib: discord,
+    discord_lib: Discord,
     log: log,
     config: config,
     chat_bridge: chat_bridge,
     redis_client: redis_client,
-    sql_pool: sql_pool
+    sql_pool: sql_pool,
+    player_util: player_util
 };
 
 redis_client.on("error", (error) => {
