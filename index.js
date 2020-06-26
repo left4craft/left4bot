@@ -4,6 +4,7 @@
  * @license MIT
  */
 
+require('dotenv').config();
 const fs = require('fs');
 const Discord = require('discord.js');
 const client = new Discord.Client({
@@ -23,13 +24,19 @@ log.init({
     name: config.name,
     logToFile: false,
 });
-const chat_bridge = new Discord.WebhookClient(config.chat_webhook_id, config.chat_webhook_token);
-const redis_client = redis.createClient({host: config.redis.host, port: config.redis.port});
-const redis_subscriber = redis.createClient({host: config.redis.host, port: config.redis.port});
+const chat_bridge = new Discord.WebhookClient(config.chat_webhook_id, process.env.CHAT_WEBHOOK_TOKEN);
+const redis_client = redis.createClient({host: process.env.REDIS_HOST, port: process.env.REDIS_PORT});
+const redis_subscriber = redis.createClient({host: process.env.REDIS_HOST, port: process.env.REDIS_PORT});
 
 
 const mysql = require('mysql');
-const sql_pool  = mysql.createPool(config['sql_db']);
+const sql_pool  = mysql.createPool({
+	host: process.env.DB_HOST,
+	port: process.env.DB_PORT,
+	user: process.env.DB_USER,
+	password: process.env.DB_PASSWORD,
+	database: process.env.DB_NAME
+});
 
 // object that can be passed to various commands and subscribers so they don't need to be re-declared every time
 const dependancies = {
@@ -50,8 +57,8 @@ redis_subscriber.on("error", (error) => {
     log.error(error);
 });
 
-redis_client.auth(config.redis.pass);
-redis_subscriber.auth(config.redis.pass);
+redis_client.auth(process.env.REDIS_PASS);
+redis_subscriber.auth(process.env.REDIS_PASS);
 
 
 client.on('ready', () => {
@@ -67,16 +74,6 @@ client.on('ready', () => {
     };
 
     log.info(`Finished loading ${commands.length} commands`);
-    if (config.log_general) {
-        client.channels.cache.get(config.log_chan_id).send(
-            new Discord.MessageEmbed()
-            .setColor(config.colour)
-            .setTitle("Started")
-            .setDescription(`:white_check_mark: **»** Started succesfully with ${commands.length} commands loaded.`)
-            .setFooter(config.name, client.user.avatarURL())
-            .setTimestamp()
-        );
-    };
 
     const subscriber_files = fs.readdirSync('./subscribers').filter(file => file.endsWith('.js'));
     var subscribe_channels = [];
@@ -85,7 +82,8 @@ client.on('ready', () => {
     for (const file of subscriber_files) {
         subscribers.push(require(`./subscribers/${file}`));
         log.console(`[SUB] > Loaded '${file}' subscriber`);
-    };
+	};
+	log.info(`Finished loading ${subscriber_files.length} subscribers`);
 
     redis_subscriber.on('message', (channel, message) => {
         for(const subscriber of subscribers) {
@@ -100,15 +98,25 @@ client.on('ready', () => {
             subscribe_channels.push(channel);
         }
     }
+	
+    channels_set = new Set(subscribe_channels);
 
-    subscribe_channels = new Set(subscribe_channels);
-
-    for(channel of subscribe_channels) {
+    for(channel of channels_set) {
         redis_subscriber.subscribe(channel);
-    }
-    log.console(`[SUB] > Subscribed to channels: '${subscribe_channels}'`);
+	}
+	
+	log.console(`[SUB] > Subscribed to ${subscribe_channels.length} channels: ${log.colour.cyanBright(subscribe_channels.join(', '))}`);
 
-    
+	if (config.log_general) {
+        client.channels.cache.get(config.log_chan_id).send(
+            new Discord.MessageEmbed()
+            .setColor(config.colour)
+            .setTitle("Started")
+            .setDescription(`:white_check_mark: **»** Started succesfully with **${commands.length} commands** and **${subscribe_channels.length} subscribers** loaded.`)
+            .setFooter(config.name, client.user.avatarURL())
+            .setTimestamp()
+        );
+    };
 
     const updatePresence = () => {
         client.user.setPresence({
@@ -304,4 +312,4 @@ process.on('beforeExit', (code) => {
 
 
 
-client.login(config.token);
+client.login(process.env.DISCORD_BOT_TOKEN);
