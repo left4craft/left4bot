@@ -10,7 +10,7 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
         }
 
         // step 2: check for exact discord id match
-        sql_pool.query('SELECT uuid FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : BigInt(input)], (err, res) => {
+        sql_pool.query('SELECT HEX(uuid) FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : BigInt(input)], (err, res) => {
             if(err) log.error(err);
             if(res[0] !== undefined) {
                 let uuid = res[0]['uuid'];
@@ -32,7 +32,7 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
                 input = input.slice(2, -1);
                 if(input.startsWith('!')) input = input.slice(1);
 
-                sql_pool.query('SELECT uuid FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : BigInt(input)], (err, res) => {
+                sql_pool.query('SELECT HEX(uuid) FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : BigInt(input)], (err, res) => {
                     if(err) log.error(err);
                     if(res[0] !== undefined) {
                         let uuid = res[0]['uuid'];
