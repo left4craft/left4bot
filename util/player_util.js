@@ -31,7 +31,7 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
                 if(input.startsWith('!')) input = input.slice(1);
 
                 sql_pool.query('SELECT uuid FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : BigInt(input)], (err, res) => {
-                    if(err) log.error(err);ORDER
+                    if(err) log.error(err);
                     if(res[0] !== undefined) {
                         callback(res[0]['uuid']);
                         return;
@@ -58,7 +58,7 @@ if user not found, returns null
 */
 exports.get_player_info = (uuid, sql_pool, redis_client, log, callback) => {
     // step 1: get most recent username
-    sql_pool.query('SELECT name FROM litebans_history WHERE uuid = ? ORDER BY date DESC LIMIT 1', [uuid], (err, res) => {
+    sql_pool.query('SELECT name FROM litebans_history WHERE uuid = ? ORDER BY date DESC LIMIT 1 ', [uuid], (err, res) => {
         if(err) log.error(err);
         if(res[0] === undefined) {
             callback(null);
