@@ -1,5 +1,5 @@
 module.exports = {
-    channels: ['minecraft.chat.global.out'],
+    channels: ['minecraft.punish'],
 
     execute(unused, webhook, channel, message, depend) {
         const sql_pool = depend['sql_pool'];
@@ -16,7 +16,7 @@ module.exports = {
             for(i in res) {
 
                 // step 2: for each uuid, check for applicable discord account
-                const uuid = res[i]['uuid'].replace('-',''); 
+                const uuid = res[i]['uuid'].split('-').join(''); 
                 sql_pool.query('SELECT discordID FROM discord_users WHERE uuid = UNHEX( ? )', [uuid], (err, res) => {
                     if(err) log.error(err);
                     if(res[0] !== undefined) {
