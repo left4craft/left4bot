@@ -13,7 +13,8 @@ module.exports = {
         const pool = depend['sql_pool'];
         const config = depend['config'];
         const player_util = depend['player_util'];
-        const redis_client = depend['redis_client']
+        const redis_client = depend['redis_client'];
+        const Discord = depend['discord_lib']
 
         const lookup_query = args[0];
 
