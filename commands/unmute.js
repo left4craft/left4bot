@@ -38,7 +38,7 @@ module.exports = {
                         } else {
                             message.channel.send(new Discord.MessageEmbed()
                             .setColor("#E74C3C")
-                            .setDescription(`\n:x: **Error: \`${player_data['username']}\` is not muted.**`));    
+                            .setDescription(`\n:x: **Error: ${player_data['username']} is not muted.**`));    
                         }
                     }
                 });

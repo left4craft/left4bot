@@ -74,6 +74,7 @@ module.exports = {
 	staff_ranks: ['helper', 'moderator', 'admin', 'owner'],
 	special_ranks: {
 		'staff': '424867647381831690',
+		'muted': '587112191950585856',
 		'status_subscriber': '701904205144653886'
 	},
 
