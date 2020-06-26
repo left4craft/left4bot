@@ -13,7 +13,7 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
         sql_pool.query('SELECT HEX(uuid) FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : BigInt(input)], (err, res) => {
             if(err) log.error(err);
             if(res[0] !== undefined) {
-                let uuid = res[0]['HEX(uuid)'];
+                let uuid = res[0]['HEX(uuid)'].toLowerCase();
                 uuid = uuid.slice(0,8) + '-' + uuid.slice(8, 12) + '-' + uuid.slice(12, 16) + '-' + uuid.slice(16, 20) + '-' + uuid.slice(20);
                 callback(uuid);
                 return;
@@ -35,7 +35,7 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
                 sql_pool.query('SELECT HEX(uuid) FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : BigInt(input)], (err, res) => {
                     if(err) log.error(err);
                     if(res[0] !== undefined) {
-                        let uuid = res[0]['HEX(uuid)'];
+                        let uuid = res[0]['HEX(uuid)'].toLowerCase();
                         uuid = uuid.slice(0,8) + '-' + uuid.slice(8, 12) + '-' + uuid.slice(12, 16) + '-' + uuid.slice(16, 20) + '-' + uuid.slice(20);
                         callback(uuid);
                         return;
@@ -72,7 +72,7 @@ exports.get_player_info = (uuid, sql_pool, redis_client, log, callback) => {
             // setp 2: get online status
             const user = res[0]['name'];
             redis_client.get('minecraft.players', (response) => {
-                let online = false;
+                var online = false;
                 if(response === null) response = '[]';
                 players = JSON.parse(response);
                 for(player of players) {
