@@ -31,9 +31,9 @@ module.exports = {
                     .setTitle('Player Information')
                     .setURL(player_data['history_url'])
                     .setDescription('Click name for detailed punishment history')
-                    .addField("Online (Minecraft)", online ? "Yes" : "No", true)
-                    .addField("Muted", muted ? "Yes" : "No", true)
-                    .addField("Banned", banned ? "Yes" : "No", true)
+                    .addField("Online (Minecraft)", player_data['online'] ? "Yes" : "No", true)
+                    .addField("Muted", player_data['muted'] ? "Yes" : "No", true)
+                    .addField("Banned", player_data['banned'] ? "Yes" : "No", true)
                     .addField("UUID", uuid, false)
                     .setTimestamp()
                     );    
