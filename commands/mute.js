@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-
+const config = require('../config');
 module.exports = {
     name: 'mute',
     description: 'Mutes a player in-game and in Discord',
@@ -9,7 +9,7 @@ module.exports = {
     args: true,
     cooldown: config.cooldown,
     guildOnly: true,
-    adminOnly: true,
+    staffOnly: true,
     async execute(message, args, depend) {
         const client = message.client;
         const timeRegex = new RegExp('[1-9]+(?:\\.\\d+)?\\s*[s|sec|seconds|m|min|minutes|h|hours|d|days]');
