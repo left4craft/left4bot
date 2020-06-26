@@ -1,9 +1,9 @@
 module.exports = {
-    name: 'unmute',
-    description: 'Unmutes a player in-game and in Discord',
+    name: 'unban',
+    description: 'Unbans a player in-game and in Discord',
     usage: '<username/Discord tag/Discord id/uuid>',
-    aliases: ['none'],
-    example: 'unmute Captain_Sisko',
+    aliases: ['pardon'],
+    example: 'unban Captain_Sisko',
     args: true,
     cooldown: 3,
     guildOnly: true,
@@ -29,16 +29,16 @@ module.exports = {
                         .setColor("#E74C3C")
                         .setDescription(`\n:x: **Error getting data for uuid \`${uuid}\`.`));
                     } else {
-                        if(player_data['muted']) {
-                            redis_client.publish('minecraft.console.hub.in', 'unmute ' + uuid);
+                        if(player_data['banned']) {
+                            redis_client.publish('minecraft.console.hub.in', 'unban ' + uuid);
                             message.channel.send(new Discord.MessageEmbed()
                             .setColor(config.colour)
-                            .setDescription(`:white_check_mark: ** ${player_data['username']} has been unmuted.**`)
+                            .setDescription(`:white_check_mark: ** ${player_data['username']} has been unbaned.**`)
                             .setTimestamp());
                         } else {
                             message.channel.send(new Discord.MessageEmbed()
                             .setColor("#E74C3C")
-                            .setDescription(`\n:x: **Error: \`${player_data['username']}\` is not muted.**`));    
+                            .setDescription(`\n:x: **Error: \`${player_data['username']}\` is not banned.**`));    
                         }
                     }
                 });
