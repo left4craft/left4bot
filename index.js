@@ -42,6 +42,7 @@ const sql_pool  = mysql.createPool({
 const dependancies = {
     fs: fs,
     discord_client: client,
+    discord_lib: discord,
     log: log,
     config: config,
     chat_bridge: chat_bridge,
