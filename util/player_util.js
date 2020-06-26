@@ -25,9 +25,15 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
                     return;
                 }
 
+                log.basic(input);
                 // step 4: check for discord tag match
                 input = input.slice(2, -1);
                 if(input.startsWith('!')) input = input.slice(1);
+                log.basic(input);
+                log.basic(isNaN(input));
+                log.basic(Number(input));
+                log.basic(isNaN(Number(input)));
+
                 sql_pool.query('SELECT uuid FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : Number(input)], (err, res) => {
                     if(err) log.error(err);
                     if(res[0] !== undefined) {
