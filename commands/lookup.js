@@ -30,6 +30,7 @@ module.exports = {
                     .setColor(config.colour)
                     .setTitle('Player Information')
                     .setURL(player_data['history_url'])
+                    .setAuthor(player_data['username'], 'https://crafatar.com/avatars/' + uuid, player_data['history_url'])
                     .setDescription('Click name for detailed punishment history')
                     .addField("Online (Minecraft)", player_data['online'] ? "Yes" : "No", true)
                     .addField("Muted", player_data['muted'] ? "Yes" : "No", true)
