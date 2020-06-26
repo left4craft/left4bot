@@ -58,7 +58,7 @@ if user not found, returns null
 */
 exports.get_player_info = (uuid, sql_pool, redis_client, log, callback) => {
     // step 1: get most recent username
-    sql_pool.query('SELECT name FROM litebans_history WHERE uuid = ? SORT BY date DESC', args[0], (err, res) => {
+    sql_pool.query('SELECT name FROM litebans_history WHERE uuid = ? SORT BY date DESC', uuid, (err, res) => {
         if(err) log.error(err);
         if(res[0] === undefined) {
             callback(null);
