@@ -26,7 +26,7 @@ module.exports = {
             for (command of commands) {
                 if (command.hide) continue;
 
-                if ((command.permission && !message.member.hasPermission(command.permission)) || (command.adminOnly === true && !message.member.roles.cache.some(r => config.admin_roles.includes(r.id)))) {
+                if ((command.permission && !message.member.hasPermission(command.permission)) || (command.staffOnly === true && !message.member.roles.cache.some(r => config.staff_ranks.includes(r.name.toLowerCase()))) || (command.adminOnly === true && !message.member.roles.cache.some(r => config.admin_roles.includes(r.name.toLowerCase())))) {
                     // cmds.push(`**${config.prefix}${command.name}**　**·**　${command.description} :exclamation:`);
                     continue;
                 };

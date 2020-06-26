@@ -221,16 +221,16 @@ client.on('message', async message => {
     if (command.guildOnly && message.channel.type !== 'text') {
         return message.channel.send(`Sorry, this command can only be used in a server.`)
     }
-
+	
     // if ((command.permission && !message.member.hasPermission(command.permission)) || (command.adminOnly === true && !message.member.roles.cache.has(config.admin_role_id))) {
-    if ((command.permission && !message.member.hasPermission(command.permission)) || (command.adminOnly === true && !message.member.roles.cache.some(r => config.admin_roles.includes(r.id)))) {
+    if ((command.permission && !message.member.hasPermission(command.permission)) || (command.staffOnly === true && !message.member.roles.cache.some(r => config.staff_ranks.includes(r.name.toLowerCase()))) || (command.adminOnly === true && !message.member.roles.cache.some(r => config.admin_roles.includes(r.name.toLowerCase())))) {
         log.console(`${message.author.tag} tried to use the '${command.name}' command without permission`);
         return message.channel.send(
             new Discord.MessageEmbed()
             .setColor("#E74C3C")
             .setDescription(`\n:x: **You do not have permission to use the \`${command.name}\` command.**`)
         );
-    }
+	}
 
     if (command.args && !args.length) {
         return message.channel.send(

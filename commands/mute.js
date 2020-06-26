@@ -7,7 +7,7 @@ module.exports = {
     args: true,
     cooldown: config.cooldown,
     guildOnly: true,
-    adminOnly: true,
+    staffOnly: true,
     async execute(message, args, depend) {
         const log = depend['log'];
         const redis_client = depend['redis_client'];
