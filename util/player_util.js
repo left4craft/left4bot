@@ -5,7 +5,7 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
 
         if(err) log.error(err);
         if(res[0] !== undefined) {
-            callback(res[0]['uuid']);
+            callback(String(res[0]['uuid']));
             return;
         }
 
@@ -13,7 +13,7 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
         sql_pool.query('SELECT uuid FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : BigInt(input)], (err, res) => {
             if(err) log.error(err);
             if(res[0] !== undefined) {
-                let uuid = res[0];
+                let uuid = String(res[0]);
                 uuid = uuid.splice(0,8) + '-' + uuid.splice(8, 13) + '-' + uuid.splice(13, 18) + '-' + uuid.splice(18, 23) + '-' + uuid.splice(23);
                 callback(uuid);
                 return;
@@ -23,7 +23,7 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
             sql_pool.query('SELECT uuid FROM litebans_history WHERE uuid = ?', input, (err, res) => {
                 if(err) log.error(err);
                 if(res[0] !== undefined) {
-                    callback(res[0]['uuid']);
+                    callback(String(res[0]['uuid']));
                     return;
                 }
 
@@ -35,7 +35,7 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
                 sql_pool.query('SELECT uuid FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : BigInt(input)], (err, res) => {
                     if(err) log.error(err);
                     if(res[0] !== undefined) {
-                        let uuid = res[0];
+                        let uuid = String(res[0]);
                         uuid = uuid.splice(0,8) + '-' + uuid.splice(8, 13) + '-' + uuid.splice(13, 18) + '-' + uuid.splice(18, 23) + '-' + uuid.splice(23);
                         callback(uuid);
                         return;
