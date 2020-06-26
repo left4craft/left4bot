@@ -20,7 +20,7 @@ module.exports = {
                 sql_pool.query('SELECT discordID FROM discord_users WHERE uuid = UNHEX( ? )', [uuid], (err, res) => {
                     if(err) log.error(err);
                     if(res[0] !== undefined) {
-                        const discordId = res[0]['discordID'];
+                        const discordId = String(res[0]['discordID']);
                         discord_client.guilds.cache.get(config.guild_id).members.fetch(discordId).then((member) => {
 
                             // step 3: add muted role and remove all other roles
@@ -28,6 +28,9 @@ module.exports = {
 
                             member.roles.set([muted]);
 
+                        }).catch((reason) => {
+                            log.error(`Error applying mute role to member ${discordId}--did they leave the server?`)
+                            log.error(reason);
                         });
                     }
                 });
