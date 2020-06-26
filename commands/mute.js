@@ -53,23 +53,6 @@ module.exports = {
                     });
                 }
             });
-            pool.query('SELECT uuid FROM litebans_history WHERE name = ?', args[0], (err, res) => {
-                if(err) log.error(err);
-                if(res[0] === undefined) {
-                    message.channel.send(new Discord.MessageEmbed()
-                    .setColor("#E74C3C")
-                    .setDescription(`\n:x: **Player ${args[0]} was not found.**`));        
-                } else {
-                    redis_client.publish('minecraft.console.hub.in', 'mute ' + args.join(' ') + ' via Discord by ' + message.member.displayName);
-                    message.channel.send(new Discord.MessageEmbed()
-                    .setColor(config.colour)
-                    .setDescription(`:white_check_mark: ** ${args[0]} has been muted.**`)
-                    .setTimestamp());
-        
-                }
-            });
         }
-
-       
     }
 }
