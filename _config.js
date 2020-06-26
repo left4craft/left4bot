@@ -78,5 +78,12 @@ module.exports = {
 	special_ranks: {
 		'staff': '424867647381831690',
 		'status_subscriber': '701904205144653886'
+	},
+	sql_db: {
+		host: '127.0.0.1',
+		port: 3306,
+		user: 'root',
+		password: 'root',
+		database: 'guess'
 	}
 };

@@ -27,6 +27,21 @@ const chat_bridge = new Discord.WebhookClient(config.chat_webhook_id, config.cha
 const redis_client = redis.createClient({host: config.redis.host, port: config.redis.port});
 const redis_subscriber = redis.createClient({host: config.redis.host, port: config.redis.port});
 
+
+const mysql = require('mysql');
+const sql_pool  = mysql.createPool(config['sql_db']);
+
+// object that can be passed to various commands and subscribers so they don't need to be re-declared every time
+const dependancies = {
+    fs: fs,
+    discord_client: client,
+    log: log,
+    config: config,
+    chat_bridge: chat_bridge,
+    redis_client: redis_client,
+    sql_pool: sql_pool
+};
+
 redis_client.on("error", (error) => {
   log.error(error);
 });
@@ -83,7 +98,6 @@ client.on('ready', () => {
     for(const subscriber of subscribers) {
         for (const channel of subscriber.channels) {
             subscribe_channels.push(channel);
-
         }
     }
 
@@ -251,7 +265,7 @@ client.on('message', async message => {
 
 
     try {
-        command.execute(message, args); // execute the command *(so much code just to get to this 1 line)*
+        command.execute(message, args, dependancies); // execute the command *(so much code just to get to this 1 line)*
 
         log.console(`${message.author.tag} used the '${command.name}' command`)
     } catch (error) {
@@ -261,6 +275,14 @@ client.on('message', async message => {
     }
 
 });
+
+client.on('guildMemberAdd', member => {
+    member.createDM(dm => {
+        sync.sync_message(redis_client, dm, member.id);
+    })
+});
+
+
 client.on('error', error => {
     log.warn(`Potential error detected\n(likely Discord API connection issue)\n`);
     log.error(`Client error:\n${error}`);
