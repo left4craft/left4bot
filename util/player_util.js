@@ -6,46 +6,40 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
         if(err) log.error(err);
         if(res[0] !== undefined) {
             callback(res[0]['uuid']);
-            return;
-        }
-
-        // step 2: check for exact discord id match
-        sql_pool.query('SELECT HEX(uuid) FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : BigInt(input)], (err, res) => {
-            if(err) log.error(err);
-            if(res[0] !== undefined) {
-                let uuid = res[0]['HEX(uuid)'].toLowerCase();
-                uuid = uuid.slice(0,8) + '-' + uuid.slice(8, 12) + '-' + uuid.slice(12, 16) + '-' + uuid.slice(16, 20) + '-' + uuid.slice(20);
-                callback(uuid);
-                return;
-            }
-
-            // step 3: check for exact uuid match
-            sql_pool.query('SELECT uuid FROM litebans_history WHERE uuid = ?', input, (err, res) => {
+        } else {
+            // step 2: check for exact discord id match
+            sql_pool.query('SELECT HEX(uuid) FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : BigInt(input)], (err, res) => {
                 if(err) log.error(err);
                 if(res[0] !== undefined) {
-                    callback(res[0]['uuid']);
-                    return;
-                }
-
-                log.basic(input);
-                // step 4: check for discord tag match
-                input = input.slice(2, -1);
-                if(input.startsWith('!')) input = input.slice(1);
-
-                sql_pool.query('SELECT HEX(uuid) FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : BigInt(input)], (err, res) => {
+                    let uuid = res[0]['HEX(uuid)'].toLowerCase();
+                    uuid = uuid.slice(0,8) + '-' + uuid.slice(8, 12) + '-' + uuid.slice(12, 16) + '-' + uuid.slice(16, 20) + '-' + uuid.slice(20);
+                    callback(uuid);
+                } else {
+                    // step 3: check for exact uuid match
+                    sql_pool.query('SELECT uuid FROM litebans_history WHERE uuid = ?', input, (err, res) => {
                     if(err) log.error(err);
                     if(res[0] !== undefined) {
-                        let uuid = res[0]['HEX(uuid)'].toLowerCase();
-                        uuid = uuid.slice(0,8) + '-' + uuid.slice(8, 12) + '-' + uuid.slice(12, 16) + '-' + uuid.slice(16, 20) + '-' + uuid.slice(20);
-                        callback(uuid);
-                        return;
+                        callback(res[0]['uuid']);
+                    } else {
+                        // step 4: check for discord tag match
+                        input = input.slice(2, -1);
+                        if(input.startsWith('!')) input = input.slice(1);
+    
+                        sql_pool.query('SELECT HEX(uuid) FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : BigInt(input)], (err, res) => {
+                            if(err) log.error(err);
+                            if(res[0] !== undefined) {
+                                let uuid = res[0]['HEX(uuid)'].toLowerCase();
+                                uuid = uuid.slice(0,8) + '-' + uuid.slice(8, 12) + '-' + uuid.slice(12, 16) + '-' + uuid.slice(16, 20) + '-' + uuid.slice(20);
+                                callback(uuid);
+                                return;
+                            } else {
+                                callback(null);
+                            }
+                        });
                     }
-                });
-                callback(null);
-                return;
+                    });
+                } 
             });
-        });
-    });
 };
 /*
 Returns the user's info in an object with the following format:
@@ -66,7 +60,6 @@ exports.get_player_info = (uuid, sql_pool, redis_client, log, callback) => {
         if(err) log.error(err);
         if(res[0] === undefined) {
             callback(null);
-            return;
         } else {
 
             // setp 2: get online status
@@ -93,7 +86,6 @@ exports.get_player_info = (uuid, sql_pool, redis_client, log, callback) => {
                             banned: banned,
                             history_url: 'https://bans.left4craft.org/history.php?uuid=' + uuid
                         });
-                        return;
                     });
                 });
             });

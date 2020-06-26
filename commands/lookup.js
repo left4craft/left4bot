@@ -23,7 +23,7 @@ module.exports = {
                 message.channel.send(new Discord.MessageEmbed()
                 .setColor("#E74C3C")
                 .setDescription(`\n:x: **Could not find player by \`${lookup_query}\`.`
-                 + `Please use a Minecraft username, Minecraft UUID, Discord tag, or Discord user id**`));    
+                 + ` Please use a Minecraft username, Minecraft UUID, Discord tag, or Discord user id**`));    
             } else {
                 player_util.get_player_info(uuid, pool, redis_client, log, (player_data) => {
                     message.channel.send(new Discord.MessageEmbed()
