@@ -14,7 +14,7 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
             if(err) log.error(err);
             if(res[0] !== undefined) {
                 let uuid = String(res[0]);
-                uuid = uuid.splice(0,8) + '-' + uuid.splice(8, 13) + '-' + uuid.splice(13, 18) + '-' + uuid.splice(18, 23) + '-' + uuid.splice(23);
+                uuid = uuid.splice(0,8) + '-' + uuid.slice(8, 13) + '-' + uuid.slice(13, 18) + '-' + uuid.slice(18, 23) + '-' + uuid.slice(23);
                 callback(uuid);
                 return;
             }
@@ -36,7 +36,7 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
                     if(err) log.error(err);
                     if(res[0] !== undefined) {
                         let uuid = String(res[0]);
-                        uuid = uuid.splice(0,8) + '-' + uuid.splice(8, 13) + '-' + uuid.splice(13, 18) + '-' + uuid.splice(18, 23) + '-' + uuid.splice(23);
+                        uuid = uuid.splice(0,8) + '-' + uuid.slice(8, 13) + '-' + uuid.slice(13, 18) + '-' + uuid.slice(18, 23) + '-' + uuid.slice(23);
                         callback(uuid);
                         return;
                     }
