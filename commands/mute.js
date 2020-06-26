@@ -5,7 +5,7 @@ module.exports = {
     aliases: ['tempmute'],
     example: 'mute Captain_Sisko 1m test',
     args: true,
-    cooldown: config.cooldown,
+    cooldown: 3,
     guildOnly: true,
     staffOnly: true,
     async execute(message, args, depend) {
