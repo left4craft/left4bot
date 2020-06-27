@@ -44,7 +44,7 @@ module.exports = {
     }
 }
 
-function show_results(channel, uuids, player_util, pool, search, log, Discord) {
+function show_results(channel, uuids, player_util, pool, redis_client, search, config, log, Discord) {
     let embed = new Discord.MessageEmbed()
     .setColor(config.colour)
     .setTitle('Nickname Search')
