@@ -9,7 +9,7 @@ module.exports = {
     cooldown: require('../config.js').cooldown,
     guildOnly: true,
     adminOnly: true,
-    async execute(message, args) {
+    async execute(message, args, depend) {
         const client = message.client;
 
         const config = depend.config;
