@@ -59,7 +59,7 @@ function show_results(channel, uuids, player_util, pool, redis_client, search, c
         if(uuids[1] !== undefined) {
             // collect info up to 3 times, depending on how many uuids are defined.
             player_util.get_player_info(uuids[1], pool, redis_client, log, (player_data) => {
-                embed.addBlankField()
+                embed.addField('\u200b', '\u200b')
                 .addField("Result 2: ", player_data['username'] + (player_data['nick'] === null ? '' : ` (nickname: ${player_data['nick']})`))
                 .addField("Online (Minecraft)", player_data['online'] ? "Yes" : "No", true)
                 .addField("Muted", player_data['muted'] ? "Yes" : "No", true)
@@ -67,7 +67,7 @@ function show_results(channel, uuids, player_util, pool, redis_client, search, c
                 if(uuids[2] !== undefined) {
                     // collect info up to 3 times, depending on how many uuids are defined.
                     player_util.get_player_info(uuids[2], pool, redis_client, log, (player_data) => {
-                        embed.addBlankField()
+                        embed.addField('\u200b', '\u200b')
                         .addField("Result 3: ", player_data['username'] + (player_data['nick'] === null ? '' : ` (nickname: ${player_data['nick']})`))
                         .addField("Online (Minecraft)", player_data['online'] ? "Yes" : "No", true)
                         .addField("Muted", player_data['muted'] ? "Yes" : "No", true)
