@@ -6,7 +6,7 @@ exports.sync_message = (redis_client, discord_channel, id) => {
     redis_client.get('discord.synccodes', (err, res) => {
         if(err) console.log(err);
         if(res === null) res = '{}';
-        var codes = JSON.parse(res);
+        let codes = JSON.parse(res);
         codes[id] = {code: code, expires: Date.now() + 30 * 60 * 1000};
         redis_client.set('discord.synccodes', JSON.stringify(codes));
         discord_channel.send('Go in-game and type `/discord ' + code + '` to sync your account.\n'
@@ -19,9 +19,16 @@ exports.expire_tokens = (redis_client) => {
     redis_client.get('discord.synccodes', (err, res) => {
         if(err) console.log(err);
         if(res === null) res = '{}';
-        var codes = JSON.parse(res);
+        let codes = JSON.parse(res);
         console.log(codes);
-        codes.filter(code => code['expires'] > Date.now());
+
+        let expired = [];
+        for(id in codes) {
+            if(codes[id]['expires'] < Date.now()) expired.push(id);
+        }
+        for(id of expired) {
+            delete codes[id];
+        }
         console.log(codes);
         redis_client.set('discord.synccodes', JSON.stringify(codes));
     });
