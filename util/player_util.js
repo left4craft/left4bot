@@ -81,12 +81,18 @@ exports.get_player_info = (uuid, sql_pool, redis_client, log, callback) => {
                     sql_pool.query('SELECT reason FROM litebans_bans WHERE uuid = ? AND (until < 1 OR until > unix_timestamp()*1000) AND active = 1', uuid, (err, res) => {
                         if(err) log.error(err);
                         const banned = res[0] !== undefined;
-                        callback({
-                            username: user,
-                            online: online,
-                            muted: muted,
-                            banned: banned,
-                            history_url: 'https://bans.left4craft.org/history.php?uuid=' + uuid
+                        sql_pool.query('SELECT nick FROM nicky WHERE uuid = ?', uuid, (err, res) => {
+                            if(err) log.error(err);
+
+                            callback({
+                                username: user,
+                                online: online,
+                                muted: muted,
+                                banned: banned,
+                                history_url: 'https://bans.left4craft.org/history.php?uuid=' + uuid,
+                                nick: res[0] === undefined ? null : res[0]['nick'].replace(/§[0-9A-FK-ORa-fk-or]/g, '').replace(/&[0-9A-FK-ORa-fk-or]/g, '') // strip color codes
+                            });
+    
                         });
                     });
                 });
