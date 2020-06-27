@@ -15,6 +15,7 @@ module.exports = {
         const Discord = depend['discord_lib'];
         const pool = depend['sql_pool'];
         const player_util = depend['player_util'];
+        const Discord = depend['discord_lib']
 
         const search = args[0];
         // step 1: try to get uuid from discord tags or perfect username match

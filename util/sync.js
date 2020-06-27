@@ -20,7 +20,6 @@ exports.expire_tokens = (redis_client, discord_client) => {
         if(err) console.log(err);
         if(res === null) res = '{}';
         let codes = JSON.parse(res);
-        console.log(codes);
 
         let expired = [];
         for(id in codes) {
@@ -34,7 +33,6 @@ exports.expire_tokens = (redis_client, discord_client) => {
                 });
             });
         }
-        console.log(codes);
         redis_client.set('discord.synccodes', JSON.stringify(codes));
     });
 
