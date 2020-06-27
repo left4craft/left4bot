@@ -154,7 +154,7 @@ client.on('ready', () => {
 					channel.setName(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}`); // cat name
 				});
 
-				client.channels.fetch(config.status_cat_id).then(channel => {
+				client.channels.fetch(config.chat_bridge_chan_id).then(channel => {
 					channel.setTopic(`Chat with players who are in-game. ${res.onlinePlayers === 1 ? 'Player' : 'Players'} online: ${res.onlinePlayers}`);
 				});
 
