@@ -5,7 +5,7 @@ module.exports = {
     aliases: ['none'],
     example: 'reload help',
     args: true,
-    cooldown: config.cooldown,
+    cooldown: require('../config.js').cooldown,
     guildOnly: true,
     adminOnly: true,
     async execute(message, args) {
