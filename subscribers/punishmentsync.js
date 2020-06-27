@@ -26,7 +26,7 @@ module.exports = {
                         muted_chan.then(chan => {
                             chan.send(`<@${member.id}>, you have been muted in Discord because of an in-game punishment.`)
                         });
-                    } else if (member.roles.cache.get(muted) !== undefined) {
+                    } else if (!ids.includes(member.id) && member.roles.cache.get(muted) !== undefined) {
                         console.log('Unmuted ' + member.id);
                         member.roles.remove([muted]);
 
