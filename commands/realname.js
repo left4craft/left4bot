@@ -74,7 +74,7 @@ function show_results(channel, uuids, player_util, pool, redis_client, search, c
                         .addField("Banned", player_data['banned'] ? "Yes" : "No", true)
                         if(uuids[3] !== undefined) {
                             embed.addField('\u200b', '\u200b')
-                            .addField("Note", "There were more than 3 matches, but only the top 3 were shown.");
+                            .addField("Note", `There were ${uuids.length} matches, but only the top 3 are shown.`);
                             channel.send(embed);
                         } else {
                             channel.send(embed);

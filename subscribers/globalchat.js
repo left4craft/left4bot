@@ -12,7 +12,7 @@ module.exports = {
         try {
             message = JSON.parse(message);
 
-			webhook.send(message.message.replace('@everyone', '@ everyone').replace('@here', '@ here'), {
+			webhook.send(message.message.replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here'), {
 				avatarURL: 'https://crafatar.com/avatars/' + message.uuid,
 				username: message.name
 			});
