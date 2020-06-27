@@ -211,14 +211,14 @@ client.on('message', async message => {
 
                 if(err) {
                     log.error(err);
-                    text = 'Failed to parse minecraft.players'
+                    text = 'Failed to parse minecraft.players';
                 }
 
                 try{
                     text = 'Players online: `';
                     response = JSON.parse(response);
                     for(player of response) {
-                        player['username'] + ' ,';
+                        text += player['username'] + ' ,';
                     }
                     text = text.slice(0, -2);
                     text += '`';
