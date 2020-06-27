@@ -154,9 +154,9 @@ client.on('ready', () => {
 					channel.setName(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}`); // cat name
 				});
 
-				client.channels.fetch(config.chat_bridge_chan_id).then(channel => {
-					channel.setTopic(`Chat with players who are in-game. ${res.onlinePlayers === 1 ? 'Player' : 'Players'} online: ${res.onlinePlayers}`);
-				});
+				// client.channels.fetch(config.chat_bridge_chan_id).then(channel => {
+				// 	channel.setTopic(`Chat with players who are in-game. ${res.onlinePlayers === 1 ? 'Player' : 'Players'} online: ${res.onlinePlayers}`);
+				// });
 
 				client.user.setStatus('online'); // green status
 			})
