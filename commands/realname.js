@@ -15,7 +15,6 @@ module.exports = {
         const Discord = depend['discord_lib'];
         const pool = depend['sql_pool'];
         const player_util = depend['player_util'];
-        const Discord = depend['discord_lib']
 
         const search = args[0];
         // step 1: try to get uuid from discord tags or perfect username match
@@ -35,17 +34,17 @@ module.exports = {
                         .setDescription(`\n:x: **Could not find player by \`${search}\`.`
                         + ` Please use a nickname, Minecraft username, Minecraft UUID, Discord tag, or Discord user id**`));   
                     } else {
-                        show_results(message.channel, uuids, player_util, pool, redis_client, search, config, log);
+                        show_results(message.channel, uuids, player_util, pool, redis_client, search, config, log, Discord);
                     }
                 });
             } else {
-                show_results(message.channel, [uuid], player_util, pool, redis_client, search, config, log);
+                show_results(message.channel, [uuid], player_util, pool, redis_client, search, config, log, Discord);
             }
         });
     }
 }
 
-function show_results(channel, uuids, player_util, pool, search, log) {
+function show_results(channel, uuids, player_util, pool, search, log, Discord) {
     let embed = new Discord.MessageEmbed()
     .setColor(config.colour)
     .setTitle('Nickname Search')
