@@ -201,6 +201,7 @@ client.on('message', async message => {
 		}
 
 		sync.sync_message(redis_client, message.channel, message.author.id);
+		sync.expire_tokens(redis_client);
 	}
 
 	const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|\\${config.prefix})\\s*`);

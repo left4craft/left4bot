@@ -4,6 +4,7 @@ exports.sync_message = (redis_client, discord_channel, id) => {
     const code = cryptoRandomString({length: 12, type: 'base64'});
 
     redis_client.get('discord.synccodes', (err, res) => {
+        if(err) console.log(err);
         if(res === null) res = '{}';
         var codes = JSON.parse(res);
         codes[id] = {code: code, expires: Date.now() + 30 * 60 * 1000};
@@ -13,3 +14,16 @@ exports.sync_message = (redis_client, discord_channel, id) => {
     });
 
 };
+
+exports.expire_tokens = (redis_client) => {
+    redis_client.get('discord.synccodes', (err, res) => {
+        if(err) console.log(err);
+        if(res === null) res = '{}';
+        var codes = JSON.parse(res);
+        console.log(codes);
+        codes.filter(code => code['expires'] > Date.now());
+        console.log(codes);
+        redis_client.set('discord.synccodes', JSON.stringify(codes));
+    });
+
+}
