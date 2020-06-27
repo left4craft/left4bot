@@ -1,7 +1,4 @@
-const Discord = require("discord.js");
-const config = require("../config.js");
-const log = require("leekslazylogger");
-const fetch = require('node-fetch');
+
 module.exports = {
     name: 'prune',
     description: 'Bulk-delete messages',
@@ -9,11 +6,17 @@ module.exports = {
     aliases: ['purge'],
     example: 'prune 100',
     args: true,
-    cooldown: config.cooldown,
+    cooldown: require('../config.js').cooldown,
     guildOnly: true,
     adminOnly: true,
     async execute(message, args) {
         const client = message.client;
+
+        const config = depend.config;
+        const Discord = depend.discord_lib;
+        const log = depend.log;
+        const fetch = depend.fetch;
+
         // command starts here
         if (message.channel.permissionsFor(message.channel.guild.me).has('MANAGE_MESSAGES')) {
             message.delete();

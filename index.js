@@ -17,6 +17,7 @@ const log = require('leekslazylogger');
 const config = require('./config.js');
 const sync = require('./util/sync.js');
 const player_util = require('./util/player_util.js');
+const fetch = require('node-fetch');
 
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
@@ -55,7 +56,9 @@ const dependancies = {
     chat_bridge: chat_bridge,
     redis_client: redis_client,
     sql_pool: sql_pool,
-    player_util: player_util
+	player_util: player_util,
+	fetch: fetch,
+	minecraft_server_util: query
 };
 
 redis_client.on('error', (error) => {

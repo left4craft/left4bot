@@ -1,7 +1,3 @@
-const Discord = require("discord.js");
-const config = require("../config.js");
-const log = require("leekslazylogger");
-
 module.exports = {
     name: 'subscribe',
     description: 'Subscribe to a role',
@@ -14,6 +10,11 @@ module.exports = {
     adminOnly: false,
     async execute(message, args) {
         const client = message.client;
+
+        const config = depend.config;
+        const Discord = depend.discord_lib;
+        const log = depend.log;
+
         // command starts here
         // if (message.channel.permissionsFor(message.channel.guild.me).has('MANAGE_MESSAGES')) {
         //     message.delete()

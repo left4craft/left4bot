@@ -1,7 +1,3 @@
-const Discord = require("discord.js");
-const config = require("../config.js");
-const log = require("leekslazylogger");
-const fetch = require('node-fetch');
 module.exports = {
     name: 'links',
     description: 'Useful pages',
@@ -12,8 +8,14 @@ module.exports = {
     cooldown: 10,
     guildOnly: true,
     adminOnly: false,
-    async execute(message, args) {
+    async execute(message, args, depend) {
         const client = message.client;
+
+        const config = depend.config;
+        const Discord = depend.discord_lib;
+        const log = depend.log;
+        const fetch = depend.fetch;
+
         // command starts here
         // if (message.channel.permissionsFor(message.channel.guild.me).has('MANAGE_MESSAGES')) {
         //     message.delete()

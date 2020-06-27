@@ -1,9 +1,3 @@
-const Discord = require("discord.js");
-const config = require("../config.js");
-const log = require("leekslazylogger");
-const query = require('minecraft-server-util');
-const fetch = require('node-fetch');
-
 module.exports = {
     name: 'status',
     description: 'Get server status information',
@@ -16,12 +10,19 @@ module.exports = {
     adminOnly: false,
     async execute(message, args) {
         const client = message.client;
+
+        const config = depend.config;
+        const Discord = depend.discord_lib;
+        const log = depend.log;
+        const fetch = depend.fetch;
+        const query = depend.minecraft_server_util;
+
         // command starts here
         // if (message.channel.permissionsFor(message.channel.guild.me).has('MANAGE_MESSAGES')) {
         //     message.delete()
         // };
 
-        // query bungee to update the status category
+        // query bungee to update the status category        
         query(config.ip, config.port)
             .then((res) => {
                 // console.log(res);

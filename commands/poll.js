@@ -1,6 +1,3 @@
-const Discord = require("discord.js");
-const config = require("../config.js");
-const log = require("leekslazylogger");
 module.exports = {
     name: 'poll',
     description: 'Create a poll',
@@ -8,11 +5,16 @@ module.exports = {
     aliases: ['newPoll', 'createPoll', 'ask'],
     example: 'poll Which colour? Blue; Orange; Red',
     args: true,
-    cooldown: config.cooldown,
+    cooldown: require('../config.js').cooldown,
     guildOnly: true,
     adminOnly: true,
     async execute(message, args) {
         const client = message.client;
+
+        const config = depend.config;
+        const Discord = depend.discord_lib;
+        const log = depend.log;
+
         // command starts here
         // if (message.channel.permissionsFor(message.channel.guild.me).has('MANAGE_MESSAGES')) {
         //     message.delete()

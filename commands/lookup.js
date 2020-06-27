@@ -7,7 +7,7 @@ module.exports = {
     args: true,
     cooldown: 3,
     guildOnly: true,
-    adminOnly: true,
+    adminOnly: false,
     async execute(message, args, depend) {
         const log = depend['log'];
         const pool = depend['sql_pool'];

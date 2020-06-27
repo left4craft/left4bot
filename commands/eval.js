@@ -1,6 +1,3 @@
-const Discord = require("discord.js");
-const config = require("../config.js");
-const log = require("leekslazylogger");
 module.exports = {
     name: 'eval',
     description: 'Evaluate javascript code',
@@ -8,11 +5,16 @@ module.exports = {
     aliases: ['none'],
     example: 'eval 5 + 5',
     args: true,
-    cooldown: config.cooldown,
+    cooldown: require("../config.js").cooldown,
     guildOnly: true,
     adminOnly: true,
-    async execute(message, args) {
+    async execute(message, args, depend) {
         const client = message.client;
+        const Discord = depend.discord_lib;
+        const config = depend.config;
+        const log = depend.log;
+
+
         // command starts here
         if (message.channel.permissionsFor(message.channel.guild.me).has('MANAGE_MESSAGES')) {
             message.delete()

@@ -1,6 +1,3 @@
-const Discord = require('discord.js');
-const config = require('../config.js');
-const log = require('leekslazylogger');
 module.exports = {
     name: 'help',
     description: 'Displays help menu',
@@ -8,15 +5,16 @@ module.exports = {
     aliases: ['command', 'commands'],
     example: 'help poll',
     args: false,
-    cooldown: config.cooldown,
+    cooldown: require('../config.js').cooldown,
     guildOnly: true,
     adminOnly: false,
-    execute(message, args) {
+    execute(message, args, depend) {
         const client = message.client;
-        // command starts here
-        // if (message.channel.permissionsFor(message.channel.guild.me).has('MANAGE_MESSAGES')) {
-        //     message.delete()
-        // };
+
+        const config = depend.config;
+        const Discord = depend.discord_lib;
+        const log = depend.log;
+
 
         const commands = Array.from(client.commands.values());
 
