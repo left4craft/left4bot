@@ -31,18 +31,23 @@ module.exports = {
                         .setColor("#E74C3C")
                         .setDescription(`\n:x: **Error getting data for uuid \`${uuid}\`.`));
                     } else {
-                        message.channel.send(new Discord.MessageEmbed()
+                        let embed = new Discord.MessageEmbed()
                         .setColor(config.colour)
                         .setTitle('Player Information')
                         .setURL(player_data['history_url'])
-                        .setAuthor(player_data['username'] + (player_data['nick'] === null ? '' : ` (nickname: ${player_data['nick']})`), 'https://crafatar.com/avatars/' + uuid, player_data['history_url'])
+                        .setAuthor(player_data['username'], 'https://crafatar.com/avatars/' + uuid, player_data['history_url'])
                         .setDescription('Click name for detailed punishment history')
                         .addField("Online (Minecraft)", player_data['online'] ? "Yes" : "No", true)
                         .addField("Muted", player_data['muted'] ? "Yes" : "No", true)
-                        .addField("Banned", player_data['banned'] ? "Yes" : "No", true)
-                        .addField("UUID", uuid, false)
+                        .addField("Banned", player_data['banned'] ? "Yes" : "No", true);
+
+                        if(player_data['nick'] !== null) embed.addField('Nickname', player_data['nick']);
+
+                        embed.addField("UUID", uuid, false)
                         .setTimestamp()
-                        );
+                        .setFooter('', client.user.avatarURL);
+
+                        message.channel.send(embed);
                     }
                 });
             }
