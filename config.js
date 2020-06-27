@@ -53,6 +53,7 @@ module.exports = {
 	 */
 	chat_bridge_chan_id: '424870757860900865',
 	chat_webhook_id: '602334307503177729', // webhook token is in ENV
+	muted_channel_id: '587122816797769788',
 
 	/**
 	 * Role sync
