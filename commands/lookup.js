@@ -45,7 +45,7 @@ module.exports = {
 
                         embed.addField("UUID", uuid, false)
                         .setTimestamp()
-                        .setFooter('', client.user.avatarURL);
+                        .setFooter('', message.client.user.avatarURL);
 
                         message.channel.send(embed);
                     }
