@@ -18,22 +18,13 @@ module.exports = {
 
             guild.members.fetch().then(members => {
                 members.forEach(member => {
-                    if(ids.includes(member.id) && member.roles.cache.get(muted) === undefined) {
+                    if(ids.includes(member.id)) {
                         log.basic('Muted ' + member.id)
                         member.roles.set([muted]);
 
-                        const muted_chan = discord_client.channels.fetch(config.muted_channel_id);
-                        muted_chan.then(chan => {
-                            chan.send(`<@${member.id}>, you have been muted in Discord because of an in-game punishment.`)
-                        });
-                    } else if (member.roles.cache.get(muted) !== undefined) {
+                    } else if (member.roles.highest.id === muted) {
                         console.log('Unmuted ' + member.id);
                         member.roles.remove([muted]);
-
-                        const muted_chan = discord_client.channels.fetch(config.muted_channel_id);
-                        muted_chan.then(chan => {
-                            chan.send(`${member.displayName}'s punishment has expired.`)
-                        });
 
                         member.createDM().then(dm => {
                             dm.send('Your punishment has expired, so you have been unmuted from the Discord server. You will need to rejoin the Minecraft server to regain your Discord rank.')
