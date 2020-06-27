@@ -7,15 +7,19 @@ module.exports = {
         const config = depend['config'];
         const discord_client = depend['discord_client'];
 
+        const guild = discord_client.guilds.cache.get(config.guild_id);
+
         //step 1: get list of punished UUIDs
         sql_pool.query(`SELECT discordID FROM discord_users WHERE uuid IN (SELECT UNHEX(REPLACE(uuid, '-', '')) FROM litebans_mutes WHERE (until < 1 OR until > unix_timestamp()*1000) AND active = 1 UNION SELECT UNHEX(REPLACE(uuid, '-', '')) FROM litebans_bans WHERE (until < 1 OR until > unix_timestamp()*1000) AND active = 1)`, (err, res) => {
             if(err) log.error(err);
-            res.forEach(element => {
-                const id = String(element['discordID']);
-                discord_client.guilds.cache.get(config.guild_id).members.fetch(id).then((member) => {
-                    log.basic(member.displayName);
-                });
-            });
+            res.map(e => String(e[0]['discordID']));
+            log.basic(`Got punished Discord ids: ${res}`);
+
+            guild.members.fetch(res).then((members) =>{
+                for(member of members) {
+                    log.basic(member);
+                }
+            }).catch(console.error);
         });
     }
 };
