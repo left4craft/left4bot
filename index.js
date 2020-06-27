@@ -150,13 +150,7 @@ client.on('ready', () => {
 				// console.log(res);
 				log.console(`${config.name} is ${log.colour.greenBright(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}`)}${log.colour.white(', updating status category')}`); // log status - online
 
-                client.channels.fetch(config.status_cat_id).then(channel => {
-					channel.setName(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}`); // cat name
-				});
-
-				// client.channels.fetch(config.chat_bridge_chan_id).then(channel => {
-				// 	channel.setTopic(`Chat with players who are in-game. ${res.onlinePlayers === 1 ? 'Player' : 'Players'} online: ${res.onlinePlayers}`);
-				// });
+                client.channels.cache.get(config.status_cat_id).setName(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? "player" : "players"}`); // cat name
 
 				client.user.setStatus('online'); // green status
 			})
@@ -165,8 +159,6 @@ client.on('ready', () => {
 
                 client.channels.cache.get(config.status_cat_id).setName('server is offline (!status)'); // cat name
                 
-                client.channels.cache.get(config.chat_bridge_chan_id).setTopic('Server is offline (!status)');
-
 				client.user.setStatus('dnd'); // red status
 
 				// throw err;

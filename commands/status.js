@@ -29,16 +29,12 @@ module.exports = {
 
                 client.channels.cache.get(config.status_cat_id).setName(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? "player" : "players"}`); // cat name
 
-                client.channels.cache.get(config.chat_bridge_chan_id).setTopic(`Chat with players who are in-game. ${res.onlinePlayers === 1 ? 'player' : 'players'} online: ${res.onlinePlayers}`);
-
                 client.user.setStatus("online"); // green status
             })
             .catch((err) => {
                 log.console(`${config.name} is ${log.colour.redBright("offline")}`); // log status - offline
 
                 client.channels.cache.get(config.status_cat_id).setName('server is offline (!status)'); // cat name
-
-                client.channels.cache.get(config.chat_bridge_chan_id).setTopic('Server is offline (!status)');
 
                 client.user.setStatus("dnd"); // red status
 
