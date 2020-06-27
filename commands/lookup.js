@@ -42,7 +42,7 @@ module.exports = {
                         .addField("Banned", player_data['banned'] ? "Yes" : "No", true)
                         .addField("UUID", uuid, false)
                         .setTimestamp()
-                    );
+                        );
                     }
                 });
             }
