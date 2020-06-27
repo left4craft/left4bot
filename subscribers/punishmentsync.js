@@ -1,7 +1,7 @@
 module.exports = {
     channels: ['minecraft.punish'],
 
-    execute(unused, webhook, channel, message, depend) {
+    execute(channel, message, depend) {
         const sql_pool = depend['sql_pool'];
         const log = depend['log'];
         const config = depend['config'];

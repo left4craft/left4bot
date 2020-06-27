@@ -1,10 +1,11 @@
-const config = require('../config.js');
-const log = require("leekslazylogger");
-
 module.exports = {
     channels: ['discord.botcommands'],
 
-    execute(discord_client, webhook, channel, message) {
+    execute(channel, message, depend) {
+        const log = depend['log'];
+        const config = depend['config'];
+        const discord_client = depend['discord_client'];
+
         log.basic('[BOT CMD] ' + message);
 
         // try {

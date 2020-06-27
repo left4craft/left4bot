@@ -58,7 +58,8 @@ const dependancies = {
     sql_pool: sql_pool,
 	player_util: player_util,
 	fetch: fetch,
-	minecraft_server_util: query
+	minecraft_server_util: query,
+	webhook: chat_bridge
 };
 
 redis_client.on('error', (error) => {
@@ -100,7 +101,7 @@ client.on('ready', () => {
 	redis_subscriber.on('message', (channel, message) => {
 		for (const subscriber of subscribers) {
 			if (subscriber.channels.includes(channel)) {
-				subscriber.execute(client, chat_bridge, channel, message, dependancies);
+				subscriber.execute(channel, message, dependancies);
 			}
 		}
 	});
