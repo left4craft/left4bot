@@ -24,7 +24,7 @@ module.exports = {
                     if(err) log.err(err);
                     uuids = [];
                     for (item of res) {
-                        const nick = item['nick'].replace('\u00A7[0-9A-FK-ORa-fk-or]', ''); // strip color codes
+                        const nick = item['nick'].replace('§[0-9A-FK-ORa-fk-or]', ''); // strip color codes
                         console.log(nick);
                         if(nick.toLowerCase().startsWith(search.toLowerCase())) uuids.push(item['uuid']);
                     }
