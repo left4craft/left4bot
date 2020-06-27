@@ -53,6 +53,11 @@ module.exports = {
 	 */
 	chat_bridge_chan_id: '424870757860900865',
 	chat_webhook_id: '602334307503177729', // webhook token is in ENV
+
+	/**
+	 * Punish sync
+	 */
+	update_punishment_interval: 60, // how often to check whether to mute / unmute people, in seconds
 	muted_channel_id: '587122816797769788',
 
 	/**

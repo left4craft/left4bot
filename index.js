@@ -169,7 +169,11 @@ client.on('ready', () => {
 	updateStatusInfo();
 	setInterval(() => {
 		updateStatusInfo();
-	}, config.status_update_interval * 1000);
+    }, config.status_update_interval * 1000);
+    
+    setInterval(() => {
+        redis_client.publish('minecraft.punish', 'update');
+    }, config.update_punishment_interval * 1000);
 
 });
 
