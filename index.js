@@ -206,10 +206,27 @@ client.on('message', async message => {
 			message.channel.send(message.author.toString() + ' Chat message not sent because the length is >256');
 		} else if (message.content.toLowerCase() === 'list') {
 
-			// TODO make formatting prettier
 			redis_client.get('minecraft.players', (response) => {
-				if (response === null) response = 'No players online';
-				message.channel.send('Players: ' + response);
+                let text = '';
+
+                try{
+                    text = 'Players online: `';
+                    response = JSON.parse(response);
+                    for(player of response) {
+                        player['username'] + ' ,';
+                    }
+                    text = text.slice(0, -2);
+                    text += '`';
+
+                    if (response.length === 0) {
+                        text = 'No players online';
+                    }
+                } catch (e) {
+                    log.error('Could not parse minecraft.players!');
+                    text = 'Failed to parse minecraft.players'
+                }             
+
+				message.channel.send(text);
 				message.delete();
 			});
 		} else {
