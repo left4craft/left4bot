@@ -52,29 +52,26 @@ function show_results(channel, uuids, player_util, pool, redis_client, search, c
 
     // collect info up to 3 times, depending on how many uuids are defined.
     player_util.get_player_info(uuids[0], pool, redis_client, log, (player_data) => {
-        embed.addField("Result 1: ", player_data['username'] + player_data['nick'] === null ? '' : ` (nickname: ${player_data['nick']}`)
+        embed.addField("Result 1: ", player_data['username'] + (player_data['nick'] === null ? '' : ` (nickname: ${player_data['nick']})`))
         .addField("Online (Minecraft)", player_data['online'] ? "Yes" : "No", true)
         .addField("Muted", player_data['muted'] ? "Yes" : "No", true)
         .addField("Banned", player_data['banned'] ? "Yes" : "No", true)
-        .addField("UUID", uuids[0], false);
         if(uuids[1] !== undefined) {
             // collect info up to 3 times, depending on how many uuids are defined.
             player_util.get_player_info(uuids[1], pool, redis_client, log, (player_data) => {
                 embed.addBlankField()
-                .addField("Result 2: ", player_data['username'] + player_data['nick'] === null ? '' : ` (nickname: ${player_data['nick']}`)
+                .addField("Result 2: ", player_data['username'] + (player_data['nick'] === null ? '' : ` (nickname: ${player_data['nick']})`))
                 .addField("Online (Minecraft)", player_data['online'] ? "Yes" : "No", true)
                 .addField("Muted", player_data['muted'] ? "Yes" : "No", true)
                 .addField("Banned", player_data['banned'] ? "Yes" : "No", true)
-                .addField("UUID", uuids[1], false);
                 if(uuids[2] !== undefined) {
                     // collect info up to 3 times, depending on how many uuids are defined.
                     player_util.get_player_info(uuids[2], pool, redis_client, log, (player_data) => {
                         embed.addBlankField()
-                        .addField("Result 3: ", player_data['username'] + player_data['nick'] === null ? '' : ` (nickname: ${player_data['nick']}`)
+                        .addField("Result 3: ", player_data['username'] + (player_data['nick'] === null ? '' : ` (nickname: ${player_data['nick']})`))
                         .addField("Online (Minecraft)", player_data['online'] ? "Yes" : "No", true)
                         .addField("Muted", player_data['muted'] ? "Yes" : "No", true)
                         .addField("Banned", player_data['banned'] ? "Yes" : "No", true)
-                        .addField("UUID", uuids[2], false);
                         if(uuids[3] !== undefined) {
                             embed.addField("Note", "There were more than 3 matches, but only the top 3 were shown.");
                             channel.send(embed);

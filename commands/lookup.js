@@ -34,7 +34,7 @@ module.exports = {
                         message.channel.send(new Discord.MessageEmbed()
                         .setColor(config.colour)
                         .setTitle('Player Information')
-                        .setURL(player_data['history_url'] + player_data['nick'] === null ? '' : ` (nickname: ${player_data['nick']}`)
+                        .setURL(player_data['history_url'] + (player_data['nick'] === null ? '' : ` (nickname: ${player_data['nick']})`))
                         .setAuthor(player_data['username'], 'https://crafatar.com/avatars/' + uuid, player_data['history_url'])
                         .setDescription('Click name for detailed punishment history')
                         .addField("Online (Minecraft)", player_data['online'] ? "Yes" : "No", true)
