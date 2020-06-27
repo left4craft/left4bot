@@ -83,6 +83,7 @@ module.exports = {
 		'muted': '587112191950585856',
 		'status_subscriber': '701904205144653886'
 	},
+	code_expire_interval: 60, // how often to check for expired sync tokens, in seconds
 
 	// Links/websites
 	links: [{

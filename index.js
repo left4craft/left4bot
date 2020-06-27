@@ -173,11 +173,17 @@ client.on('ready', () => {
 	updateStatusInfo();
 	setInterval(() => {
 		updateStatusInfo();
-    }, config.status_update_interval * 1000);
-    
+	}, config.status_update_interval * 1000);
+	
+	redis_client.publish('minecraft.punish', 'update');
     setInterval(() => {
         redis_client.publish('minecraft.punish', 'update');
-    }, config.update_punishment_interval * 1000);
+	}, config.update_punishment_interval * 1000);
+	
+	sync.expire_tokens(redis_client, client);
+	setInterval(() => {
+		sync.expire_tokens(redis_client, client);
+	}, config.code_expire_interval * 1000);
 
 });
 
@@ -201,7 +207,6 @@ client.on('message', async message => {
 		}
 
 		sync.sync_message(redis_client, message.channel, message.author.id);
-		sync.expire_tokens(redis_client);
 	}
 
 	const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|\\${config.prefix})\\s*`);

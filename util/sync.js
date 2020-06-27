@@ -15,7 +15,7 @@ exports.sync_message = (redis_client, discord_channel, id) => {
 
 };
 
-exports.expire_tokens = (redis_client) => {
+exports.expire_tokens = (redis_client, discord_client) => {
     redis_client.get('discord.synccodes', (err, res) => {
         if(err) console.log(err);
         if(res === null) res = '{}';
@@ -28,6 +28,11 @@ exports.expire_tokens = (redis_client) => {
         }
         for(id of expired) {
             delete codes[id];
+            discord_client.users.fetch(id).then(user => {
+                user.createDM().then(dm => {
+                    dm.send("Your sync code has expired. Reply to this message to generate a new one.")
+                });
+            });
         }
         console.log(codes);
         redis_client.set('discord.synccodes', JSON.stringify(codes));
