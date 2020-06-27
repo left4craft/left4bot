@@ -206,8 +206,13 @@ client.on('message', async message => {
 			message.channel.send(message.author.toString() + ' Chat message not sent because the length is >256');
 		} else if (message.content.toLowerCase() === 'list') {
 
-			redis_client.get('minecraft.players', (response) => {
+			redis_client.get('minecraft.players', (err, response) => {
                 let text = '';
+
+                if(err) {
+                    log.error(err);
+                    text = 'Failed to parse minecraft.players'
+                }
 
                 try{
                     text = 'Players online: `';
