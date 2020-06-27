@@ -12,7 +12,9 @@ module.exports = {
             if(err) log.error(err);
             res.forEach(element => {
                 const id = String(element['discordID']);
-                log.basic(id);
+                discord_client.guilds.cache.get(config.guild_id).members.fetch(id).then((member) => {
+                    log.basic(member.displayName);
+                });
             });
         });
     }
