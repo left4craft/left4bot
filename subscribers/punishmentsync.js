@@ -12,7 +12,7 @@ module.exports = {
         //step 1: get list of punished UUIDs
         sql_pool.query(`SELECT discordID FROM discord_users WHERE uuid IN (SELECT UNHEX(REPLACE(uuid, '-', '')) FROM litebans_mutes WHERE (until < 1 OR until > unix_timestamp()*1000) AND active = 1 UNION SELECT UNHEX(REPLACE(uuid, '-', '')) FROM litebans_bans WHERE (until < 1 OR until > unix_timestamp()*1000) AND active = 1)`, (err, res) => {
             if(err) log.error(err);
-            res.map(e => String(e[0]['discordID']));
+            res.map(e => String(e['discordID']));
             log.basic(`Got punished Discord ids: ${res}`);
 
             guild.members.fetch(res).then((members) =>{
