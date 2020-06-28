@@ -228,7 +228,7 @@ client.on('message', async message => {
                     text = 'Players online: `';
                     response = JSON.parse(response);
                     for(player of response) {
-                        text += player['username'] + ' ,';
+                        text += player['username'] + ', ';
                     }
                     text = text.slice(0, -2);
                     text += '`';
