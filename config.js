@@ -60,6 +60,7 @@ module.exports = {
 	 */
 	update_punishment_interval: 60, // how often to check whether to mute / unmute people, in seconds
 	muted_channel_id: '587122816797769788',
+	litebans_base_url = 'https://left4craft.org/bans/', // with trailing slash
 
 	/**
 	 * Role sync
