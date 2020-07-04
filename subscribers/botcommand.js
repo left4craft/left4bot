@@ -22,7 +22,7 @@ module.exports = {
                 discord_client.guilds.cache.get(config.guild_id).members.fetch(commandObj.id).then((member) => {
 
                     // step 0: don't promote a muted player
-                    if(member.roles.cache.get(config.muted_channel_id) !== undefined) {
+                    if(member.roles.cache.get(config.special_ranks['muted']) !== undefined) {
                         return;
                     }
 
