@@ -66,6 +66,7 @@ exports.get_player_info = (uuid, sql_pool, redis_client, log, callback) => {
 
             // setp 2: get online status
             const user = res[0]['name'];
+            console.log(redis_client);
             redis_client.get('minecraft.players', (response) => {
                 let online = false;
                 if(response === null) response = '[]';
