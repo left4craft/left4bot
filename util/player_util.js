@@ -73,6 +73,8 @@ exports.get_player_info = (uuid, sql_pool, redis_client, log, callback) => {
                 for(player of players) {
                     if(player['uuid'] === uuid) online = true;
                 }
+                console.log(players);
+                console.log(online);
 
                 // step 3: get muted / banned status
                 sql_pool.query('SELECT reason FROM litebans_mutes WHERE uuid = ? AND (until < 1 OR until > unix_timestamp()*1000) AND active = 1', uuid, (err, res) => {
