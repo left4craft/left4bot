@@ -73,6 +73,7 @@ exports.get_player_info = (uuid, sql_pool, redis_client, log, callback) => {
                 for(player of players) {
                     if(player['uuid'] === uuid) online = true;
                 }
+                console.log(response);
                 console.log(players);
                 console.log(online);
 
