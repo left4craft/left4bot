@@ -37,6 +37,12 @@ module.exports = {
 			description: 'Get mentioned when there is a status notification posted to <#701035082240229477>.\nTo prevent you from throwing your phone at a wall in the event that multiple servers go offline simultaneously, the notification service is limited to **1 ping per 5 minutes**.',
 			role: '701904205144653886',
 			id: 'status'
+		},
+		minor_announcements: {
+			title: 'Minor announcements',
+			description: 'Get mentioned where is an announcement that is important but doesn\'t warrent tagging everyone',
+			role: '730811314796101632',
+			id: 'announcements'
 		}
 	},
 
@@ -83,7 +89,8 @@ module.exports = {
 	special_ranks: {
 		'staff': '424867647381831690',
 		'muted': '587112191950585856',
-		'status_subscriber': '701904205144653886'
+		'status_subscriber': '701904205144653886',
+		'minor_announcements': '730811314796101632'
 	},
 	code_expire_interval: 60, // how often to check for expired sync tokens, in seconds
 

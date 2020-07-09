@@ -13,7 +13,7 @@ module.exports = {
 
 			if(commandObj.command === 'setuser') {
                 discord_client.guilds.cache.get(config.guild_id).members.fetch(commandObj.id).then((member) => {
-                    member.setNickname(commandObj.nick);
+                    if(member.displayName !== commandObj.nick) member.setNickname(commandObj.nick);
                 });
 
             } else if (commandObj.command === 'setgroup') {
@@ -26,15 +26,20 @@ module.exports = {
                         return;
                     }
 
-                    // step 1: add new role
+                    //step 1: don't promote player which already has role
+                    if(member.roles.cache.get(role_ids[commandObj.group]) !== undefined) {
+                        return;
+                    }
+
+                    // step 2: add new role
                     member.roles.add(role_ids[commandObj.group]).then((newMember) => {
-                        // step 2: remove all other in game roles
+                        // step 3: remove all other in game roles
                         for(const in_game_role in role_ids) {
                             if(in_game_role !== commandObj.group) {
                                 member.roles.remove(role_ids[in_game_role]);
                             }
                         }
-                        // step 3: add staff role if applicable
+                        // step 4: add staff role if applicable
                         if(config.staff_ranks.includes(commandObj.group)) {
                             member.roles.add(config.special_ranks.staff);
                         } else {
