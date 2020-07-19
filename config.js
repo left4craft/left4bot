@@ -7,7 +7,7 @@
 
 module.exports = {
 	/**
-	 * Logs
+	 * General
 	 */
 	name: 'Left4Craft',
 	prefix: '!', // prefix commands with this
