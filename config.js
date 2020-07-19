@@ -31,6 +31,7 @@ module.exports = {
 	 * Basic bot features
 	 */
 	poll_chan_id: '697485686688710786',
+	suggestion_chan_id: '734407921311416331',
 	subscription_roles: {
 		status: {
 			title: 'Status notifications',
@@ -40,9 +41,15 @@ module.exports = {
 		},
 		announcements: {
 			title: 'Minor announcements',
-			description: 'Get mentioned where is an announcement that is important but doesn\'t warrent tagging everyone',
+			description: 'Get mentioned when there is an announcement that is important but doesn\'t warrant tagging everyone',
 			role: '730811314796101632',
 			id: 'announcements'
+		},
+		polls: {
+			title: 'Polls',
+			description: 'Get mentioned when there is a poll',
+			role: '734428253552640001',
+			id: 'polls'
 		}
 	},
 

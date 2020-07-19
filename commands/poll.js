@@ -26,7 +26,7 @@ module.exports = {
 
         let joined = args.join(" ") // make it a string again
 
-        let split = joined.trim().split(";"); // arrary of question and options, no type, split at the ;
+        let split = joined.trim().split(";"); // array of question and options, no type, split at the ;
 
 
         for (i = 0; i < split.length; i++) {
@@ -56,6 +56,7 @@ module.exports = {
             // basic with thumbs up and down
             log.info(`${message.author.username} created a basic poll`);
 
+			channel.send(`<@&${config.subscription_roles.polls.role}>`);
             const poll = await channel.send(
                 new Discord.MessageEmbed()
                 .setColor(config.colour)
@@ -80,7 +81,7 @@ module.exports = {
             for (i = 0; i < options.length; i++) {
                 options_string += `:regional_indicator_${alphabet[i]}: ${options[i]}\n\n`;
             }
-
+			channel.send(`<@&${config.subscription_roles.polls.role}>`);
             const poll = await channel.send(
                 new Discord.MessageEmbed()
                 .setColor(config.colour)
@@ -105,7 +106,7 @@ module.exports = {
         message.channel.send(
             new Discord.MessageEmbed()
             .setColor(config.colour)
-            .setTitle("Poll created")
+            .setTitle(":thumbsup: Poll created")
             .setDescription(`**»** Go to <#${config.poll_chan_id}> to view`)
             .addField("Question", question, false)
         ); // success message

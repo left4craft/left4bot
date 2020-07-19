@@ -47,7 +47,7 @@ const sql_pool = mysql.createPool({
 });
 
 // object that can be passed to various commands and subscribers so they don't need to be re-declared every time
-const dependancies = {
+const dependencies = {
     fs: fs,
     discord_client: client,
     discord_lib: Discord,
@@ -101,7 +101,7 @@ client.on('ready', () => {
 	redis_subscriber.on('message', (channel, message) => {
 		for (const subscriber of subscribers) {
 			if (subscriber.channels.includes(channel)) {
-				subscriber.execute(channel, message, dependancies);
+				subscriber.execute(channel, message, dependencies);
 			}
 		}
 	});
@@ -125,7 +125,7 @@ client.on('ready', () => {
 			new Discord.MessageEmbed()
 			.setColor(config.colour)
 			.setTitle('Started')
-			.setDescription(`:white_check_mark: **»** Started succesfully with **${commands.length} commands** and **${subscribe_channels.length} subscribers** loaded.`)
+			.setDescription(`:white_check_mark: **»** Started successfully with **${commands.length} commands** and **${subscribe_channels.length} subscribers** loaded.`)
 			.setFooter(config.name, client.user.avatarURL())
 			.setTimestamp()
 		);
@@ -318,13 +318,13 @@ client.on('message', async message => {
 
 
 	try {
-		command.execute(message, args, dependancies); // execute the command *(so much code just to get to this 1 line)*
+		command.execute(message, args, dependencies); // execute the command *(so much code just to get to this 1 line)*
 
 		log.console(`${message.author.tag} used the '${command.name}' command`);
 	} catch (error) {
 		log.error(error);
 		message.channel.send(`:x: An error occured whilst executing the \`${command.name}\` command.\nThe issue has been reported.`);
-		log.error(`An error occured whilst executing the '${command.name}' command`);
+		log.error(`An error occurred whilst executing the '${command.name}' command`);
 	}
 
 });
@@ -335,6 +335,23 @@ client.on('guildMemberAdd', member => {
 	});
 });
 
+client.on('rateLimit', limit => {
+	let chan = client.channels.cache.get(config.log_chan_id);
+	log.warn(':x: Rate-limited!');
+	log.debug(limit);
+	chan.send(
+		new Discord.MessageEmbed()
+		.setColor(config.colour)
+		.setTitle('Rate-limited')
+		.addField('Timeout (s)', limit.timeout * 1000, true)
+		.addField('Limit', limit.limit, true)
+		.addField('Path', limit.method + ': ' + limit.path, false)
+		.addField('Route', limit.route, false)
+		.setFooter(config.name, client.user.avatarURL())
+		.setTimestamp()
+	); // log channel message
+	chan.send(`<@&${in_game_ranks.admin}> <@&${in_game_ranks.owner}>`);
+});
 
 client.on('error', error => {
 	log.warn('Potential error detected\n(likely Discord API connection issue)\n');
