@@ -96,7 +96,7 @@ module.exports = {
 
 	// Links/websites
 	links: [{
-			name: 'Home / Forums',
+			name: 'Home',
 			url: 'https://www.left4craft.org',
 			pretty: 'www.left4craft.org'
 		},
