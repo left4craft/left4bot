@@ -6,11 +6,14 @@ module.exports = {
         const config = depend['config'];
         const discord_client = depend['discord_client'];
 
-        log.basic('[MESSAGE] ' + message);
+        // log.basic('[MESSAGE] ' + message);
 
-        const parts = message.split(',');
+		const parts = message.split(',');
+		const msg = parts.slice(2).join(',').replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here');
+		
+		log.basic(`[MESSAGE] ${parts[0]} -> ${parts[1]}: ${msg}`);
 
-        const chat = '**' + parts[0] + ' -> ' + parts[1] + '** ' + parts.slice(2).join(',').replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here');
+        const chat = '**' + parts[0] + ' -> ' + parts[1] + '** ' + msg;
         discord_client.channels.fetch(config.socialspy_chan_id).then(channel => {
             channel.send(chat);
         });

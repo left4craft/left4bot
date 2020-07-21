@@ -132,10 +132,11 @@ client.on('ready', () => {
 	}
 
 	const updatePresence = () => {
+		let num = Math.floor(Math.random() * config.activities.length);
 		client.user.setPresence({
 				activity: {
-					name: config.activities[Math.floor(Math.random() * config.activities.length)] + `  |  ${config.prefix}help`,
-					type: config.activity_type
+					name: config.activities[num] + `  |  ${config.prefix}help`,
+					type: config.activity_types[num]
 				}
 			})
 			.catch(log.error);
@@ -148,24 +149,23 @@ client.on('ready', () => {
 
 	const updateStatusInfo = () => {
 		log.info(`Pinging ${config.ip}`);
-
+		const cat = client.channels.cache.get(config.status_cat_id);
 		query(config.ip, config.port)
 			.then((res) => {
-				// console.log(res);
-				log.console(`${config.name} is ${log.colour.greenBright(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}`)}${log.colour.white(', updating status category')}`); // log status - online
+				const status = `online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}`;
+				log.console(`${config.name} is ${log.colour.greenBright(status)}`); // log status - online
 
-                client.channels.cache.get(config.status_cat_id).setName(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? "player" : "players"}`); // cat name
-
-				client.user.setStatus('online'); // green status
+				if(cat.name !== status) { // only if it is different
+					cat.setName(status);
+					log.info('Status has changed, updating status category')
+					client.user.setStatus('online'); // green status
+				};
 			})
 			.catch(() => {
-				log.console(`${config.name} is ${log.colour.redBright('offline')}`); // log status - offline
+				log.console(`${config.name} is ${log.colour.redBright('offline')}`);
 
-                client.channels.cache.get(config.status_cat_id).setName('server is offline (!status)'); // cat name
-                
+                cat.setName('server is offline (!status)'); // cat name
 				client.user.setStatus('dnd'); // red status
-
-				// throw err;
 			});
 
 	};
@@ -224,7 +224,7 @@ client.on('message', async message => {
                     text = 'Failed to parse minecraft.players';
                 }
 
-                try{
+                try	{
 					response = JSON.parse(response);
 					text = `Players online (${Object.keys(response).length}): \``;
                     for(player of response) {
@@ -249,6 +249,7 @@ client.on('message', async message => {
 			const name = message.member.displayName;
 			const content = '&3[Discord&r' + role + '&3]&r ' + name + ' &3&l»&r ' + message.content;
 			redis_client.publish('minecraft.chat.global.in', content);
+			log.basic(`[CHAT OUT] [${role}] ${name}: ${message.content}`)
 		}
 	}
 
@@ -323,7 +324,7 @@ client.on('message', async message => {
 		log.console(`${message.author.tag} used the '${command.name}' command`);
 	} catch (error) {
 		log.error(error);
-		message.channel.send(`:x: An error occured whilst executing the \`${command.name}\` command.\nThe issue has been reported.`);
+		message.channel.send(`:x: An error occurred whilst executing the \`${command.name}\` command.\nThe issue has been reported.`);
 		log.error(`An error occurred whilst executing the '${command.name}' command`);
 	}
 
@@ -336,21 +337,8 @@ client.on('guildMemberAdd', member => {
 });
 
 client.on('rateLimit', limit => {
-	let chan = client.channels.cache.get(config.log_chan_id);
-	log.warn(':x: Rate-limited!');
+	log.warn('Rate-limited!');
 	log.debug(limit);
-	chan.send(
-		new Discord.MessageEmbed()
-		.setColor(config.colour)
-		.setTitle('Rate-limited')
-		.addField('Timeout (s)', limit.timeout * 1000, true)
-		.addField('Limit', limit.limit, true)
-		.addField('Path', limit.method + ': ' + limit.path, false)
-		.addField('Route', limit.route, false)
-		.setFooter(config.name, client.user.avatarURL())
-		.setTimestamp()
-	); // log channel message
-	chan.send(`<@&${in_game_ranks.admin}> <@&${in_game_ranks.owner}>`);
 });
 
 client.on('error', error => {
@@ -368,7 +356,7 @@ process.on('unhandledRejection', error => {
 	log.error(`Uncaught error: \n${error.stack}`);
 });
 process.on('beforeExit', (code) => {
-	log.basic(log.colour.yellowBright('Disconected from Discord API'));
+	log.basic(log.colour.yellowBright('Disconnected from Discord API'));
 	log.basic(`Exiting (${code})`);
 });
 

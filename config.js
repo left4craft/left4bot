@@ -15,8 +15,8 @@ module.exports = {
 	ip: 'mc.left4craft.org',
 	port: 25565,
 	guild_id: '424571587413540874',
-	activities: ['Minecraft', 'on mc.left4craft.org', 'with nuclear launch codes', 'Minecraft on mc.left4craft.org'],
-	activity_type: 'PLAYING',
+	activities: ['Minecraft', 'on mc.left4craft.org', 'with nuclear launch codes', 'chat', 'Minecraft on mc.left4craft.org'],
+	activity_types: ['PLAYING', 'PLAYING', 'PLAYING', 'WATCHING', 'PLAYING'],
 	cooldown: 3, // default (in seconds), can be different for each command
 
 	/**
@@ -86,6 +86,7 @@ module.exports = {
 		'patron': '426469168171319297',
 		'patron+': '424867110041288716',
 		'builder': '424867526481281024',
+		'hbuilder': '735124508339470436',
 		'helper': '424867726511570955',
 		'moderator': '424867915226021888',
 		'admin': '424868133967364096',

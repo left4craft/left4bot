@@ -7,10 +7,10 @@ module.exports = {
         const discord_client = depend['discord_client'];
         const webhook = depend['webhook'];
 
-        log.basic('[CHAT] ' + message);
-
         try {
-            message = JSON.parse(message);
+			message = JSON.parse(message);
+			
+			log.basic(`[CHAT IN] ${message.name}: ${message.message}`);
 
 			webhook.send(message.message.replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here'), {
 				avatarURL: 'https://crafatar.com/avatars/' + message.uuid,
@@ -20,7 +20,8 @@ module.exports = {
         } catch (e) { // when not a json object, message is supposed to be directly sent
             // TODO make this less crappy (requies Left4Chat edit)
             discord_client.channels.fetch(config.chat_bridge_chan_id, true).then((channel) => {
-                channel.send(message);
+				channel.send(message);
+				log.basic(`[RAW TXT] ${message}`)
             });
         }
     }
