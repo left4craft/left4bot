@@ -1,9 +1,9 @@
 module.exports = {
     name: 'lookup',
-    description: 'Mutes a player in-game and in Discord',
+    description: 'Lookup a player\'s history',
     usage: '<username/Discord tag/Discord id/uuid>',
     aliases: ['history', 'punishments'],
-    example: 'mute Captain_Sisko 1m test',
+    example: 'lookup Captain_Sisko',
     args: true,
     cooldown: 3,
     guildOnly: true,
