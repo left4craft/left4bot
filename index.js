@@ -247,8 +247,10 @@ client.on('message', async message => {
 		} else {
 			const role = message.member.roles.highest.name;
 			const name = message.member.displayName;
-			const content = '&3[Discord&r' + role + '&3]&r ' + name + ' &3&l»&r ' + message.content;
-			redis_client.publish('minecraft.chat.global.in', content);
+			redis_client.publish('minecraft.chat', JSON.stringify({
+				type: 'raw',
+				content: `&#7289DA[Discord&r${role}&#7289DA]&r ${name} &#7289DA&l»&r ${message.content}`
+			}));
 			log.basic(`[CHAT OUT] [${role}] ${name}: ${message.content}`)
 		}
 	}

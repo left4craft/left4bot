@@ -1,5 +1,5 @@
 module.exports = {
-	channels: ['minecraft.chat.global.out'],
+	channels: ['minecraft.chat'],
 
 	execute(channel, message, depend) {
 		const log = depend['log'];
@@ -14,11 +14,19 @@ module.exports = {
 			message = JSON.parse(message);
 
 			switch (message.type) {
-				case 'message':
-					log.basic(`[CHAT IN] ${message.name}: ${message.message}`);
-					webhook.send(message.message.replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here'), {
+				case 'chat':
+					log.basic(`[CHAT IN] ${message.name}: ${message.content}`);
+					webhook.send(message.content.replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here'), {
 						avatarURL: 'https://crafatar.com/avatars/' + message.uuid,
-						username: message.name
+						username: message.webhook_name
+					});
+					break;
+
+				case 'pm':
+					log.basic(`[PM] ${message.from_name} -> ${message.to_name}: ${msg}`);
+					discord_client.channels.fetch(config.socialspy_chan_id).then(channel => {
+						channel.send(`** ${message.from_name} -> ${message.to_name}:** ${message.content
+							.replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here')}`);
 					});
 					break;
 
@@ -48,15 +56,15 @@ module.exports = {
 					break;
 
 				case 'broadcast':
-					log.basic(`[CHAT IN] ${message.message}`);
-					chan.send(`:exclamation: **${message.message}**`);
+					log.basic(`[CHAT IN] ${message.content}`);
+					chan.send(`:exclamation: **${message.content}**`);
 					break;
 
 				default:
-					chan.send(message.message);
+					chan.send(message.content);
 			}
 
-		} catch (e) { 
+		} catch (e) {
 
 			discord_client.channels.fetch(config.chat_bridge_chan_id, true).then((channel) => {
 				log.basic(`[RAW TXT] ${message}`)
