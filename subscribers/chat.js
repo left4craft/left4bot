@@ -61,13 +61,14 @@ module.exports = {
 					break;
 
 				default:
+					log.basic(`[CHAT IN] ${message}`);
 					chan.send(message.content);
 			}
 
 		} catch (e) {
 
 			discord_client.channels.fetch(config.chat_bridge_chan_id, true).then((channel) => {
-				log.basic(`[RAW TXT] ${message}`)
+				log.warn(`[RAW?] ${message}`);
 				chan.send(message);
 			});
 		}
