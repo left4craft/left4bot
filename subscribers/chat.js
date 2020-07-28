@@ -10,7 +10,7 @@ module.exports = {
 		const chan = discord_client.channels.cache.get(config.chat_bridge_chan_id);
 
 		try {
-
+			console.log(message);
 			message = JSON.parse(message);
 
 			switch (message.type) {
