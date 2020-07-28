@@ -15,7 +15,7 @@ module.exports = {
 
 			switch (message.type) {
 				case 'chat':
-					log.basic(`[CHAT IN] ${message.name}: ${message.content}`);
+					log.basic(`[CHAT IN] ${message.name}: ${message.content_stripped}`);
 					webhook.send(message.content.replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here'), {
 						avatarURL: 'https://crafatar.com/avatars/' + message.uuid,
 						username: message.webhook_name
@@ -23,9 +23,9 @@ module.exports = {
 					break;
 
 				case 'pm':
-					log.basic(`[PM] ${message.from_name} -> ${message.to_name}: ${message.content}`);
+					log.basic(`[PM] ${message.from_name} -> ${message.to_name}: ${message.content_stripped}`);
 					discord_client.channels.fetch(config.socialspy_chan_id).then(channel => {
-						channel.send(`** ${message.from_name} -> ${message.to_name}:** ${message.content
+						channel.send(`** ${message.from_name} -> ${message.to_name}:** ${message.content_stripped
 							.replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here')}`);
 					});
 					break;
