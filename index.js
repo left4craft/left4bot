@@ -248,8 +248,16 @@ client.on('message', async message => {
 			const role = message.member.roles.highest.name;
 			const name = message.member.displayName;
 			redis_client.publish('minecraft.chat', JSON.stringify({
-				type: 'raw',
-				content: `&#7289DA[Discord&r${role}&#7289DA]&r ${name} &#7289DA&l»&r ${message.content}`
+				type: 'discord_chat',
+				discord_username: message.member.user.tag,
+				timestamp: new Date().getTime(),
+				discord_prefix: `&#7289DA[Discord&r${role}&#7289DA]&r ${name} &#7289DA&l»&r `,
+				discord_id: member.id,
+				content: `${message.content}`,
+
+				// @TODO Check if rank sufficient to use color and format
+				color: true,
+				format: true
 			}));
 			log.basic(`[CHAT OUT] [${role}] ${name}: ${message.content}`)
 		}

@@ -60,6 +60,9 @@ module.exports = {
 					chan.send(`:exclamation: **${message.content}**`);
 					break;
 
+				case 'discord_chat':
+					break;
+
 				default:
 					log.basic(`[CHAT IN] ${message}`);
 					chan.send(message.content);
