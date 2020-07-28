@@ -9,7 +9,7 @@ module.exports = {
 
 		const chan = discord_client.channels.cache.get(config.chat_bridge_chan_id);
 
-		try {
+		// try {
 			console.log(message);
 			message = JSON.parse(message);
 
@@ -65,14 +65,14 @@ module.exports = {
 					chan.send(message.content);
 			}
 
-		} catch (e) {
+		// } catch (e) {
 
-			discord_client.channels.fetch(config.chat_bridge_chan_id, true).then((channel) => {
-				log.warn(`[RAW?] ${message}`);
-				log.warn(e);
-				chan.send(message);
-			});
-		}
+		// 	discord_client.channels.fetch(config.chat_bridge_chan_id, true).then((channel) => {
+		// 		log.warn(`[RAW?] ${message}`);
+		// 		log.warn(e);
+		// 		chan.send(message);
+		// 	});
+		// }
 
 
 	}
