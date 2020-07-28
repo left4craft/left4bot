@@ -252,8 +252,8 @@ client.on('message', async message => {
 				discord_username: message.member.user.tag,
 				timestamp: new Date().getTime(),
 				discord_prefix: `&#7289DA[Discord&r${role}&#7289DA]&r ${name} &#7289DA&l»&r `,
-				discord_id: member.id,
-				content: `${message.content}`,
+				discord_id: message.member.id,
+				content: message.content,
 
 				// @TODO Check if rank sufficient to use color and format
 				color: true,
