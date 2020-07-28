@@ -16,7 +16,7 @@ module.exports = {
 			switch (message.type) {
 				case 'chat':
 					log.basic(`[CHAT IN] ${message.name}: ${message.content_stripped}`);
-					webhook.send(message.content.replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here'), {
+					webhook.send(message.content_stripped.replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here'), {
 						avatarURL: 'https://crafatar.com/avatars/' + message.uuid,
 						username: message.webhook_name
 					});
