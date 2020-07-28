@@ -57,7 +57,7 @@ module.exports = {
 
 				case 'broadcast':
 					log.basic(`[CHAT IN] ${message.content}`);
-					chan.send(`:exclamation: **${message.content}**`);
+					chan.send(`:exclamation: **${message.content.replace(/&[0-9a-fi-or]|&![0-9a-f]/g, '')}**`);
 					break;
 
 				case 'discord_chat':
