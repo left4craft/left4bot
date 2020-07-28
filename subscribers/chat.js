@@ -9,8 +9,8 @@ module.exports = {
 
 		const chan = discord_client.channels.cache.get(config.chat_bridge_chan_id);
 
-		// try {
-			console.log(message);
+		try {
+			//console.log(message);
 			message = JSON.parse(message);
 
 			switch (message.type) {
@@ -23,7 +23,7 @@ module.exports = {
 					break;
 
 				case 'pm':
-					log.basic(`[PM] ${message.from_name} -> ${message.to_name}: ${msg}`);
+					log.basic(`[PM] ${message.from_name} -> ${message.to_name}: ${message.content}`);
 					discord_client.channels.fetch(config.socialspy_chan_id).then(channel => {
 						channel.send(`** ${message.from_name} -> ${message.to_name}:** ${message.content
 							.replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here')}`);
@@ -65,14 +65,14 @@ module.exports = {
 					chan.send(message.content);
 			}
 
-		// } catch (e) {
+		} catch (e) {
 
-		// 	discord_client.channels.fetch(config.chat_bridge_chan_id, true).then((channel) => {
-		// 		log.warn(`[RAW?] ${message}`);
-		// 		log.warn(e);
-		// 		chan.send(message);
-		// 	});
-		// }
+			discord_client.channels.fetch(config.chat_bridge_chan_id, true).then((channel) => {
+				log.warn(`[RAW?] ${message}`);
+				log.warn(e);
+				chan.send(message);
+			});
+		}
 
 
 	}
