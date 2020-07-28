@@ -69,6 +69,7 @@ module.exports = {
 
 			discord_client.channels.fetch(config.chat_bridge_chan_id, true).then((channel) => {
 				log.warn(`[RAW?] ${message}`);
+				log.warn(e);
 				chan.send(message);
 			});
 		}
