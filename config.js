@@ -78,6 +78,20 @@ module.exports = {
 	/**
 	 * Role sync
 	 */
+	rank_colors: {
+		'guest': '&7',
+		'user': '&e',
+		'user+': '&e',
+		'donor': '&b',
+		'patron': '&c',
+		'patron+': '&d',
+		'builder': '&2',
+		'hbuilder': '&2',
+		'helper': '&a',
+		'moderator': '&9',
+		'admin': '&3',
+		'owner': '&4'
+	},
 	in_game_ranks: {
 		'guest': '429026758692438038',
 		'user': '424866580141441026',
@@ -98,7 +112,8 @@ module.exports = {
 		'staff': '424867647381831690',
 		'muted': '587112191950585856',
 		'status_subscriber': '701904205144653886',
-		'announcements': '730811314796101632'
+		'announcements': '730811314796101632',
+		'polls': '734428253552640001'
 	},
 	code_expire_interval: 60, // how often to check for expired sync tokens, in seconds
 

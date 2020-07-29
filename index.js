@@ -251,7 +251,7 @@ client.on('message', async message => {
 				type: 'discord_chat',
 				discord_username: message.member.user.tag,
 				timestamp: new Date().getTime(),
-				discord_prefix: `&#7289DA[Discord&r${role}&#7289DA]&r ${name} &#7289DA&l»&r `,
+				discord_prefix: `&#7289DA[Discord${config.rank_colors[role.toLowerCase()]}${role}&#7289DA]&r ${name} &#7289DA&l»&r `,
 				discord_id: message.member.id,
 				content: message.content,
 

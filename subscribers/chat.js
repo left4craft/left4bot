@@ -18,7 +18,7 @@ module.exports = {
 					log.basic(`[CHAT IN] ${message.name}: ${message.content_stripped}`);
 					webhook.send(message.content_stripped.replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here'), {
 						avatarURL: 'https://crafatar.com/avatars/' + message.uuid,
-						username: message.webhook_name
+						username: message.webhook_name.replace(/§[0-9A-FK-ORa-fk-or]/g, '').replace(/&[0-9A-FK-ORa-fk-or]/g, '')
 					});
 					break;
 
@@ -56,27 +56,23 @@ module.exports = {
 					break;
 
 				case 'broadcast':
-					log.basic(`[CHAT IN] ${message.content}`);
-					chan.send(`:exclamation: **${message.content.replace(/&[0-9a-fi-or]|&![0-9a-f]/g, '')}**`);
+					log.basic(`[CHAT IN] ${message.content_stripped}`);
+					chan.send(`:exclamation: **${message.content_stripped}**`);
 					break;
 
 				case 'discord_chat':
 					break;
 
 				default:
-					log.basic(`[CHAT IN] ${message}`);
-					chan.send(message.content);
+					log.basic(`[CHAT IN] ${message.content_stripped}`);
+					chan.send(message.content_stripped);
 			}
 
 		} catch (e) {
-
-			discord_client.channels.fetch(config.chat_bridge_chan_id, true).then((channel) => {
-				log.warn(`[RAW?] ${message}`);
-				log.warn(e);
-				chan.send(message);
-			});
+			log.warn(`[RAW?] ${message}`);
+			log.warn(e);
+			chan.send(message);
 		}
-
 
 	}
 }
