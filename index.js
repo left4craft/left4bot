@@ -253,13 +253,13 @@ client.on('message', async message => {
 				timestamp: new Date().getTime(),
 				discord_prefix: `&#7289DA[Discord${config.rank_colors[role.toLowerCase()]}${role}&#7289DA]&r ${name} &#7289DA&l»&r `,
 				discord_id: message.member.id,
-				content: message.content,
+				content: message.cleanContent,
 
 				// @TODO Check if rank sufficient to use color and format
 				color: true,
 				format: true
 			}));
-			log.basic(`[CHAT OUT] [${role}] ${name}: ${message.content}`)
+			log.basic(`[CHAT OUT] [${role}] ${name}: ${message.cleanContent}`)
 		}
 	}
 
