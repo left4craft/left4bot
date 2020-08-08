@@ -19,7 +19,7 @@ module.exports = {
             guild.members.fetch().then(members => {
                 members.forEach(member => {
                     if(ids.includes(member.id) && member.roles.cache.get(muted) === undefined) {
-                        log.basic('Muted ' + member.id)
+                        log.console('Muted ' + member.id)
                         member.roles.set([muted]);
 
                         const muted_chan = discord_client.channels.fetch(config.muted_channel_id);

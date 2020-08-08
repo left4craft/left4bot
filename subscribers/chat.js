@@ -15,7 +15,7 @@ module.exports = {
 
 			switch (message.type) {
 				case 'chat':
-					log.basic(`[CHAT IN] ${message.name}: ${message.content_stripped}`);
+					log.console(`[CHAT IN] ${message.name}: ${message.content_stripped}`);
 					webhook.send(message.content_stripped.replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here'), {
 						avatarURL: 'https://crafatar.com/avatars/' + message.uuid,
 						username: message.webhook_name.replace(/§[0-9A-FK-ORa-fk-or]/g, '').replace(/&[0-9A-FK-ORa-fk-or]/g, '')
@@ -23,7 +23,7 @@ module.exports = {
 					break;
 
 				case 'pm':
-					log.basic(`[PM] ${message.from_name} -> ${message.to_name}: ${message.content_stripped}`);
+					log.console(`[PM] ${message.from_name} -> ${message.to_name}: ${message.content_stripped}`);
 					discord_client.channels.fetch(config.socialspy_chan_id).then(channel => {
 						channel.send(`** ${message.from_name} -> ${message.to_name}:** ${message.content_stripped
 							.replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here')}`);
@@ -32,31 +32,31 @@ module.exports = {
 
 				case 'afk':
 					if (message.afk == true) {
-						log.basic(`[CHAT IN] ${message.name} is now AFK`);
+						log.console(`[CHAT IN] ${message.name} is now AFK`);
 						chan.send(`:exclamation: ${message.name} is now AFK`);
 					} else {
-						log.basic(`[CHAT IN] ${message.name} is no longer AFK`);
+						log.console(`[CHAT IN] ${message.name} is no longer AFK`);
 						chan.send(`:exclamation: ${message.name} is no longer AFK`);
 					}
 					break;
 
 				case 'join':
-					log.basic(`[CHAT IN] ${message.name} joined`);
+					log.console(`[CHAT IN] ${message.name} joined`);
 					chan.send(`<:plus:429331570625871873> **${message.name} joined**`);
 					break;
 
 				case 'leave':
-					log.basic(`[CHAT IN] ${message.name} left`);
+					log.console(`[CHAT IN] ${message.name} left`);
 					chan.send(`<:minus:429331570583797790> **${message.name} left**`);
 					break;
 
 				case 'welcome':
-					log.basic(`[CHAT IN] ${message.name} joined ${config.name} for the first time!`);
+					log.console(`[CHAT IN] ${message.name} joined ${config.name} for the first time!`);
 					chan.send(`<:l4c:429327878879182849> :tada: **${message.name} joined ${config.name} for the first time!**`);
 					break;
 
 				case 'broadcast':
-					log.basic(`[CHAT IN] ${message.content_stripped}`);
+					log.console(`[CHAT IN] ${message.content_stripped}`);
 					chan.send(`:exclamation: **${message.content_stripped}**`);
 					break;
 
@@ -64,7 +64,7 @@ module.exports = {
 					break;
 
 				default:
-					log.basic(`[CHAT IN] ${message.content_stripped}`);
+					log.console(`[CHAT IN] ${message.content_stripped}`);
 					chan.send(message.content_stripped);
 			}
 

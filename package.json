@@ -12,7 +12,7 @@
     "crypto-random-string": "^3.2.0",
     "discord.js": "^12.1.1",
     "dotenv": "^8.2.0",
-    "leekslazylogger": "^1.1.9",
+    "leekslazylogger": "^2.0.0-alpha.3",
     "minecraft-server-util": "^1.1.0",
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.0",

@@ -22,7 +22,7 @@ module.exports = {
 	/**
 	 * Logs
 	 */
-	debug_level: 0,
+	debug: false,
 	log_dm: false,
 	log_general: true,
 	log_chan_id: '425382138037403658',
@@ -73,7 +73,7 @@ module.exports = {
 	 */
 	update_punishment_interval: 60, // how often to check whether to mute / unmute people, in seconds
 	muted_channel_id: '587122816797769788',
-	litebans_base_url: 'https://left4craft.org/bans/', // with trailing slash
+	litebans_base_url: 'https://left4craft.org/bans/', // WITH trailing slash
 
 	/**
 	 * Role sync
@@ -143,5 +143,11 @@ module.exports = {
 			url: 'https://status.left4craft.org',
 			pretty: 'status.left4craft.org'
 		}
-	]
+	],
+
+	yourls: {
+		name: 'left4.cf',
+		api: 'https://left4.cf/yourls-api.php', // WITHOUT trailing /
+		max_length: 50 // URLs sent through minecraft.chat longer than this will be shortened
+	}
 };

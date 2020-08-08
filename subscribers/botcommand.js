@@ -6,7 +6,7 @@ module.exports = {
 		const config = depend['config'];
 		const discord_client = depend['discord_client'];
 
-		log.basic('[BOT CMD] ' + message);
+		log.console('[BOT CMD] ' + message);
 
 		// try {
 		commandObj = JSON.parse(message);

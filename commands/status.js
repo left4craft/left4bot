@@ -26,14 +26,14 @@ module.exports = {
         query(config.ip, config.port)
             .then((res) => {
                 // console.log(res);
-                log.console(`${config.name} is ${log.colour.greenBright(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? "player" : "players"}`)}${log.colour.white(", updating status category")}`); // log status - online
+                log.console(`${config.name} is &aonline with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? "player" : "players"}&f, updating status category`); // log status - online
 
                 client.channels.cache.get(config.status_cat_id).setName(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? "player" : "players"}`); // cat name
 
                 client.user.setStatus("online"); // green status
             })
             .catch((err) => {
-                log.console(`${config.name} is ${log.colour.redBright("offline")}`); // log status - offline
+                log.console(`${config.name} is &coffline}`); // log status - offline
 
                 client.channels.cache.get(config.status_cat_id).setName('server is offline (!status)'); // cat name
 
