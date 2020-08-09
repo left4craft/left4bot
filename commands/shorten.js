@@ -36,7 +36,7 @@ module.exports = {
 		yourls.shorten(url, safe, depend).then(short => {
 			message.channel.send(
 				new Discord.MessageEmbed()
-				.setAuthor(message.author.username, message.author.avatarURL)
+				.setAuthor(message.author.username, message.author.avatarURL())
 				.setColor(config.colour)
 				.setTitle(`:white_check_mark: Shortened`, short)
 				.setDescription(`Your URL has been shortened`)

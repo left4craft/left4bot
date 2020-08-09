@@ -30,6 +30,7 @@ module.exports = {
 	/**
 	 * Basic bot features
 	 */
+	welcome_chan_id: '424571587413540876',
 	poll_chan_id: '697485686688710786',
 	suggestion_chan_id: '734407921311416331',
 	subscription_roles: {

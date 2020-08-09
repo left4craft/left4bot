@@ -222,6 +222,7 @@ client.on('message', async message => {
 		if (message.content.length > 256) {
 			message.channel.send(message.author.toString() + ' Chat message not sent because the length is >256');
 		} else if (message.content.toLowerCase() === 'list') {
+			log.console(`${message.author.tag} listed online players`);
 
 			redis_client.get('minecraft.players', (err, response) => {
 				let text = '';
@@ -256,6 +257,7 @@ client.on('message', async message => {
 			const name = message.member.displayName;
 			// let content = yourls.conditionalReplace(message.cleanContent, dependencies);
 			let content = message.cleanContent;
+
 			redis_client.publish('minecraft.chat', JSON.stringify({
 				type: 'discord_chat',
 				discord_username: message.member.user.tag,
@@ -263,11 +265,13 @@ client.on('message', async message => {
 				discord_prefix: `&#7289DA[Discord${config.rank_colors[role.toLowerCase()]}${role}&#7289DA]&r ${name} &#7289DA&l»&r `,
 				discord_id: message.member.id,
 				content: content,
+				attachments: message.attachments,
 
 				// @TODO Check if rank sufficient to use color and format
 				color: true,
 				format: true
 			}));
+
 			log.console(`[CHAT OUT] [${role}] ${name}: ${content}`);
 		}
 	}
@@ -351,6 +355,7 @@ client.on('message', async message => {
 
 client.on('guildMemberAdd', member => {
 	member.createDM(dm => {
+		dm.send(`Welcome to ${config.name}. Please read the information in <#${config.welcome_chan_id}> *(scroll up!).*`);
 		sync.sync_message(redis_client, dm, member.id);
 	});
 });
