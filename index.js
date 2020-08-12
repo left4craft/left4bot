@@ -41,9 +41,6 @@ const redis_subscriber = redis.createClient({
 
 
 const mysql = require('mysql');
-const {
-	connected
-} = require('process');
 const sql_pool = mysql.createPool({
 	host: process.env.DB_HOST,
 	port: process.env.DB_PORT,
@@ -128,24 +125,24 @@ client.on('ready', () => {
 	log.console(`[SUB] > Subscribed to ${subscribe_channels.length} channels: &9${subscribe_channels.join(', ')}`);
 
 	if (config.log_general) {
-		client.channels.cache.get(config.log_chan_id).send(
+		client.channels.cache.cache.get(config.log_chan_id).send(
 			new Discord.MessageEmbed()
-			.setColor(config.colour)
-			.setTitle('Started')
-			.setDescription(`:white_check_mark: **»** Started successfully with **${commands.length} commands** and **${subscribe_channels.length} subscribers** loaded.`)
-			.setFooter(config.name, client.user.avatarURL())
-			.setTimestamp()
+				.setColor(config.colour)
+				.setTitle('Started')
+				.setDescription(`:white_check_mark: **»** Started successfully with **${commands.length} commands** and **${subscribe_channels.length} subscribers** loaded.`)
+				.setFooter(config.name, client.user.avatarURL())
+				.setTimestamp()
 		);
 	}
 
 	const updatePresence = () => {
 		let num = Math.floor(Math.random() * config.activities.length);
 		client.user.setPresence({
-				activity: {
-					name: config.activities[num] + `  |  ${config.prefix}help`,
-					type: config.activity_types[num]
-				}
-			})
+			activity: {
+				name: config.activities[num] + `  |  ${config.prefix}help`,
+				type: config.activity_types[num]
+			}
+		})
 			.catch(log.error);
 	};
 
@@ -156,7 +153,7 @@ client.on('ready', () => {
 
 	const updateStatusInfo = () => {
 		log.info(`Pinging ${config.ip}`);
-		const cat = client.channels.cache.get(config.status_cat_id);
+		const cat = client.channels.cache.cache.get(config.status_cat_id);
 		query(config.ip, config.port)
 			.then((res) => {
 				const status = `online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}`;
@@ -164,9 +161,9 @@ client.on('ready', () => {
 
 				if (cat.name !== status) { // only if it is different
 					cat.setName(status);
-					log.info('Status has changed, updating status category')
+					log.info('Status has changed, updating status category');
 					client.user.setStatus('online'); // green status
-				};
+				}
 			})
 			.catch(() => {
 				log.console(`${config.name} is &coffline`);
@@ -201,14 +198,14 @@ client.on('message', async message => {
 		if (message.author.id === client.user.id) return;
 		if (config.log_dm) {
 			if (config.log_general) {
-				client.channels.cache.get(config.log_chan_id).send(
+				client.channels.cache.cache.get(config.log_chan_id).send(
 					new Discord.MessageEmbed()
-					.setAuthor(message.author.username, message.author.avatarURL())
-					.setTitle('DM Logger')
-					.addField('Username', message.author.tag, true)
-					.addField('Message', message.content, true)
-					.setFooter(config.name, client.user.avatarURL())
-					.setTimestamp()
+						.setAuthor(message.author.username, message.author.avatarURL())
+						.setTitle('DM Logger')
+						.addField('Username', message.author.tag, true)
+						.addField('Message', message.content, true)
+						.setFooter(config.name, client.user.avatarURL())
+						.setTimestamp()
 				);
 			}
 		}
@@ -235,7 +232,7 @@ client.on('message', async message => {
 				try {
 					response = JSON.parse(response);
 					text = `Players online (${Object.keys(response).length}): \``;
-					for (player of response) {
+					for (let player of response) {
 						text += player['username'] + ', ';
 					}
 					text = text.slice(0, -2);
@@ -246,7 +243,7 @@ client.on('message', async message => {
 					}
 				} catch (e) {
 					log.error('Could not parse minecraft.players!');
-					text = 'Failed to parse minecraft.players'
+					text = 'Failed to parse minecraft.players';
 				}
 
 				message.channel.send(text);
@@ -295,17 +292,17 @@ client.on('message', async message => {
 		log.console(`${message.author.tag} tried to use the '${command.name}' command without permission`);
 		return message.channel.send(
 			new Discord.MessageEmbed()
-			.setColor('#E74C3C')
-			.setDescription(`\n:x: **You do not have permission to use the \`${command.name}\` command.**`)
+				.setColor('#E74C3C')
+				.setDescription(`\n:x: **You do not have permission to use the \`${command.name}\` command.**`)
 		);
 	}
 
 	if (command.args && !args.length) {
 		return message.channel.send(
 			new Discord.MessageEmbed()
-			.setColor('#E74C3C')
-			.addField('Usage', `\`${config.prefix}${command.name} ${command.usage}\`\n`)
-			.addField('Help', `Type \`${config.prefix}help ${command.name}\` for more information`)
+				.setColor('#E74C3C')
+				.addField('Usage', `\`${config.prefix}${command.name} ${command.usage}\`\n`)
+				.addField('Help', `Type \`${config.prefix}help ${command.name}\` for more information`)
 		);
 	}
 
@@ -328,8 +325,8 @@ client.on('message', async message => {
 			log.console(`${message.author.tag} attempted to use the '${command.name}' command before the cooldown was over`);
 			return message.channel.send(
 				new Discord.MessageEmbed()
-				.setColor('#E74C3C')
-				.setDescription(`:x: **Please do not spam commands.**\nWait ${timeLeft.toFixed(1)} second(s) before reusing the \`${command.name}\` command.`)
+					.setColor('#E74C3C')
+					.setDescription(`:x: **Please do not spam commands.**\nWait ${timeLeft.toFixed(1)} second(s) before reusing the \`${command.name}\` command.`)
 			);
 		}
 	}
@@ -342,7 +339,7 @@ client.on('message', async message => {
 
 
 	try {
-		command.execute(message, args, dependencies); // execute the command *(so much code just to get to this 1 line)*
+		command.execute(message, args, dependencies);
 
 		log.console(`${message.author.tag} used the '${command.name}' command`);
 	} catch (error) {
@@ -369,9 +366,9 @@ client.on('error', error => {
 	log.warn('Potential error detected\n(likely Discord API connection issue)\n');
 	log.error(`Client error:\n${error}`);
 });
-client.on('warn', (e) => log.warn(`${e}`));
+client.on('warn', (e) => log.warn(e));
 
-client.on('debug', (e) => log.debug(`${e}`));
+client.on('debug', (e) => log.debug(e));
 
 process.on('unhandledRejection', error => {
 	log.warn('An error was not caught');

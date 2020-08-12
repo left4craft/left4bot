@@ -17,7 +17,7 @@ module.exports = {
 	guild_id: '424571587413540874',
 	activities: ['Minecraft', 'on mc.left4craft.org', 'with nuclear launch codes', 'chat', 'Minecraft on mc.left4craft.org'],
 	activity_types: ['PLAYING', 'PLAYING', 'PLAYING', 'WATCHING', 'PLAYING'],
-	cooldown: 3, // default (in seconds), can be different for each command
+	// default (in seconds), can be different for each command
 
 	/**
 	 * Logs
@@ -120,30 +120,30 @@ module.exports = {
 
 	// Links/websites
 	links: [{
-			name: 'Home',
-			url: 'https://www.left4craft.org',
-			pretty: 'www.left4craft.org'
-		},
-		{
-			name: 'Discord Server',
-			url: 'https://discord.left4craft.org',
-			pretty: 'discord.left4craft.org'
-		},
-		{
-			name: 'Shop / Donation Store',
-			url: 'https://www.left4craft.org/shop',
-			pretty: 'www.left4craft.org/shop'
-		},
-		{
-			name: 'Punishments',
-			url: 'https://www.left4craft.org/bans',
-			pretty: 'www.left4craft.org/bans'
-		},
-		{
-			name: 'Status',
-			url: 'https://status.left4craft.org',
-			pretty: 'status.left4craft.org'
-		}
+		name: 'Home',
+		url: 'https://www.left4craft.org',
+		pretty: 'www.left4craft.org'
+	},
+	{
+		name: 'Discord Server',
+		url: 'https://discord.left4craft.org',
+		pretty: 'discord.left4craft.org'
+	},
+	{
+		name: 'Shop / Donation Store',
+		url: 'https://www.left4craft.org/shop',
+		pretty: 'www.left4craft.org/shop'
+	},
+	{
+		name: 'Punishments',
+		url: 'https://www.left4craft.org/bans',
+		pretty: 'www.left4craft.org/bans'
+	},
+	{
+		name: 'Status',
+		url: 'https://status.left4craft.org',
+		pretty: 'status.left4craft.org'
+	}
 	],
 
 	yourls: {

@@ -15,7 +15,7 @@ module.exports = {
 	},
 	'rules': {
 		'indent': [
-			'off',
+			'warn',
 			'tab'
 		],
 		'linebreak-style': [
@@ -30,12 +30,8 @@ module.exports = {
 			'error',
 			'always'
 		],
-		'no-irregular-whitespace': {
-			'skipComments': true,
-			"skipRegExps": true,
-			"skipTemplates": true
-		}
-
-
+		'no-control-regex': [
+			'off'
+		]
 	}
 };

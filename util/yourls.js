@@ -10,7 +10,7 @@ module.exports.shorten = (url, safe, depend) => {
 		fetch(`${config.yourls.api}/?signature=${process.env.YOURLS_TOKEN}&action=shorturl&url=${url}&format=json`)
 			.then(res => res.json())
 			.then(json => {
-				let short = json.shorturl
+				let short = json.shorturl;
 				if (!safe) short += '~';
 				resolve(short);
 			});
