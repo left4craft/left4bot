@@ -15,7 +15,7 @@
     "leekslazylogger": "^2.0.0-alpha.3",
     "minecraft-server-util": "^1.1.0",
     "mysql": "^2.18.1",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "redis": "^3.0.2"
   }
 }
