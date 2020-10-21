@@ -125,7 +125,7 @@ client.on('ready', () => {
 	log.console(`[SUB] > Subscribed to ${subscribe_channels.length} channels: &9${subscribe_channels.join(', ')}`);
 
 	if (config.log_general) {
-		client.channels.cache.cache.get(config.log_chan_id).send(
+		client.channels.cache.get(config.log_chan_id).send(
 			new Discord.MessageEmbed()
 				.setColor(config.colour)
 				.setTitle('Started')
