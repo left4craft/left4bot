@@ -153,7 +153,7 @@ client.on('ready', () => {
 
 	const updateStatusInfo = () => {
 		log.info(`Pinging ${config.ip}`);
-		const cat = client.channels.cache.cache.get(config.status_cat_id);
+		const cat = client.channels.cache.get(config.status_cat_id);
 		query(config.ip, config.port)
 			.then((res) => {
 				const status = `online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}`;
@@ -198,7 +198,7 @@ client.on('message', async message => {
 		if (message.author.id === client.user.id) return;
 		if (config.log_dm) {
 			if (config.log_general) {
-				client.channels.cache.cache.get(config.log_chan_id).send(
+				client.channels.cache.get(config.log_chan_id).send(
 					new Discord.MessageEmbed()
 						.setAuthor(message.author.username, message.author.avatarURL())
 						.setTitle('DM Logger')
