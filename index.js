@@ -277,14 +277,18 @@ client.on('message', async message => {
 			console.log(messages);
 
 			let last_numbers = [0];
-
+			let num_author_map = {};
 			for(old_message of messages.entries()) {
 				let n = parseInt(old_message[1].content.split(' ')[0]);
-				if(n != NaN) last_numbers.push(n);
+				if(n != NaN) {
+					last_numbers.push(n);
+					num_author_map[n] = old_message[0].author;
+				}
 			}
 
-			console.log(last_numbers)
-			let last_num = Math.max(last_numbers);
+			console.log(last_numbers);
+			console.log(num_author_map);
+			let last_num = Math.max(...last_numbers);
 
 			let this_num = parseInt(message.content.split(' ')[0]);
 			console.log(last_num);
