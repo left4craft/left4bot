@@ -334,7 +334,7 @@ client.on('message', async message => {
 		// });
 	}
 
-	if (!prefixRegex.test(message.content)) return;
+	if (!prefixRegex.test(message.content) || message.channel.id === config.count_chan_id) return;
 	const [, matchedPrefix] = message.content.match(prefixRegex);
 	const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
 	const commandName = args.shift().toLowerCase();

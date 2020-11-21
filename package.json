@@ -9,11 +9,11 @@
   "author": "eartharoid",
   "license": "MIT",
   "dependencies": {
-    "crypto-random-string": "^3.2.0",
-    "discord.js": "^12.1.1",
+    "crypto-random-string": "^3.3.0",
+    "discord.js": "^12.4.1",
     "dotenv": "^8.2.0",
-    "leekslazylogger": "^2.0.0-alpha.3",
-    "minecraft-server-util": "^1.1.0",
+    "leekslazylogger": "^2.0.7",
+    "minecraft-server-util": "^1.4.3",
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.1",
     "redis": "^3.0.2"
