@@ -293,7 +293,7 @@ client.on('message', async message => {
 			let this_num = parseInt(message.content.split(' ')[0]);
 			console.log(last_num);
 			console.log(this_num);
-			if(this_num === NaN || last_num === NaN || this_num !== last_num + 1) {
+			if(this_num === NaN || last_num === NaN || this_num !== last_num + 1 || num_author_map[last_num] === message.author.id) {
 				message.delete();
 			} else {
 				
