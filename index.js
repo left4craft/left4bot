@@ -279,7 +279,8 @@ client.on('message', async message => {
 			let last_numbers = [0];
 
 			for(old_message of messages.entries()) {
-				last_numbers.push(parseInt(old_message[1].content.split(' ')[0]));
+				let n = parseInt(old_message[1].content.split(' ')[0]);
+				if(n != NaN) last_numbers.push(n);
 			}
 
 			console.log(last_numbers)
