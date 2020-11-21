@@ -280,7 +280,7 @@ client.on('message', async message => {
 			let num_author_map = {};
 			for(old_message of messages.entries()) {
 				let n = parseInt(old_message[1].content.split(' ')[0]);
-				if(n != NaN) {
+				if(n !== NaN && old_message[1].id !== message.id) {
 					last_numbers.push(n);
 					num_author_map[n] = old_message[1].author.id;
 				}
