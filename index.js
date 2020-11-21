@@ -273,7 +273,7 @@ client.on('message', async message => {
 			log.console(`[CHAT OUT] [${role}] ${name}: ${content}`);
 		}
 	} else if (message.channel.id === config.count_chan_id) {
-		channel.messages.fetch({ limit: 1 }).then(messages => {
+		message.channel.messages.fetch({ limit: 1 }).then(messages => {
 			let lastnum = 0;
 			if(messages[0] !== undefined) {
 				lastnum = parseInt(messages[0].split(' ')[0]);
