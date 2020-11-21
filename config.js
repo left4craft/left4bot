@@ -32,6 +32,7 @@ module.exports = {
 	 */
 	poll_chan_id: '697485686688710786',
 	suggestion_chan_id: '734407921311416331',
+	count_chan_id: '779454172826697728',
 	subscription_roles: {
 		status: {
 			title: 'Status notifications',

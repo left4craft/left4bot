@@ -38,6 +38,7 @@ const redis_subscriber = redis.createClient({
 
 
 const mysql = require('mysql');
+const { resolve } = require('path');
 const sql_pool = mysql.createPool({
 	host: process.env.DB_HOST,
 	port: process.env.DB_PORT,
@@ -261,6 +262,19 @@ client.on('message', async message => {
 			}));
 			log.basic(`[CHAT OUT] [${role}] ${name}: ${message.content}`)
 		}
+	} else if (message.channel.id === config.count_chan_id) {
+		channel.messages.fetch({ limit: 1 }).then(messages => {
+			let lastnum = 0;
+			if(messages[0] !== undefined) {
+				lastnum = parseInt(messages[0].split(' ')[0]);
+			}
+			let thisNum = parseInt(message.split(' ')[0]);
+			if(thisNum === NaN || lastnum === NaN || thisNum !== lastnum + 1) {
+				message.delete();
+			} else {
+				
+			}
+		});
 	}
 
 	if (!prefixRegex.test(message.content)) return;
@@ -370,6 +384,25 @@ process.on('beforeExit', (code) => {
 	log.basic(`Exiting (${code})`);
 });
 
+// module.exports.conditionalReplace = (str, depend) => new Promise(resolve => resolve(str.replace(regex, async url => {
+//     if (url.length < depend.config.yourls.max_length) return url;
+//     else return await module.exports.shorten(url, false, depend);
+// })));
 
+// module.exports.conditionalReplace = async (str, depend) => new Promise(resolve => {
+// 	let urls = str.match(regex);
+// 	let strArr = str.split(regex);
+// 	for (const i in urls) {
+// 		if (urls[i].length > depend.config.yourls.max_length) {
+// 			urls[i] = await module.exports.shorten(url, false, depend);
+// 		}
+// 	}
+// 	let finalStr = ''
+// 	for(const i in strArr) {
+// 		finalStr += strArr[i];
+// 		if (urls[i] !== undefined) finalStr += urls[i];
+// 	}
+// 	resolve(finalStr);
+// });
 
 client.login(process.env.DISCORD_BOT_TOKEN);
