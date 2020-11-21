@@ -273,7 +273,7 @@ client.on('message', async message => {
 
 			log.console(`[CHAT OUT] [${role}] ${name}: ${content}`);
 		}
-	} else if (message.channel.id === config.count_chan_id) {
+	} else if (message.channel.id === config.count_chan_id && message.author.id !== client.user.id) {
 		redis_client.get('minecraft.countinggame', (err, response) => {
 			let last_num = 0;
 			let last_author = 0;
@@ -294,8 +294,15 @@ client.on('message', async message => {
 			let this_num = parseInt(message.content.split(' ')[0]);
 			if(this_num === NaN || this_num !== last_num + 1 || last_author === message.author.id) {
 				message.delete();
+				return;
 			} else {
 				redis_client.set('minecraft.countinggame', JSON.stringify({'last_num': this_num, 'last_author': message.author.id}));
+
+				if(Math.random() < 0.03) {
+					message.channel.send(message.author.tag + " Just won $50 in game for counting " + String(this_num));
+				} else if (Math.random < 0.01) {
+					message.channel.send(message.author.tag + " Just won a normal crate key in game for counting " + String(this_num));
+				}
 			}
 		});
 		// message.channel.messages.fetch({ limit: 10 }).then(messages => {
