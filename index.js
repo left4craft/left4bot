@@ -283,7 +283,7 @@ client.on('message', async message => {
 			}
 
 			console.log(last_numbers)
-			let last_num = max(last_numbers);
+			let last_num = Math.max(last_numbers);
 
 			let this_num = parseInt(message.content.split(' ')[0]);
 			console.log(last_num);
