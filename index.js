@@ -276,9 +276,9 @@ client.on('message', async message => {
 		message.channel.messages.fetch({ limit: 1 }).then(messages => {
 			let lastnum = 0;
 			if(messages[0] !== undefined) {
-				lastnum = parseInt(messages[0].split(' ')[0]);
+				lastnum = parseInt(messages[0].content.split(' ')[0]);
 			}
-			let thisNum = parseInt(message.split(' ')[0]);
+			let thisNum = parseInt(message.content.split(' ')[0]);
 			if(thisNum === NaN || lastnum === NaN || thisNum !== lastnum + 1) {
 				message.delete();
 			} else {
