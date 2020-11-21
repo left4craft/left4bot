@@ -13,19 +13,22 @@ const client = new Discord.Client({
 
 const redis = require('redis');
 const query = require('minecraft-server-util');
-const log = require('leekslazylogger');
+
 const config = require('./config.js');
-const sync = require('./util/sync.js');
 const player_util = require('./util/player_util.js');
+const sync = require('./util/sync.js');
 const fetch = require('node-fetch');
+
+const Logger = require('leekslazylogger');
+const log = new Logger({
+	name: config.name,
+	maxAge: 3,
+	debug: config.debug
+});
 
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 
-log.init({
-	name: config.name,
-	logToFile: false,
-});
 const chat_bridge = new Discord.WebhookClient(config.chat_webhook_id, process.env.CHAT_WEBHOOK_TOKEN);
 const redis_client = redis.createClient({
 	host: process.env.REDIS_HOST,
@@ -49,14 +52,14 @@ const sql_pool = mysql.createPool({
 
 // object that can be passed to various commands and subscribers so they don't need to be re-declared every time
 const dependencies = {
-    fs: fs,
-    discord_client: client,
-    discord_lib: Discord,
-    log: log,
-    config: config,
-    chat_bridge: chat_bridge,
-    redis_client: redis_client,
-    sql_pool: sql_pool,
+	fs: fs,
+	discord_client: client,
+	discord_lib: Discord,
+	log: log,
+	config: config,
+	chat_bridge: chat_bridge,
+	redis_client: redis_client,
+	sql_pool: sql_pool,
 	player_util: player_util,
 	fetch: fetch,
 	minecraft_server_util: query,
@@ -94,8 +97,9 @@ client.on('ready', () => {
 	var subscribers = [];
 
 	for (const file of subscriber_files) {
-		subscribers.push(require(`./subscribers/${file}`));
-		log.console(`[SUB] > Loaded '${file}' subscriber`);
+		const sub = require(`./subscribers/${file}`);
+		subscribers.push(sub);
+		log.console(`[SUB] > Loaded '${sub.channels}' subscriber`);
 	}
 	log.info(`Finished loading ${subscriber_files.length} subscribers`);
 
@@ -119,27 +123,27 @@ client.on('ready', () => {
 		redis_subscriber.subscribe(channel);
 	}
 
-	log.console(`[SUB] > Subscribed to ${subscribe_channels.length} channels: ${log.colour.cyanBright(subscribe_channels.join(', '))}`);
+	log.console(`[SUB] > Subscribed to ${subscribe_channels.length} channels: &9${subscribe_channels.join(', ')}`);
 
 	if (config.log_general) {
 		client.channels.cache.get(config.log_chan_id).send(
 			new Discord.MessageEmbed()
-			.setColor(config.colour)
-			.setTitle('Started')
-			.setDescription(`:white_check_mark: **»** Started successfully with **${commands.length} commands** and **${subscribe_channels.length} subscribers** loaded.`)
-			.setFooter(config.name, client.user.avatarURL())
-			.setTimestamp()
+				.setColor(config.colour)
+				.setTitle('Started')
+				.setDescription(`:white_check_mark: **»** Started successfully with **${commands.length} commands** and **${subscribe_channels.length} subscribers** loaded.`)
+				.setFooter(config.name, client.user.avatarURL())
+				.setTimestamp()
 		);
 	}
 
 	const updatePresence = () => {
 		let num = Math.floor(Math.random() * config.activities.length);
 		client.user.setPresence({
-				activity: {
-					name: config.activities[num] + `  |  ${config.prefix}help`,
-					type: config.activity_types[num]
-				}
-			})
+			activity: {
+				name: config.activities[num] + `  |  ${config.prefix}help`,
+				type: config.activity_types[num]
+			}
+		})
 			.catch(log.error);
 	};
 
@@ -154,18 +158,18 @@ client.on('ready', () => {
 		query(config.ip, config.port)
 			.then((res) => {
 				const status = `online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}`;
-				log.console(`${config.name} is ${log.colour.greenBright(status)}`); // log status - online
+				log.console(`${config.name} is &a${status}`); // log status - online
 
-				if(cat.name !== status) { // only if it is different
+				if (cat.name !== status) { // only if it is different
 					cat.setName(status);
-					log.info('Status has changed, updating status category')
+					log.info('Status has changed, updating status category');
 					client.user.setStatus('online'); // green status
-				};
+				}
 			})
 			.catch(() => {
-				log.console(`${config.name} is ${log.colour.redBright('offline')}`);
+				log.console(`${config.name} is &coffline`);
 
-                cat.setName('server is offline (!status)'); // cat name
+				cat.setName('server is offline (!status)'); // cat name
 				client.user.setStatus('dnd'); // red status
 			});
 
@@ -175,12 +179,12 @@ client.on('ready', () => {
 	setInterval(() => {
 		updateStatusInfo();
 	}, config.status_update_interval * 1000);
-	
+
 	redis_client.publish('minecraft.punish', 'update');
-    setInterval(() => {
-        redis_client.publish('minecraft.punish', 'update');
+	setInterval(() => {
+		redis_client.publish('minecraft.punish', 'update');
 	}, config.update_punishment_interval * 1000);
-	
+
 	sync.expire_tokens(redis_client, client);
 	setInterval(() => {
 		sync.expire_tokens(redis_client, client);
@@ -197,12 +201,12 @@ client.on('message', async message => {
 			if (config.log_general) {
 				client.channels.cache.get(config.log_chan_id).send(
 					new Discord.MessageEmbed()
-					.setAuthor(message.author.username, message.author.avatarURL())
-					.setTitle('DM Logger')
-					.addField('Username', message.author.tag, true)
-					.addField('Message', message.content, true)
-					.setFooter(config.name, client.user.avatarURL())
-					.setTimestamp()
+						.setAuthor(message.author.username, message.author.avatarURL())
+						.setTitle('DM Logger')
+						.addField('Username', message.author.tag, true)
+						.addField('Message', message.content, true)
+						.setFooter(config.name, client.user.avatarURL())
+						.setTimestamp()
 				);
 			}
 		}
@@ -216,31 +220,32 @@ client.on('message', async message => {
 		if (message.content.length > 256) {
 			message.channel.send(message.author.toString() + ' Chat message not sent because the length is >256');
 		} else if (message.content.toLowerCase() === 'list') {
+			log.console(`${message.author.tag} listed online players`);
 
 			redis_client.get('minecraft.players', (err, response) => {
-                let text = '';
+				let text = '';
 
-                if(err) {
-                    log.error(err);
-                    text = 'Failed to parse minecraft.players';
-                }
+				if (err) {
+					log.error(err);
+					text = 'Failed to parse minecraft.players';
+				}
 
-                try	{
+				try {
 					response = JSON.parse(response);
 					text = `Players online (${Object.keys(response).length}): \``;
-                    for(player of response) {
-                        text += player['username'] + ', ';
-                    }
-                    text = text.slice(0, -2);
-                    text += '`';
+					for (let player of response) {
+						text += player['username'] + ', ';
+					}
+					text = text.slice(0, -2);
+					text += '`';
 
-                    if (response.length === 0) {
-                        text = 'No players online';
-                    }
-                } catch (e) {
-                    log.error('Could not parse minecraft.players!');
-                    text = 'Failed to parse minecraft.players'
-                }             
+					if (response.length === 0) {
+						text = 'No players online';
+					}
+				} catch (e) {
+					log.error('Could not parse minecraft.players!');
+					text = 'Failed to parse minecraft.players';
+				}
 
 				message.channel.send(text);
 				message.delete();
@@ -248,19 +253,24 @@ client.on('message', async message => {
 		} else {
 			const role = message.member.roles.highest.name;
 			const name = message.member.displayName;
+			// let content = yourls.conditionalReplace(message.cleanContent, dependencies);
+			let content = message.cleanContent;
+
 			redis_client.publish('minecraft.chat', JSON.stringify({
 				type: 'discord_chat',
 				discord_username: message.member.user.tag,
 				timestamp: new Date().getTime(),
-				discord_prefix: `&#7289DA[Discord&r${role}&#7289DA]&r ${name} &#7289DA&l»&r `,
+				discord_prefix: `&#7289DA[Discord${config.rank_colors[role.toLowerCase()]}${role}&#7289DA]&r ${name} &#7289DA&l»&r `,
 				discord_id: message.member.id,
-				content: message.content,
+				content: content,
+				attachments: message.attachments,
 
 				// @TODO Check if rank sufficient to use color and format
 				color: true,
 				format: true
 			}));
-			log.basic(`[CHAT OUT] [${role}] ${name}: ${message.content}`)
+
+			log.console(`[CHAT OUT] [${role}] ${name}: ${content}`);
 		}
 	} else if (message.channel.id === config.count_chan_id) {
 		channel.messages.fetch({ limit: 1 }).then(messages => {
@@ -296,17 +306,17 @@ client.on('message', async message => {
 		log.console(`${message.author.tag} tried to use the '${command.name}' command without permission`);
 		return message.channel.send(
 			new Discord.MessageEmbed()
-			.setColor('#E74C3C')
-			.setDescription(`\n:x: **You do not have permission to use the \`${command.name}\` command.**`)
+				.setColor('#E74C3C')
+				.setDescription(`\n:x: **You do not have permission to use the \`${command.name}\` command.**`)
 		);
 	}
 
 	if (command.args && !args.length) {
 		return message.channel.send(
 			new Discord.MessageEmbed()
-			.setColor('#E74C3C')
-			.addField('Usage', `\`${config.prefix}${command.name} ${command.usage}\`\n`)
-			.addField('Help', `Type \`${config.prefix}help ${command.name}\` for more information`)
+				.setColor('#E74C3C')
+				.addField('Usage', `\`${config.prefix}${command.name} ${command.usage}\`\n`)
+				.addField('Help', `Type \`${config.prefix}help ${command.name}\` for more information`)
 		);
 	}
 
@@ -329,8 +339,8 @@ client.on('message', async message => {
 			log.console(`${message.author.tag} attempted to use the '${command.name}' command before the cooldown was over`);
 			return message.channel.send(
 				new Discord.MessageEmbed()
-				.setColor('#E74C3C')
-				.setDescription(`:x: **Please do not spam commands.**\nWait ${timeLeft.toFixed(1)} second(s) before reusing the \`${command.name}\` command.`)
+					.setColor('#E74C3C')
+					.setDescription(`:x: **Please do not spam commands.**\nWait ${timeLeft.toFixed(1)} second(s) before reusing the \`${command.name}\` command.`)
 			);
 		}
 	}
@@ -343,7 +353,7 @@ client.on('message', async message => {
 
 
 	try {
-		command.execute(message, args, dependencies); // execute the command *(so much code just to get to this 1 line)*
+		command.execute(message, args, dependencies);
 
 		log.console(`${message.author.tag} used the '${command.name}' command`);
 	} catch (error) {
@@ -356,6 +366,7 @@ client.on('message', async message => {
 
 client.on('guildMemberAdd', member => {
 	member.createDM(dm => {
+		dm.send(`Welcome to ${config.name}. Please read the information in <#${config.welcome_chan_id}> *(scroll up!).*`);
 		sync.sync_message(redis_client, dm, member.id);
 	});
 });
@@ -369,19 +380,17 @@ client.on('error', error => {
 	log.warn('Potential error detected\n(likely Discord API connection issue)\n');
 	log.error(`Client error:\n${error}`);
 });
-client.on('warn', (e) => log.warn(`${e}`));
+client.on('warn', (e) => log.warn(e));
 
-if (config.debug_level == 1) {
-	client.on('debug', (e) => log.debug(`${e}`));
-}
+client.on('debug', (e) => log.debug(e));
 
 process.on('unhandledRejection', error => {
 	log.warn('An error was not caught');
 	log.error(`Uncaught error: \n${error.stack}`);
 });
 process.on('beforeExit', (code) => {
-	log.basic(log.colour.yellowBright('Disconnected from Discord API'));
-	log.basic(`Exiting (${code})`);
+	log.console('&6Disconnected from Discord API');
+	log.console(`Exiting (${code})`);
 });
 
 // module.exports.conditionalReplace = (str, depend) => new Promise(resolve => resolve(str.replace(regex, async url => {

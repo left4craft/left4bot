@@ -17,12 +17,12 @@ module.exports = {
 	guild_id: '424571587413540874',
 	activities: ['Minecraft', 'on mc.left4craft.org', 'with nuclear launch codes', 'chat', 'Minecraft on mc.left4craft.org'],
 	activity_types: ['PLAYING', 'PLAYING', 'PLAYING', 'WATCHING', 'PLAYING'],
-	cooldown: 3, // default (in seconds), can be different for each command
+	// default (in seconds), can be different for each command
 
 	/**
 	 * Logs
 	 */
-	debug_level: 0,
+	debug: false,
 	log_dm: false,
 	log_general: true,
 	log_chan_id: '425382138037403658',
@@ -30,6 +30,7 @@ module.exports = {
 	/**
 	 * Basic bot features
 	 */
+	welcome_chan_id: '424571587413540876',
 	poll_chan_id: '697485686688710786',
 	suggestion_chan_id: '734407921311416331',
 	count_chan_id: '779454172826697728',
@@ -74,11 +75,25 @@ module.exports = {
 	 */
 	update_punishment_interval: 60, // how often to check whether to mute / unmute people, in seconds
 	muted_channel_id: '587122816797769788',
-	litebans_base_url: 'https://left4craft.org/bans/', // with trailing slash
+	litebans_base_url: 'https://left4craft.org/bans/', // WITH trailing slash
 
 	/**
 	 * Role sync
 	 */
+	rank_colors: {
+		'guest': '&7',
+		'user': '&e',
+		'user+': '&e',
+		'donor': '&b',
+		'patron': '&c',
+		'patron+': '&d',
+		'builder': '&2',
+		'hbuilder': '&2',
+		'helper': '&a',
+		'moderator': '&9',
+		'admin': '&3',
+		'owner': '&4'
+	},
 	in_game_ranks: {
 		'guest': '429026758692438038',
 		'user': '424866580141441026',
@@ -99,35 +114,42 @@ module.exports = {
 		'staff': '424867647381831690',
 		'muted': '587112191950585856',
 		'status_subscriber': '701904205144653886',
-		'announcements': '730811314796101632'
+		'announcements': '730811314796101632',
+		'polls': '734428253552640001'
 	},
 	code_expire_interval: 60, // how often to check for expired sync tokens, in seconds
 
 	// Links/websites
 	links: [{
-			name: 'Home',
-			url: 'https://www.left4craft.org',
-			pretty: 'www.left4craft.org'
-		},
-		{
-			name: 'Discord Server',
-			url: 'https://discord.left4craft.org',
-			pretty: 'discord.left4craft.org'
-		},
-		{
-			name: 'Shop / Donation Store',
-			url: 'https://www.left4craft.org/shop',
-			pretty: 'www.left4craft.org/shop'
-		},
-		{
-			name: 'Punishments',
-			url: 'https://www.left4craft.org/bans',
-			pretty: 'www.left4craft.org/bans'
-		},
-		{
-			name: 'Status',
-			url: 'https://status.left4craft.org',
-			pretty: 'status.left4craft.org'
-		}
-	]
+		name: 'Home',
+		url: 'https://www.left4craft.org',
+		pretty: 'www.left4craft.org'
+	},
+	{
+		name: 'Discord Server',
+		url: 'https://discord.left4craft.org',
+		pretty: 'discord.left4craft.org'
+	},
+	{
+		name: 'Shop / Donation Store',
+		url: 'https://www.left4craft.org/shop',
+		pretty: 'www.left4craft.org/shop'
+	},
+	{
+		name: 'Punishments',
+		url: 'https://www.left4craft.org/bans',
+		pretty: 'www.left4craft.org/bans'
+	},
+	{
+		name: 'Status',
+		url: 'https://status.left4craft.org',
+		pretty: 'status.left4craft.org'
+	}
+	],
+
+	yourls: {
+		name: 'left4.cf',
+		api: 'https://left4.cf/yourls-api.php', // WITHOUT trailing /
+		max_length: 50 // URLs sent through minecraft.chat longer than this will be shortened
+	}
 };
