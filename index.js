@@ -298,10 +298,11 @@ client.on('message', async message => {
 			} else {
 				redis_client.set('minecraft.countinggame', JSON.stringify({'last_num': this_num, 'last_author': message.author.id}));
 
-				if(Math.random() < 0.03) {
-					message.channel.send(message.author.tag + " Just won $50 in game for counting " + String(this_num));
+				if(Math.random() < 0.05) {
+					message.reply("You just won $25 in game for counting " + String(this_num));
+
 				} else if (Math.random < 0.01) {
-					message.channel.send(message.author.tag + " Just won a normal crate key in game for counting " + String(this_num));
+					message.reply("You just won a normal crate key in game for counting " + String(this_num));
 				}
 			}
 		});
