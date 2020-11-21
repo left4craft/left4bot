@@ -279,9 +279,10 @@ client.on('message', async message => {
 			let last_numbers = [0];
 
 			for(old_message of messages.entries()) {
-				last_numbers.append(old_message[1].content.split(' ')[0])
+				last_numbers.push(old_message[1].content.split(' ')[0])
 			}
 
+			console.log(last_numbers)
 			let last_num = max(last_numbers);
 
 			let this_num = parseInt(message.content.split(' ')[0]);
