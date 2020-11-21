@@ -42,6 +42,7 @@ const redis_subscriber = redis.createClient({
 
 const mysql = require('mysql');
 const { resolve } = require('path');
+const { strict } = require('assert');
 const sql_pool = mysql.createPool({
 	host: process.env.DB_HOST,
 	port: process.env.DB_PORT,
@@ -295,6 +296,7 @@ client.on('message', async message => {
 				message.delete();
 			} else {
 				redis_client.set('minecraft.countinggame', JSON.stringify({'last_num': this_num, 'last_author': message.author.id}));
+				message.channel.setTopic('Count to 1 million. Messages must start with the correct next number or they will be deleted. Next number: ' + String(this_num + 1));
 			}
 		});
 		// message.channel.messages.fetch({ limit: 10 }).then(messages => {
