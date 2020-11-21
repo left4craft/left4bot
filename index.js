@@ -276,14 +276,14 @@ client.on('message', async message => {
 		message.channel.messages.fetch({ limit: 1 }).then(messages => {
 			console.log(messages);
 
-			let lastnum = 0;
+			let last_num = 0;
 			if(messages[0] !== undefined) {
-				lastnum = parseInt(messages[0].content.split(' ')[0]);
+				last_num = parseInt(messages[0].content.split(' ')[0]);
 			}
-			let thisNum = parseInt(message.content.split(' ')[0]);
-			console.log(lastnum);
-			console.log(thisnum);
-			if(thisNum === NaN || lastnum === NaN || thisNum !== lastnum + 1) {
+			let this_num = parseInt(message.content.split(' ')[0]);
+			console.log(last_num);
+			console.log(this_num);
+			if(this_num === NaN || last_num === NaN || this_num !== last_num + 1) {
 				message.delete();
 			} else {
 				
