@@ -273,13 +273,17 @@ client.on('message', async message => {
 			log.console(`[CHAT OUT] [${role}] ${name}: ${content}`);
 		}
 	} else if (message.channel.id === config.count_chan_id) {
-		message.channel.messages.fetch({ limit: 1 }).then(messages => {
+		message.channel.messages.fetch({ limit: 10 }).then(messages => {
 			console.log(messages);
 
-			let last_num = 0;
-			if(messages[0] !== undefined) {
-				last_num = parseInt(messages[0].content.split(' ')[0]);
+			let last_numbers = [0];
+
+			for(old_message of messages.entries()) {
+				last_numbers.append(old_message[1].content.split(' ')[0])
 			}
+
+			let last_num = max(last_numbers);
+
 			let this_num = parseInt(message.content.split(' ')[0]);
 			console.log(last_num);
 			console.log(this_num);
