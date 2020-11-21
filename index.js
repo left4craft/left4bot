@@ -296,7 +296,6 @@ client.on('message', async message => {
 				message.delete();
 			} else {
 				redis_client.set('minecraft.countinggame', JSON.stringify({'last_num': this_num, 'last_author': message.author.id}));
-				message.channel.setTopic('Count to 1 million. Next number: ' + String(this_num + 1));
 			}
 		});
 		// message.channel.messages.fetch({ limit: 10 }).then(messages => {
