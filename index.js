@@ -273,32 +273,56 @@ client.on('message', async message => {
 			log.console(`[CHAT OUT] [${role}] ${name}: ${content}`);
 		}
 	} else if (message.channel.id === config.count_chan_id) {
-		message.channel.messages.fetch({ limit: 10 }).then(messages => {
-			console.log(messages);
+		redis_client.get('minecraft.countinggame', (err, response) => {
+			let last_num = 0;
+			let last_author = 0;
 
-			let last_numbers = [0];
-			let num_author_map = {};
-			for(old_message of messages.entries()) {
-				let n = parseInt(old_message[1].content.split(' ')[0]);
-				if(n !== NaN && old_message[1].id !== message.id) {
-					last_numbers.push(n);
-					num_author_map[n] = old_message[1].author.id;
-				}
+			if (err) {
+				log.error(err);
+				text = 'Failed to parse minecraft.countinggame';
 			}
 
-			console.log(last_numbers);
-			console.log(num_author_map);
-			let last_num = Math.max(...last_numbers);
+			try {
+				response = JSON.parse(response);
+				last_num = response['last_num'];
+				last_author = response['last_author'];
+			} catch (e) {
+				log.error('Could not parse minecraft.countinggame');
+			}
 
 			let this_num = parseInt(message.content.split(' ')[0]);
-			console.log(last_num);
-			console.log(this_num);
-			if(this_num === NaN || last_num === NaN || this_num !== last_num + 1 || num_author_map[last_num] === message.author.id) {
+			if(this_num === NaN || this_num !== last_num + 1 || last_author === message.author.id) {
 				message.delete();
 			} else {
-				
+				redis_client.set('minecraft.countinggame', JSON.stringify({'last_num': this_num, 'last_author': message.author.id}));
 			}
 		});
+		// message.channel.messages.fetch({ limit: 10 }).then(messages => {
+		// 	console.log(messages);
+
+		// 	let last_numbers = [0];
+		// 	let num_author_map = {};
+		// 	for(old_message of messages.entries()) {
+		// 		let n = parseInt(old_message[1].content.split(' ')[0]);
+		// 		if(n !== NaN && old_message[1].id !== message.id) {
+		// 			last_numbers.push(n);
+		// 			num_author_map[n] = old_message[1].author.id;
+		// 		}
+		// 	}
+
+		// 	console.log(last_numbers);
+		// 	console.log(num_author_map);
+		// 	let last_num = Math.max(...last_numbers);
+
+		// 	let this_num = parseInt(message.content.split(' ')[0]);
+		// 	console.log(last_num);
+		// 	console.log(this_num);
+		// 	if(this_num === NaN || last_num === NaN || this_num !== last_num + 1 || num_author_map[last_num] === message.author.id) {
+		// 		message.delete();
+		// 	} else {
+				
+		// 	}
+		// });
 	}
 
 	if (!prefixRegex.test(message.content)) return;
