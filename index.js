@@ -301,8 +301,16 @@ client.on('message', async message => {
 				if(Math.random() < 0.05) {
 					message.reply("You just won $25 in game for counting " + String(this_num));
 
+					player_util.get_uuid(message.author.id, sql_pool, log, (uuid) => {
+						if(uuid != null) {
+							redis_client.publish('minecraft.console.survival.in', 'eco give ' + uuid + ' 25');
+						}
+					});
 				} else if (Math.random < 0.01) {
 					message.reply("You just won a normal crate key in game for counting " + String(this_num));
+					if(uuid != null) {
+						redis_client.publish('minecraft.console.hub.in', 'givecosmetic ' + message.member.displayName + ' 1 0');
+					}
 				}
 			}
 		});
