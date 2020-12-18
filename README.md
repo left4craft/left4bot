@@ -1,3 +1,3 @@
 # Left4Bot
 
-LeftCraft's Discord bot.
+Left4Craft's Discord bot.
