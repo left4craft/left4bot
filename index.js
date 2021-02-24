@@ -6,6 +6,8 @@
 
 require('dotenv').config();
 const fs = require('fs');
+const emojis = require('./emojis.js');
+const emoji = require('node-emoji');
 const Discord = require('discord.js');
 const client = new Discord.Client({
 	autoReconnect: true
@@ -67,6 +69,8 @@ const dependencies = {
 	webhook: chat_bridge
 };
 
+//never heard of "redis"
+
 redis_client.on('error', (error) => {
 	log.error(error);
 });
@@ -78,6 +82,15 @@ redis_subscriber.on('error', (error) => {
 redis_client.auth(process.env.REDIS_PASS);
 redis_subscriber.auth(process.env.REDIS_PASS);
 
+const emoji1 = require('./emojis.json')
+
+function stringcleaner(string) { //needs string input but can also have a variable
+	emoji
+		.unemojify(string.cleanContent) // replace standard/unicode emojis
+		.replace(/<a?(:\S*:)\d{18}>/gm, '$1')
+		.replace(/:([_a-zA-Z0-9]*):/gm, ($_, $1) => emojis[$1] || $_);
+	return string
+  }
 
 client.on('ready', () => {
 	log.success('Connected to Discord API');
@@ -255,7 +268,10 @@ client.on('message', async message => {
 			const role = message.member.roles.highest.name;
 			const name = message.member.displayName;
 			// let content = yourls.conditionalReplace(message.cleanContent, dependencies);
-			let content = message.cleanContent;
+			let content = emoji
+				.unemojify(content.cleanContent) // replace standard/unicode emojis
+				.replace(/<a?(:\S*:)\d{18}>/gm, '$1')
+				.replace(/:([_a-zA-Z0-9]*):/gm, ($_, $1) => emojis[$1] || $_);
 
 			redis_client.publish('minecraft.chat', JSON.stringify({
 				type: 'discord_chat',
