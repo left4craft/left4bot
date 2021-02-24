@@ -27,17 +27,17 @@ module.exports = {
 			if (isNaN(amount)) {
 				return message.channel.send(
 					new Discord.MessageEmbed()
-						.setColor('#E74C3C')
+						.setColor('RED')
 						.setTitle('Error')
-						.setDescription(`:x: **»** Invalid number. Type \`${config.prefix}help prune\` for help.`)
+						.setDescription(`❌ **»** Invalid number. Type \`${config.prefix}help prune\` for help.`)
 				);
 
 			} else if (amount < 1 || amount > 100) {
 				return message.channel.send(
 					new Discord.MessageEmbed()
-						.setColor('#E74C3C')
+						.setColor('RED')
 						.setTitle('Error')
-						.setDescription(':x: **»** Number of messages to delete must be btween 1 and 100.')
+						.setDescription('❌ **»** Number of messages to delete must be btween 1 and 100.')
 				);
 			}
 
@@ -46,7 +46,7 @@ module.exports = {
 					new Discord.MessageEmbed()
 						.setColor(config.colour)
 						.setTitle('Messages pruned')
-						.setDescription(`:white_check_mark: **»** Deleted ${amount} messages`)
+						.setDescription(`✅ **»** Deleted ${amount} messages`)
 				);
 
 				client.channels.cache.get(config.log_chan_id).send(

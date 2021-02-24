@@ -6,7 +6,7 @@
 
 require('dotenv').config();
 const fs = require('fs');
-const emojis = require('./emojis.js');
+const emojis = require('./emojis.json');
 const emoji = require('node-emoji');
 const Discord = require('discord.js');
 const client = new Discord.Client({
@@ -43,8 +43,6 @@ const redis_subscriber = redis.createClient({
 
 
 const mysql = require('mysql');
-const { resolve } = require('path');
-const { strict } = require('assert');
 const sql_pool = mysql.createPool({
 	host: process.env.DB_HOST,
 	port: process.env.DB_PORT,
@@ -132,7 +130,7 @@ client.on('ready', () => {
 			new Discord.MessageEmbed()
 				.setColor(config.colour)
 				.setTitle('Started')
-				.setDescription(`:white_check_mark: **»** Started successfully with **${commands.length} commands** and **${subscribe_channels.length} subscribers** loaded.`)
+				.setDescription(`✅ **»** Started successfully with **${commands.length} commands** and **${subscribe_channels.length} subscribers** loaded.`)
 				.setFooter(config.name, client.user.avatarURL())
 				.setTimestamp()
 		);
@@ -258,8 +256,8 @@ client.on('message', async message => {
 			// let content = yourls.conditionalReplace(message.cleanContent, dependencies);
 			let content = emoji
 				.unemojify(message.cleanContent) // replace standard/unicode emojis
-				.replace(/<a?(:\S*:)\d{18}>/gm, '$1')
-				.replace(/:([_a-zA-Z0-9]*):/gm, ($_, $1) => emojis[$1] || $_);
+				.replace(/<a?(:\S*:)\d{18}>/gm, '$1') // replace custom emoji with their names
+				.replace(/:([_a-zA-Z0-9]*):/gm, ($_, $1) => emojis[$1] || $_); // replace some emoji names with other text
 
 			redis_client.publish('minecraft.chat', JSON.stringify({
 				type: 'discord_chat',
@@ -284,7 +282,6 @@ client.on('message', async message => {
 
 			if (err) {
 				log.error(err);
-				text = 'Failed to parse minecraft.countinggame';
 			}
 
 			try {
@@ -292,29 +289,32 @@ client.on('message', async message => {
 				last_num = response['last_num'];
 				last_author = response['last_author'];
 			} catch (e) {
-				log.error('Could not parse minecraft.countinggame');
+				log.warn('Could not parse minecraft.countinggame');
+				log.error(e);
 			}
 
 			let this_num = parseInt(message.content.split(' ')[0]);
-			if(this_num === NaN || this_num !== last_num + 1 || last_author === message.author.id) {
+			if(isNaN(this_num) || this_num !== last_num + 1 || last_author === message.author.id) {
 				message.delete();
 				return;
 			} else {
 				redis_client.set('minecraft.countinggame', JSON.stringify({'last_num': this_num, 'last_author': message.author.id}));
 
 				if(Math.random() < 0.05) {
-					message.reply("You just won $25 in game for counting " + String(this_num));
-
+					message.reply('You just won $25 in game for counting ' + String(this_num));
 					player_util.get_uuid(message.author.id, sql_pool, log, (uuid) => {
 						if(uuid != null) {
-							redis_client.publish('minecraft.console.survival.in', 'eco give ' + uuid + ' 25');
+							redis_client.publish('minecraft.console.survival.in', `eco give ${uuid} 25`);
 						}
 					});
 				} else if (Math.random < 0.01) {
-					message.reply("You just won a normal crate key in game for counting " + String(this_num));
-					if(uuid != null) {
-						redis_client.publish('minecraft.console.hub.in', 'givecosmetic ' + message.member.displayName + ' 1 0');
-					}
+					message.reply('You just won a normal crate key in game for counting ' + String(this_num));
+					player_util.get_uuid(message.author.id, sql_pool, log, (uuid) => {
+						if (uuid != null) {
+							redis_client.publish('minecraft.console.hub.in', `givecosmetic ${message.member.displayName} 1 0`);
+						}
+					});
+					
 				}
 			}
 		});
@@ -365,15 +365,15 @@ client.on('message', async message => {
 		log.console(`${message.author.tag} tried to use the '${command.name}' command without permission`);
 		return message.channel.send(
 			new Discord.MessageEmbed()
-				.setColor('#E74C3C')
-				.setDescription(`\n:x: **You do not have permission to use the \`${command.name}\` command.**`)
+				.setColor('RED')
+				.setDescription(`\n❌ **You do not have permission to use the \`${command.name}\` command.**`)
 		);
 	}
 
 	if (command.args && !args.length) {
 		return message.channel.send(
 			new Discord.MessageEmbed()
-				.setColor('#E74C3C')
+				.setColor('RED')
 				.addField('Usage', `\`${config.prefix}${command.name} ${command.usage}\`\n`)
 				.addField('Help', `Type \`${config.prefix}help ${command.name}\` for more information`)
 		);
@@ -398,8 +398,8 @@ client.on('message', async message => {
 			log.console(`${message.author.tag} attempted to use the '${command.name}' command before the cooldown was over`);
 			return message.channel.send(
 				new Discord.MessageEmbed()
-					.setColor('#E74C3C')
-					.setDescription(`:x: **Please do not spam commands.**\nWait ${timeLeft.toFixed(1)} second(s) before reusing the \`${command.name}\` command.`)
+					.setColor('RED')
+					.setDescription(`❌ **Please do not spam commands.**\nWait ${timeLeft.toFixed(1)} second(s) before reusing the \`${command.name}\` command.`)
 			);
 		}
 	}
@@ -417,7 +417,7 @@ client.on('message', async message => {
 		log.console(`${message.author.tag} used the '${command.name}' command`);
 	} catch (error) {
 		log.error(error);
-		message.channel.send(`:x: An error occurred whilst executing the \`${command.name}\` command.\nThe issue has been reported.`);
+		message.channel.send(`❌ An error occurred whilst executing the \`${command.name}\` command.\nThe issue has been reported.`);
 		log.error(`An error occurred whilst executing the '${command.name}' command`);
 	}
 

@@ -49,8 +49,8 @@ module.exports = {
 
 			if (!command) {
 				const notCmd = new Discord.MessageEmbed()
-					.setColor('#E74C3C')
-					.setDescription(`:x: **Invalid command name** (\`${config.prefix}help\`)`);
+					.setColor('RED')
+					.setDescription(`❌ **Invalid command name** (\`${config.prefix}help\`)`);
 				return message.channel.send(notCmd);
 			}
 

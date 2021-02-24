@@ -23,7 +23,7 @@ module.exports = {
 		message.channel.send(
 			new Discord.MessageEmbed()
 				.setColor(config.colour)
-				.setTitle(':white_check_mark: Sent chatlock command')
+				.setTitle('✅ Sent chatlock command')
 				.setDescription('Chat has been locked/unlocked')
 				.setFooter(config.name, client.user.avatarURL())
 				.setTimestamp()

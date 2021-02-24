@@ -16,7 +16,7 @@ module.exports = {
 		//     message.delete()
 		// };
 
-		if (!args.length) return message.channel.send(':x: **»** No command given');
+		if (!args.length) return message.channel.send('❌ **»** No command given');
 
 		const commandName = args[0].toLowerCase();
 		const command = message.client.commands.get(commandName) ||
@@ -24,9 +24,9 @@ module.exports = {
 
 		if (!command) return message.channel.send(
 			new Discord.MessageEmbed()
-				.setColor('#E74C3C')
+				.setColor('RED')
 				.setTitle('Error')
-				.setDescription(`:x: **»** There is no command with the name or alias \`${commandName}\``)
+				.setDescription(`❌ **»** There is no command with the name or alias \`${commandName}\``)
 		);
 
 
@@ -41,7 +41,7 @@ module.exports = {
 				new Discord.MessageEmbed()
 					.setColor(config.colour)
 					.setTitle('Command reloaded')
-					.setDescription(`:white_check_mark: **»** Reloaded the \`${newCommand.name}\` command.`)
+					.setDescription(`✅ **»** Reloaded the \`${newCommand.name}\` command.`)
 			);
 
 			client.channels.cache.get(config.log_chan_id).send(
