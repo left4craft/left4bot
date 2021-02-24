@@ -1,6 +1,5 @@
 module.exports = {
 	channels: ['minecraft.chat'],
-
 	execute(channel, message, depend) {
 		const {
 			config,
