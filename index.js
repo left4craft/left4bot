@@ -69,8 +69,6 @@ const dependencies = {
 	webhook: chat_bridge
 };
 
-//never heard of "redis"
-
 redis_client.on('error', (error) => {
 	log.error(error);
 });
