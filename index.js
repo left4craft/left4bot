@@ -123,7 +123,7 @@ client.on('ready', () => {
 		redis_subscriber.subscribe(channel);
 	}
 
-	log.console(`[SUB] > Subscribed to ${subscribe_channels.length} channels: &9${subscribe_channels.join(', ')}`);
+	log.console(log.f(`[SUB] > Subscribed to ${subscribe_channels.length} channels: &9${subscribe_channels.join(', ')}`));
 
 	if (config.log_general) {
 		client.channels.cache.get(config.log_chan_id).send(
@@ -158,7 +158,7 @@ client.on('ready', () => {
 		query(config.ip, config.port)
 			.then((res) => {
 				const status = `online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}`;
-				log.console(`${config.name} is &a${status}`); // log status - online
+				log.console(log.f(`${config.name} is &a${status}`)); // log status - online
 
 				if (cat.name !== status) { // only if it is different
 					cat.setName(status);
@@ -448,7 +448,7 @@ process.on('unhandledRejection', error => {
 	log.error(`Uncaught error: \n${error.stack}`);
 });
 process.on('beforeExit', (code) => {
-	log.console('&6Disconnected from Discord API');
+	log.console(log.f('&6Disconnected from Discord API'));
 	log.console(`Exiting (${code})`);
 });
 
