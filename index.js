@@ -80,16 +80,6 @@ redis_subscriber.on('error', (error) => {
 redis_client.auth(process.env.REDIS_PASS);
 redis_subscriber.auth(process.env.REDIS_PASS);
 
-const emoji1 = require('./emojis.json')
-
-function stringcleaner(string) { //needs string input but can also have a variable
-	emoji
-		.unemojify(string.cleanContent) // replace standard/unicode emojis
-		.replace(/<a?(:\S*:)\d{18}>/gm, '$1')
-		.replace(/:([_a-zA-Z0-9]*):/gm, ($_, $1) => emojis[$1] || $_);
-	return string
-  }
-
 client.on('ready', () => {
 	log.success('Connected to Discord API');
 	log.success(`Logged in as ${client.user.tag}`);
