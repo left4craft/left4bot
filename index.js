@@ -269,7 +269,7 @@ client.on('message', async message => {
 			const name = message.member.displayName;
 			// let content = yourls.conditionalReplace(message.cleanContent, dependencies);
 			let content = emoji
-				.unemojify(content.cleanContent) // replace standard/unicode emojis
+				.unemojify(message.cleanContent) // replace standard/unicode emojis
 				.replace(/<a?(:\S*:)\d{18}>/gm, '$1')
 				.replace(/:([_a-zA-Z0-9]*):/gm, ($_, $1) => emojis[$1] || $_);
 
