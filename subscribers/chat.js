@@ -12,11 +12,11 @@ module.exports = {
 		const socialspy = client.channels.cache.get(config.socialspy_chan_id);
 
 		try {
-			//console.log(message);
+			console.log(message);
 			message = JSON.parse(message);
 			let clean_content = message.content_stripped
-				.replace(/@(everyone|here)/gmi, '@\u200b$1')
-				.replace(/§|&[0-9A-FK-ORa-fk-or]/g, '');
+				?.replace(/@(everyone|here)/gmi, '@\u200b$1')
+				?.replace(/§|&[0-9A-FK-ORa-fk-or]/g, '');
 
 			switch (message.type) {
 			case 'chat':
