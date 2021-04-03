@@ -259,7 +259,7 @@ client.on('message', async message => {
 
 			redis_client.publish('minecraft.chat', JSON.stringify({
 				type: 'discord_chat',
-				discord_username: message.member.user.tag,
+				discord_username: message.author.tag,
 				timestamp: new Date().getTime(),
 				discord_prefix: `&#7289DA[Discord${config.rank_colors[role.toLowerCase()]}${role}&#7289DA]&r ${name} &#7289DA&l»&r `,
 				discord_id: message.member.id,
@@ -272,6 +272,8 @@ client.on('message', async message => {
 			}));
 
 			log.console(`[CHAT OUT] [${role}] ${name}: ${content}`);
+			const socialspy = client.channels.cache.get(config.socialspy_chan_id);
+			socialspy.send(`[DISCORD>MC] **${name}** said: \`${content.replace(/`/g, '\\`')}\``);
 		}
 	} else if (message.channel.id === config.count_chan_id && message.author.id !== client.user.id) {
 		redis_client.get('minecraft.countinggame', (err, response) => {
