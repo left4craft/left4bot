@@ -13,21 +13,23 @@ module.exports = {
 		try {
 			//console.log(message);
 			message = JSON.parse(message);
+			let clean_content = message.content_stripped
+				.replace(/@(everyone|here)/gmi, '@\u200b$1')
+				.replace(/§|&[0-9A-FK-ORa-fk-or]/g, '');
 
 			switch (message.type) {
 			case 'chat':
-				log.console(`[CHAT IN] ${message.name}: ${message.content_stripped}`);
-				webhook.send(message.content_stripped.replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here'), {
+				log.console(`[CHAT IN] ${message.name}: ${clean_content}`);
+				webhook.send(clean_content, {
 					avatarURL: 'https://crafatar.com/avatars/' + message.uuid,
-					username: message.webhook_name.replace(/§[0-9A-FK-ORa-fk-or]/g, '').replace(/&[0-9A-FK-ORa-fk-or]/g, '')
+					username: message.webhook_name
 				});
 				break;
 
 			case 'pm':
-				log.console(`[PM] ${message.from_name} -> ${message.to_name}: ${message.content_stripped}`);
+				log.console(`[PM] ${message.from_name} -> ${message.to_name}: ${clean_content}`);
 				client.channels.fetch(config.socialspy_chan_id).then(channel => {
-					channel.send(`** ${message.from_name} -> ${message.to_name}:** ${message.content_stripped
-						.replace(/@everyone/ig, '@ everyone').replace(/@here/ig, '@ here')}`);
+					channel.send(`**${message.from_name} -> ${message.to_name}:** ${clean_content}`);
 				});
 				break;
 
@@ -57,16 +59,16 @@ module.exports = {
 				break;
 
 			case 'broadcast':
-				log.console(`[CHAT IN] ${message.content_stripped}`);
-				chan.send(`:exclamation: **${message.content_stripped}**`);
+				log.console(`[CHAT IN] ${clean_content}`);
+				chan.send(`:exclamation: **${clean_content}**`);
 				break;
 
 			case 'discord_chat':
 				break;
 
 			default:
-				log.console(`[CHAT IN] ${message.content_stripped}`);
-				chan.send(message.content_stripped);
+				log.console(`[CHAT IN] ${clean_content}`);
+				chan.send(clean_content);
 			}
 
 		} catch (e) {
