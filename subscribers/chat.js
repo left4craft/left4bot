@@ -30,12 +30,12 @@ module.exports = {
 					avatarURL: 'https://crafatar.com/avatars/' + message.uuid,
 					username: message.webhook_name
 				});
-				socialspy.send(`[MC>DISCORD] **${message.name}** said: \`${clean_content.replace(/`/g, '\\`')}\``);
+				socialspy.send(`[MC] **${message.name}** said: \`${clean_content.replace(/`/g, '\\`')}\``);
 				break;
 
 			case 'pm':
 				log.console(`[PM] ${message.from_name} -> ${message.to_name}: ${clean_content}`);
-				socialspy.send(`[PM] **${message.from_name}** said to **${message.to_name}**: \`${clean_content.replace(/`/g, '\\`')}\``);
+				socialspy.send(`[MC:PM] **${message.from_name}** said to **${message.to_name}**: \`${clean_content.replace(/`/g, '\\`')}\``);
 				break;
 
 			case 'afk':
