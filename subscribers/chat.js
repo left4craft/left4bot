@@ -16,21 +16,26 @@ module.exports = {
 			await socialspy.send(content);
 		};
 
+		const strip = (content) => {
+			if (!content) return '';
+			return content
+				.replace(/@(everyone|here)/gmi, '@\u200b$1')
+				.replace(/§|&[0-9A-FK-ORa-fk-or]/g, '');
+		};
+
 		try {
 			// console.log(message);
 			message = JSON.parse(message);
-			let clean_content = message.content_stripped
-				?.replace(/@(everyone|here)/gmi, '@\u200b$1')
-				?.replace(/§|&[0-9A-FK-ORa-fk-or]/g, '');
+			let clean_content = strip(message.content_stripped);
 
 			switch (message.type) {
 			case 'chat':
 				log.console(`[CHAT IN] ${message.name}: ${clean_content}`);
 				webhook.send(clean_content, {
 					avatarURL: 'https://crafatar.com/avatars/' + message.uuid,
-					username: message.webhook_name
+					username: strip(message.webhook_name)
 				});
-				socialspy.send(`[MC] **${message.name}** said: \`${clean_content.replace(/`/g, '\\`')}\``);
+				socialspy.send(`[MC] **${message.nick}** said: \`${clean_content.replace(/`/g, '\\`')}\``);
 				break;
 
 			case 'pm':
