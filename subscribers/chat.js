@@ -35,7 +35,7 @@ module.exports = {
 					avatarURL: 'https://crafatar.com/avatars/' + message.uuid,
 					username: strip(message.webhook_name)
 				});
-				socialspy.send(`[MC] **${message.nick}** said: \`${clean_content.replace(/`/g, '\\`')}\``);
+				socialspy.send(`[MC] **${strip(message.nick)}** said: \`${clean_content.replace(/`/g, '\\`')}\``);
 				break;
 
 			case 'pm':
