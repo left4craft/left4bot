@@ -8,12 +8,13 @@ module.exports = {
 			webhook,
 		} = depend;
 
-		const minecraft = client.channels.cache.get(config.chat_bridge_chan_id);
-		const socialspy = client.channels.cache.get(config.socialspy_chan_id);
+		const minecraft_chat = client.channels.cache.get(config.chat_bridge_chan_id);
+		const admin_chat = client.channels.cache.get(config.admin_chan_id);
+		const ssonly = client.channels.cache.get(config.socialspy_chan_id);
 
 		const sendToBoth = async (content) => {
-			await minecraft.send(content);
-			await socialspy.send(content);
+			await minecraft_chat.send(content);
+			await admin_chat.send(content);
 		};
 
 		const strip = (content) => {
@@ -36,12 +37,13 @@ module.exports = {
 					avatarURL: 'https://crafatar.com/avatars/' + message.uuid,
 					username: strip(message.webhook_name)
 				});
-				socialspy.send(`[MC] **${strip(message.nick)}** said: \`${clean_content.replace(/`/g, '\\`')}\``);
+				admin_chat.send(`[MC] **${strip(message.nick)}** said: \`${clean_content.replace(/`/g, '\\`')}\``);
 				break;
 
 			case 'pm':
 				log.console(`[PM] ${message.from_name} -> ${message.to_name}: ${clean_content}`);
-				socialspy.send(`[MC:PM] **${message.from_name}** said to **${message.to_name}**: \`${clean_content.replace(/`/g, '\\`')}\``);
+				admin_chat.send(`[MC:PM] **${message.from_name}** said to **${message.to_name}**: \`${clean_content.replace(/`/g, '\\`')}\``);
+				ssonly.send(`**${message.from_name}** to **${message.to_name}** » \`${clean_content.replace(/`/g, '\\`')}\``);
 				break;
 
 			case 'afk':

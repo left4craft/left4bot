@@ -215,7 +215,7 @@ client.on('message', async message => {
 	}
 
 	const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|\\${config.prefix})\\s*`);
-	const is_linked_channel = message.channel.id === config.chat_bridge_chan_id || message.channel.id === config.socialspy_chan_id;
+	const is_linked_channel = message.channel.id === config.chat_bridge_chan_id || message.channel.id === config.admin_chan_id;
 	if (is_linked_channel && !prefixRegex.test(message.content)) {
 		if (message.content.length > 256) {
 			message.reply('your chat message was not sent because the length is >256');
@@ -273,14 +273,14 @@ client.on('message', async message => {
 
 			log.console(`[CHAT OUT] [${role}] ${name}: ${content}`);
 
-			if (message.channel.id === config.socialspy_chan_id) {
+			if (message.channel.id === config.admin_chan_id) {
 				chat_bridge.send(content, {
 					avatarURL: message.author.displayAvatarURL(),
 					username: name
 				});
 			} else {
-				const socialspy = client.channels.cache.get(config.socialspy_chan_id);
-				socialspy.send(`[DSC] **${name}** said: \`${content.replace(/`/g, '\\`')}\``);
+				const admin = client.channels.cache.get(config.admin_chan_id);
+				admin.send(`[DSC] **${name}** said: \`${content.replace(/`/g, '\\`')}\``);
 			}
 			
 		}
