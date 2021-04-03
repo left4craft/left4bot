@@ -20,7 +20,7 @@ module.exports = {
 			if (!content) return '';
 			return content
 				.replace(/@(everyone|here)/gmi, '@\u200b$1')
-				.replace(/§|&[0-9A-FK-ORa-fk-or]/g, '');
+				.replace(/(§|&)[0-9A-FK-ORa-fk-or]/g, '');
 		};
 
 		try {
