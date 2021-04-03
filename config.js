@@ -68,7 +68,7 @@ module.exports = {
 	 */
 	chat_bridge_chan_id: '424870757860900865',
 	chat_webhook_id: '602334307503177729', // webhook token is in ENV
-	socialspy_chan_id: '526562171472183296',
+	socialspy_chan_id: '828041424293331025',
 	admin_chan_id: '526562171472183296',
 
 	/**
