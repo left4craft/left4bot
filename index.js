@@ -280,7 +280,7 @@ client.on('message', async message => {
 				});
 			} else {
 				const socialspy = client.channels.cache.get(config.socialspy_chan_id);
-				socialspy.send(`[DSC] **${message.author}** said: \`${content.replace(/`/g, '\\`')}\``);
+				socialspy.send(`[DSC] **${name}** said: \`${content.replace(/`/g, '\\`')}\``);
 			}
 			
 		}
