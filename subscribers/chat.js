@@ -17,7 +17,7 @@ module.exports = {
 		};
 
 		try {
-			console.log(message);
+			// console.log(message);
 			message = JSON.parse(message);
 			let clean_content = message.content_stripped
 				?.replace(/@(everyone|here)/gmi, '@\u200b$1')
