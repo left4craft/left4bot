@@ -215,10 +215,10 @@ client.on('message', async message => {
 	}
 
 	const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|\\${config.prefix})\\s*`);
-
-	if (message.channel.id === config.chat_bridge_chan_id && !prefixRegex.test(message.content)) {
+	const is_linked_channel = message.channel.id === config.chat_bridge_chan_id || message.channel.id === config.socialspy_chan_id;
+	if (is_linked_channel && !prefixRegex.test(message.content)) {
 		if (message.content.length > 256) {
-			message.channel.send(message.author.toString() + ' Chat message not sent because the length is >256');
+			message.reply('your chat message was not sent because the length is >256');
 		} else if (message.content.toLowerCase() === 'list') {
 			log.console(`${message.author.tag} listed online players`);
 
@@ -231,19 +231,17 @@ client.on('message', async message => {
 				}
 
 				try {
-					response = JSON.parse(response);
-					text = `Players online (${Object.keys(response).length}): \``;
-					for (let player of response) {
-						text += player['username'] + ', ';
-					}
-					text = text.slice(0, -2);
-					text += '`';
+					let players = JSON.parse(response);
+					let player_count = Object.keys(players).length;
+					let player_names = players.map(player => player.username);
+					text = `There are **${player_count}** players: \`${player_names.join(', ')}\``;
 
 					if (response.length === 0) {
 						text = 'No players online';
 					}
 				} catch (e) {
-					log.error('Could not parse minecraft.players!');
+					log.warn('Could not parse minecraft.players!');
+					log.error(e);
 					text = 'Failed to parse minecraft.players';
 				}
 
