@@ -234,11 +234,19 @@ client.on('message', async message => {
 					let players = JSON.parse(response);
 					let player_count = Object.keys(players).length;
 					let player_names = players.map(player => player.username);
-					text = `There are **${player_count}** players: \`${player_names.join(', ')}\``;
 
-					if (response.length === 0) {
+					switch (player_count) {
+					case 0:
 						text = 'No players online';
+						break;
+					case 1:
+						text = `There is **${player_count}** player online: \`${player_names.join(', ')}\``;
+						break;
+					default:
+						text = `There are **${player_count}** players online: \`${player_names.join(', ')}\``;
+						break;
 					}
+
 				} catch (e) {
 					log.warn('Could not parse minecraft.players!');
 					log.error(e);
