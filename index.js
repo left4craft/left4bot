@@ -194,7 +194,7 @@ client.on('ready', () => {
 });
 
 client.on('message', async message => {
-	if (message.author.bot) return;
+	if (message.author.bot && (message.author.id !== '836714577474617346')) return;
 
 	if (message.channel.type === 'dm') {
 		if (message.author.id === client.user.id) return;
