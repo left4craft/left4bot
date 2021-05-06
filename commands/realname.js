@@ -34,8 +34,8 @@ module.exports = {
 					}
 					if(uuids.length === 0) {
 						message.channel.send(new Discord.MessageEmbed()
-							.setColor('#E74C3C')
-							.setDescription(`\n:x: **Could not find player by \`${search}\`.`
+							.setColor('RED')
+							.setDescription(`\n❌ **Could not find player by \`${search}\`.`
                         + ' Please use a nickname, Minecraft username, Minecraft UUID, Discord tag, or Discord user id**'));   
 					} else {
 						show_results(message.channel, uuids, player_util, pool, redis_client, search, config, log, Discord);

@@ -6,6 +6,8 @@
 
 require('dotenv').config();
 const fs = require('fs');
+const emojis = require('./emojis.json');
+const emoji = require('node-emoji');
 const Discord = require('discord.js');
 const client = new Discord.Client({
 	autoReconnect: true
@@ -41,8 +43,6 @@ const redis_subscriber = redis.createClient({
 
 
 const mysql = require('mysql');
-const { resolve } = require('path');
-const { strict } = require('assert');
 const sql_pool = mysql.createPool({
 	host: process.env.DB_HOST,
 	port: process.env.DB_PORT,
@@ -77,7 +77,6 @@ redis_subscriber.on('error', (error) => {
 
 redis_client.auth(process.env.REDIS_PASS);
 redis_subscriber.auth(process.env.REDIS_PASS);
-
 
 client.on('ready', () => {
 	log.success('Connected to Discord API');
@@ -124,14 +123,14 @@ client.on('ready', () => {
 		redis_subscriber.subscribe(channel);
 	}
 
-	log.console(`[SUB] > Subscribed to ${subscribe_channels.length} channels: &9${subscribe_channels.join(', ')}`);
+	log.console(log.f(`[SUB] > Subscribed to ${subscribe_channels.length} channels: &9${subscribe_channels.join(', ')}`));
 
 	if (config.log_general) {
 		client.channels.cache.get(config.log_chan_id).send(
 			new Discord.MessageEmbed()
 				.setColor(config.colour)
 				.setTitle('Started')
-				.setDescription(`:white_check_mark: **»** Started successfully with **${commands.length} commands** and **${subscribe_channels.length} subscribers** loaded.`)
+				.setDescription(`✅ **»** Started successfully with **${commands.length} commands** and **${subscribe_channels.length} subscribers** loaded.`)
 				.setFooter(config.name, client.user.avatarURL())
 				.setTimestamp()
 		);
@@ -159,7 +158,7 @@ client.on('ready', () => {
 		query(config.ip, config.port)
 			.then((res) => {
 				const status = `online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}`;
-				log.console(`${config.name} is &a${status}`); // log status - online
+				log.console(log.f(`${config.name} is &a${status}`)); // log status - online
 
 				if (cat.name !== status) { // only if it is different
 					cat.setName(status);
@@ -216,10 +215,10 @@ client.on('message', async message => {
 	}
 
 	const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|\\${config.prefix})\\s*`);
-
-	if (message.channel.id === config.chat_bridge_chan_id && !prefixRegex.test(message.content)) {
+	const is_linked_channel = message.channel.id === config.chat_bridge_chan_id || message.channel.id === config.admin_chan_id;
+	if (is_linked_channel && !prefixRegex.test(message.content)) {
 		if (message.content.length > 256) {
-			message.channel.send(message.author.toString() + ' Chat message not sent because the length is >256');
+			message.reply('your chat message was not sent because the length is >256');
 		} else if (message.content.toLowerCase() === 'list') {
 			log.console(`${message.author.tag} listed online players`);
 
@@ -232,19 +231,25 @@ client.on('message', async message => {
 				}
 
 				try {
-					response = JSON.parse(response);
-					text = `Players online (${Object.keys(response).length}): \``;
-					for (let player of response) {
-						text += player['username'] + ', ';
-					}
-					text = text.slice(0, -2);
-					text += '`';
+					let players = JSON.parse(response);
+					let player_count = Object.keys(players).length;
+					let player_names = players.map(player => player.username);
 
-					if (response.length === 0) {
+					switch (player_count) {
+					case 0:
 						text = 'No players online';
+						break;
+					case 1:
+						text = `There is **${player_count}** player online: \`${player_names.join(', ')}\``;
+						break;
+					default:
+						text = `There are **${player_count}** players online: \`${player_names.join(', ')}\``;
+						break;
 					}
+
 				} catch (e) {
-					log.error('Could not parse minecraft.players!');
+					log.warn('Could not parse minecraft.players!');
+					log.error(e);
 					text = 'Failed to parse minecraft.players';
 				}
 
@@ -255,11 +260,14 @@ client.on('message', async message => {
 			const role = message.member.roles.highest.name;
 			const name = message.member.displayName;
 			// let content = yourls.conditionalReplace(message.cleanContent, dependencies);
-			let content = message.cleanContent;
+			let content = emoji
+				.unemojify(message.cleanContent) // replace standard/unicode emojis
+				.replace(/<a?(:\S*:)\d{18}>/gm, '$1') // replace custom emoji with their names
+				.replace(/:([_a-zA-Z0-9]*):/gm, ($_, $1) => emojis[$1] || $_); // replace some emoji names with other text
 
 			redis_client.publish('minecraft.chat', JSON.stringify({
 				type: 'discord_chat',
-				discord_username: message.member.user.tag,
+				discord_username: message.author.tag,
 				timestamp: new Date().getTime(),
 				discord_prefix: `&#7289DA[Discord${config.rank_colors[role.toLowerCase()]}${role}&#7289DA]&r ${name} &#7289DA&l»&r `,
 				discord_id: message.member.id,
@@ -272,6 +280,17 @@ client.on('message', async message => {
 			}));
 
 			log.console(`[CHAT OUT] [${role}] ${name}: ${content}`);
+
+			if (message.channel.id === config.admin_chan_id) {
+				chat_bridge.send(content, {
+					avatarURL: message.author.displayAvatarURL(),
+					username: name
+				});
+			} else {
+				const admin = client.channels.cache.get(config.admin_chan_id);
+				admin.send(`[DSC] **${name}** said: \`${content.replace(/`/g, '\\`')}\``);
+			}
+			
 		}
 	} else if (message.channel.id === config.count_chan_id && message.author.id !== client.user.id) {
 		redis_client.get('minecraft.countinggame', (err, response) => {
@@ -280,7 +299,6 @@ client.on('message', async message => {
 
 			if (err) {
 				log.error(err);
-				text = 'Failed to parse minecraft.countinggame';
 			}
 
 			try {
@@ -288,29 +306,32 @@ client.on('message', async message => {
 				last_num = response['last_num'];
 				last_author = response['last_author'];
 			} catch (e) {
-				log.error('Could not parse minecraft.countinggame');
+				log.warn('Could not parse minecraft.countinggame');
+				log.error(e);
 			}
 
 			let this_num = parseInt(message.content.split(' ')[0]);
-			if(this_num === NaN || this_num !== last_num + 1 || last_author === message.author.id) {
+			if(isNaN(this_num) || this_num !== last_num + 1 || last_author === message.author.id) {
 				message.delete();
 				return;
 			} else {
 				redis_client.set('minecraft.countinggame', JSON.stringify({'last_num': this_num, 'last_author': message.author.id}));
 
 				if(Math.random() < 0.05) {
-					message.reply("You just won $25 in game for counting " + String(this_num));
-
+					message.reply('You just won $25 in game for counting ' + String(this_num));
 					player_util.get_uuid(message.author.id, sql_pool, log, (uuid) => {
 						if(uuid != null) {
-							redis_client.publish('minecraft.console.survival.in', 'eco give ' + uuid + ' 25');
+							redis_client.publish('minecraft.console.survival.in', `eco give ${uuid} 25`);
 						}
 					});
 				} else if (Math.random < 0.01) {
-					message.reply("You just won a normal crate key in game for counting " + String(this_num));
-					if(uuid != null) {
-						redis_client.publish('minecraft.console.hub.in', 'givecosmetic ' + message.member.displayName + ' 1 0');
-					}
+					message.reply('You just won a normal crate key in game for counting ' + String(this_num));
+					player_util.get_uuid(message.author.id, sql_pool, log, (uuid) => {
+						if (uuid != null) {
+							redis_client.publish('minecraft.console.hub.in', `givecosmetic ${message.member.displayName} 1 0`);
+						}
+					});
+					
 				}
 			}
 		});
@@ -361,15 +382,15 @@ client.on('message', async message => {
 		log.console(`${message.author.tag} tried to use the '${command.name}' command without permission`);
 		return message.channel.send(
 			new Discord.MessageEmbed()
-				.setColor('#E74C3C')
-				.setDescription(`\n:x: **You do not have permission to use the \`${command.name}\` command.**`)
+				.setColor('RED')
+				.setDescription(`\n❌ **You do not have permission to use the \`${command.name}\` command.**`)
 		);
 	}
 
 	if (command.args && !args.length) {
 		return message.channel.send(
 			new Discord.MessageEmbed()
-				.setColor('#E74C3C')
+				.setColor('RED')
 				.addField('Usage', `\`${config.prefix}${command.name} ${command.usage}\`\n`)
 				.addField('Help', `Type \`${config.prefix}help ${command.name}\` for more information`)
 		);
@@ -394,8 +415,8 @@ client.on('message', async message => {
 			log.console(`${message.author.tag} attempted to use the '${command.name}' command before the cooldown was over`);
 			return message.channel.send(
 				new Discord.MessageEmbed()
-					.setColor('#E74C3C')
-					.setDescription(`:x: **Please do not spam commands.**\nWait ${timeLeft.toFixed(1)} second(s) before reusing the \`${command.name}\` command.`)
+					.setColor('RED')
+					.setDescription(`❌ **Please do not spam commands.**\nWait ${timeLeft.toFixed(1)} second(s) before reusing the \`${command.name}\` command.`)
 			);
 		}
 	}
@@ -413,7 +434,7 @@ client.on('message', async message => {
 		log.console(`${message.author.tag} used the '${command.name}' command`);
 	} catch (error) {
 		log.error(error);
-		message.channel.send(`:x: An error occurred whilst executing the \`${command.name}\` command.\nThe issue has been reported.`);
+		message.channel.send(`❌ An error occurred whilst executing the \`${command.name}\` command.\nThe issue has been reported.`);
 		log.error(`An error occurred whilst executing the '${command.name}' command`);
 	}
 
@@ -444,7 +465,7 @@ process.on('unhandledRejection', error => {
 	log.error(`Uncaught error: \n${error.stack}`);
 });
 process.on('beforeExit', (code) => {
-	log.console('&6Disconnected from Discord API');
+	log.console(log.f('&6Disconnected from Discord API'));
 	log.console(`Exiting (${code})`);
 });
 

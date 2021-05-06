@@ -47,7 +47,7 @@ module.exports = {
 			return message.channel.send(
 				new Discord.MessageEmbed()
 					.setTitle('Error')
-					.setColor('#E74C3C')
+					.setColor('RED')
 					.addField('Too many options', 'Polls are limited to maximum of 26 options')
 					.addField('Information', `\`${config.prefix}help ${this.name}\` for more information`)
 			);

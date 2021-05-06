@@ -67,7 +67,7 @@ module.exports = {
 			message.channel.send(
 				new Discord.MessageEmbed()
 					.setTitle('Error')
-					.setColor('#E74C3C')
+					.setColor('RED')
 					.addField('Unkown role', `Type \`${config.prefix}${this.name}\` for a list of roles`)
 					.addField('Information', `\`${config.prefix}help ${this.name}\` for more information`)
 			);

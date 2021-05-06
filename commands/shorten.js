@@ -9,7 +9,7 @@ module.exports = {
 	args: true,
 	cooldown: 10,
 	guildOnly: true,
-	adminOnly: false,
+	adminOnly: true,
 	async execute(message, args, depend) {
 		const client = message.client;
 
@@ -18,12 +18,12 @@ module.exports = {
 			discord_lib: Discord,
 		} = depend;
 
-		const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
+		const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/gi;
 
 		if (!args[0].match(regex)) return message.channel.send(
 			new Discord.MessageEmbed()
-				.setColor('#E74C3C')
-				.setTitle(':x: Invalid URL')
+				.setColor('RED')
+				.setTitle('❌ Invalid URL')
 				.setDescription('You need to provide a valid URL to shorten')
 				.addField('Usage', `\`${config.prefix}${this.name} ${this.usage}\`\n`)
 				.addField('Help', `Type \`${config.prefix}help ${this.name}\` for more information`)
@@ -39,7 +39,7 @@ module.exports = {
 				new Discord.MessageEmbed()
 					.setAuthor(message.author.username, message.author.avatarURL())
 					.setColor(config.colour)
-					.setTitle(':white_check_mark: Shortened', short)
+					.setTitle('✅ Shortened', short)
 					.setDescription('Your URL has been shortened')
 					.addField('Long URL', url)
 					.addField('Short URL', short)

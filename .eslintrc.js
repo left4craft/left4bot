@@ -11,7 +11,7 @@ module.exports = {
 		'SharedArrayBuffer': 'readonly'
 	},
 	'parserOptions': {
-		'ecmaVersion': 2018
+		'ecmaVersion': 2021
 	},
 	'rules': {
 		'indent': [
@@ -31,6 +31,9 @@ module.exports = {
 			'always'
 		],
 		'no-control-regex': [
+			'off'
+		],
+		'no-console': [
 			'off'
 		]
 	}

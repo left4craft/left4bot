@@ -8,6 +8,7 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
 			callback(res[0]['uuid']);
 		} else {
 			// step 2: check for exact discord id match
+			// eslint-disable-next-line no-undef
 			sql_pool.query('SELECT HEX(uuid) FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : BigInt(input)], (err, res) => {
 				if(err) log.error(err);
 				if(res[0] !== undefined) {
@@ -25,6 +26,7 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
 							input = input.slice(2, -1);
 							if(input.startsWith('!')) input = input.slice(1);
     
+							// eslint-disable-next-line no-undef
 							sql_pool.query('SELECT HEX(uuid) FROM discord_users WHERE discordID = ?', [isNaN(input) ? 0 : BigInt(input)], (err, res) => {
 								if(err) log.error(err);
 								if(res[0] !== undefined) {

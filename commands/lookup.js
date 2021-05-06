@@ -25,15 +25,15 @@ module.exports = {
 		player_util.get_uuid(lookup_query, pool, log, (uuid) => {
 			if(uuid === null) {
 				message.channel.send(new Discord.MessageEmbed()
-					.setColor('#E74C3C')
-					.setDescription(`\n:x: **Could not find player by \`${lookup_query}\`.`
+					.setColor('RED')
+					.setDescription(`\n❌ **Could not find player by \`${lookup_query}\`.`
                  + ' Please use a Minecraft username, Minecraft UUID, Discord tag, or Discord user id**'));    
 			} else {
 				player_util.get_player_info(uuid, pool, redis_client, log, (player_data) => {
 					if(player_data === null) {
 						message.channel.send(new Discord.MessageEmbed()
-							.setColor('#E74C3C')
-							.setDescription(`\n:x: **Error getting data for uuid \`${uuid}\`.`));
+							.setColor('RED')
+							.setDescription(`\n❌ **Error getting data for uuid \`${uuid}\`.`));
 					} else {
 						let embed = new Discord.MessageEmbed()
 							.setColor(config.colour)
