@@ -51,6 +51,7 @@ const redis_subscriber = redis.createClient({
 
 
 const mysql = require('mysql');
+const { async } = require('crypto-random-string');
 const sql_pool = mysql.createPool({
 	host: process.env.DB_HOST,
 	port: process.env.DB_PORT,
@@ -83,12 +84,17 @@ redis_subscriber.on('error', (error) => {
 	log.error(error);
 });
 
-redis_client.connect();
+async function connect_redis() {
+	await redis_client.connect();
+	await redis_subscriber.connect();
 
-if(process.env.REDIS_PASS) {
-	redis_client.auth(process.env.REDIS_PASS);
-	redis_subscriber.auth(process.env.REDIS_PASS);	
+	if(process.env.REDIS_PASS) {
+		redis_client.auth(process.env.REDIS_PASS);
+		redis_subscriber.auth(process.env.REDIS_PASS);	
+	}
 }
+
+connect_redis();
 
 client.once('ready', async () => {
 	log.success('Connected to Discord API');
