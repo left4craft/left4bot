@@ -24,20 +24,19 @@ module.exports = {
 
 
 		if (args.length < 1) {
-			let list = new Discord.MessageEmbed()
-				.setColor(config.colour)
+			let list = new Discord.EmbedBuilder()
+				.setColor(config.color.success)
 				.setTitle('Subscribe to notifications')
 				.setDescription('**»** Subscribe to specific notifications by giving yourself a role that will be mentioned (by staff or bots, not players).')
-				.setFooter(config.name, client.user.avatarURL())
+				.setFooter({text: config.name, iconURL: client.user.avatarURL()})
 				.setTimestamp();
 
 
 
 			for (let role in roles) {
-				console.log(role);
-				list.addField(`:white_small_square: **${roles[role].title}**: ${roles[role].id}`, roles[role].description + `\n\n**Type \`${config.prefix}subscribe ${roles[role].id}\` to subscribe**`);
+				list.addFields({name: `:white_small_square: **${roles[role].title}**: ${roles[role].id}`, value: roles[role].description + `\n\n**Type \`${config.prefix}subscribe ${roles[role].id}\` to subscribe**`});
 			}
-			return message.channel.send(list);
+			return message.channel.send({embeds: [list]});
 		}
 
 
@@ -46,31 +45,31 @@ module.exports = {
 
 			if (message.member.roles.cache.some(r => r.id === roles[args[0]].role)) {
 				message.member.roles.remove(role);
-				message.channel.send(
-					new Discord.MessageEmbed()
-						.setColor(config.colour)
+				message.channel.send({embeds: [
+					new Discord.EmbedBuilder()
+						.setColor(config.color.success)
 						.setTitle(':thumbsup: Unsubscribed')
 						.setDescription(`**»** ${message.author}, you are no longer subscribed to **${roles[args[0]].title.toLowerCase()}**.\nYou can use \`${config.prefix}subscribe ${roles[args[0]].id}\` to resubscribe.`)
-				);
+				]});
 			} else {
 				message.member.roles.add(role);
-				message.channel.send(
-					new Discord.MessageEmbed()
-						.setColor(config.colour)
+				message.channel.send({embeds: [
+					new Discord.EmbedBuilder()
+						.setColor(config.color.success)
 						.setTitle(':thumbsup: Subscribed')
 						.setDescription(`**»** ${message.author}, you are now subscribed to **${roles[args[0]].title.toLowerCase()}**.\nYou can use \`${config.prefix}unsubscribe ${roles[args[0]].id}\` to unsubscribe.`)
-				);
+				]});
 			}
 
 
 		} else {
-			message.channel.send(
-				new Discord.MessageEmbed()
+			message.channel.send({embeds: [
+				new Discord.EmbedBuilder()
 					.setTitle('Error')
-					.setColor('RED')
-					.addField('Unkown role', `Type \`${config.prefix}${this.name}\` for a list of roles`)
-					.addField('Information', `\`${config.prefix}help ${this.name}\` for more information`)
-			);
+					.setColor(config.color.fail)
+					.addFields({name: 'Unkown role', value: `Type \`${config.prefix}${this.name}\` for a list of roles`})
+					.addFields({name: 'Information', value: `\`${config.prefix}help ${this.name}\` for more information`})
+			]});
 		}
 
 

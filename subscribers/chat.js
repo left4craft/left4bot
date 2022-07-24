@@ -1,6 +1,6 @@
 module.exports = {
 	channels: ['minecraft.chat'],
-	execute(channel, message, depend) {
+	async execute(channel, message, depend) {
 		const {
 			config,
 			discord_client: client,
@@ -8,9 +8,9 @@ module.exports = {
 			webhook,
 		} = depend;
 
-		const minecraft_chat = client.channels.cache.get(config.chat_bridge_chan_id);
-		const admin_chat = client.channels.cache.get(config.admin_chan_id);
-		const ssonly = client.channels.cache.get(config.socialspy_chan_id);
+		const minecraft_chat = await client.channels.fetch(config.chat_bridge_chan_id);
+		const admin_chat = await client.channels.fetch(config.admin_chan_id);
+		const ssonly = await client.channels.fetch(config.socialspy_chan_id);
 
 		const sendToBoth = async (content) => {
 			await minecraft_chat.send(content);

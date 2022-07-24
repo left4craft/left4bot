@@ -10,16 +10,16 @@
   "license": "MIT",
   "dependencies": {
     "crypto-random-string": "^3.3.0",
-    "discord.js": "^12.4.1",
-    "dotenv": "^8.2.0",
+    "discord.js": "^14.0.3",
+    "dotenv": "^16.0.1",
     "leekslazylogger": "^2.0.7",
     "minecraft-server-util": "^1.4.3",
     "mysql": "^2.18.1",
-    "node-emoji": "^1.10.0",
+    "node-emoji": "^1.11.0",
     "node-fetch": "^2.6.7",
-    "redis": "^3.1.1"
+    "redis": "^4.2.0"
   },
   "devDependencies": {
-    "eslint": "^7.20.0"
+    "eslint": "^8.20.0"
   }
 }

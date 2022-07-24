@@ -28,14 +28,14 @@ module.exports = {
 		m.edit('...');
 		m.delete();
 
-		message.channel.send(
-			new Discord.MessageEmbed()
-				.setColor(config.colour)
+		message.channel.send({embeds: [
+			new Discord.EmbedBuilder()
+				.setColor(config.color.success)
 				.setTitle('Pong!')
-				.addField('Latency', `\`${m.createdTimestamp - message.createdTimestamp}ms\``, true)
-				.setFooter(config.name, client.user.avatarURL())
+				.addFields({name: 'Latency', value: `\`${m.createdTimestamp - message.createdTimestamp}ms\``, inline: true})
+				.setFooter({text: config.name, iconURL: client.user.avatarURL()})
 				.setTimestamp()
-		);
+		]});
 		message.channel.stopTyping();
 
 

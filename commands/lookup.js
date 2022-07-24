@@ -24,35 +24,35 @@ module.exports = {
 
 		player_util.get_uuid(lookup_query, pool, log, (uuid) => {
 			if(uuid === null) {
-				message.channel.send(new Discord.MessageEmbed()
-					.setColor('RED')
+				message.channel.send({embeds: [new Discord.EmbedBuilder()
+					.setColor(config.color.fail)
 					.setDescription(`\n❌ **Could not find player by \`${lookup_query}\`.`
-                 + ' Please use a Minecraft username, Minecraft UUID, Discord tag, or Discord user id**'));    
+                 + ' Please use a Minecraft username, Minecraft UUID, Discord tag, or Discord user id**')]});    
 			} else {
 				player_util.get_player_info(uuid, pool, redis_client, log, (player_data) => {
 					if(player_data === null) {
-						message.channel.send(new Discord.MessageEmbed()
-							.setColor('RED')
-							.setDescription(`\n❌ **Error getting data for uuid \`${uuid}\`.`));
+						message.channel.send({embeds: [new Discord.EmbedBuilder()
+							.setColor(config.color.fail)
+							.setDescription(`\n❌ **Error getting data for uuid \`${uuid}\`.`)]});
 					} else {
-						let embed = new Discord.MessageEmbed()
-							.setColor(config.colour)
+						let embed = new Discord.EmbedBuilder()
+							.setColor(config.color.success)
 							.setTitle('Player Information')
 							.setURL(player_data['history_url'])
-							.setAuthor(player_data['username'], 'https://crafatar.com/avatars/' + uuid, player_data['history_url'])
+							.setAuthor({name: player_data['username'], iconURL: 'https://crafatar.com/avatars/' + uuid, url: player_data['history_url']})
 							.setThumbnail(`https://crafatar.com/avatars/${uuid}`)
 							.setDescription('Click name for detailed punishment history')
-							.addField('Online (Minecraft)', player_data['online'] ? 'Yes' : 'No', true)
-							.addField('Muted', player_data['muted'] ? 'Yes' : 'No', true)
-							.addField('Banned', player_data['banned'] ? 'Yes' : 'No', true);
+							.addFields({name: 'Online (Minecraft)', value: player_data['online'] ? 'Yes' : 'No', inline: true})
+							.addFields({name: 'Muted', value: player_data['muted'] ? 'Yes' : 'No', inline: true})
+							.addFields({name: 'Banned', value: player_data['banned'] ? 'Yes' : 'No', inline:  true});
 
-						if(player_data['nick'] !== null) embed.addField('Nickname', player_data['nick']);
+						if(player_data['nick'] !== null) embed.addFields({name: 'Nickname', value: player_data['nick']});
 
-						embed.addField('UUID', uuid, false)
+						embed.addFields({name: 'UUID', value: uuid, inline: false})
 							.setTimestamp()
-							.setFooter('', message.client.user.avatarURL);
+							.setFooter({text: '', iconURL: message.client.user.avatarURL});
 
-						message.channel.send(embed);
+						message.channel.send({embeds: [embed]});
 					}
 				});
 			}

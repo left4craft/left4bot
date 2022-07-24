@@ -11,7 +11,10 @@ module.exports = {
 	 */
 	name: 'Left4Craft',
 	prefix: '!', // prefix commands with this
-	colour: '#4CAF50', // for embeds
+	color: {
+		success: 0x4CAF50, // for embeds
+		fail: 0xD65A49
+	},
 	ip: 'mc.left4craft.org',
 	port: 25565,
 	guild_id: '424571587413540874',

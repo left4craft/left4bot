@@ -29,14 +29,13 @@ module.exports = {
 					let uuids = [];
 					for (let item of res) {
 						const nick = item['nick'].replace(/§[0-9A-FK-ORa-fk-or]/g, '').replace(/&[0-9A-FK-ORa-fk-or]/g, ''); // strip color codes
-						console.log(nick);
 						if(nick.toLowerCase().startsWith(search.toLowerCase())) uuids.push(item['uuid']);
 					}
 					if(uuids.length === 0) {
-						message.channel.send(new Discord.MessageEmbed()
-							.setColor('RED')
+						message.channel.send({embeds: [new Discord.EmbedBuilder()
+							.setColor(config.color.fail)
 							.setDescription(`\n❌ **Could not find player by \`${search}\`.`
-                        + ' Please use a nickname, Minecraft username, Minecraft UUID, Discord tag, or Discord user id**'));   
+                        + ' Please use a nickname, Minecraft username, Minecraft UUID, Discord tag, or Discord user id**')]});   
 					} else {
 						show_results(message.channel, uuids, player_util, pool, redis_client, search, config, log, Discord);
 					}
@@ -49,47 +48,47 @@ module.exports = {
 };
 
 function show_results(channel, uuids, player_util, pool, redis_client, search, config, log, Discord) {
-	let embed = new Discord.MessageEmbed()
-		.setColor(config.colour)
+	let embed = new Discord.EmbedBuilder()
+		.setColor(config.color.success)
 		.setTitle('Nickname Search')
 		.setDescription(`Players matching ${search}`);
 
 	// collect info up to 3 times, depending on how many uuids are defined.
 	player_util.get_player_info(uuids[0], pool, redis_client, log, (player_data) => {
-		embed.addField(player_data['username'], 'Nickname: ' + player_data['nick'])
-			.addField('Online (Minecraft)', player_data['online'] ? 'Yes' : 'No', true)
-			.addField('Muted', player_data['muted'] ? 'Yes' : 'No', true)
-			.addField('Banned', player_data['banned'] ? 'Yes' : 'No', true);
+		embed.addFields({name: player_data['username'], value: 'Nickname: ' + player_data['nick']})
+			.addFields({name: 'Online (Minecraft)', value: player_data['online'] ? 'Yes' : 'No', inline: true})
+			.addFields({name: 'Muted', value: player_data['muted'] ? 'Yes' : 'No', inline: true})
+			.addFields({name: 'Banned', value: player_data['banned'] ? 'Yes' : 'No', inline: true});
 		if(uuids[1] !== undefined) {
 			// collect info up to 3 times, depending on how many uuids are defined.
 			player_util.get_player_info(uuids[1], pool, redis_client, log, (player_data) => {
-				embed.addField('\u200b', '\u200b')
-					.addField(player_data['username'], 'Nickname: ' + player_data['nick'])
-					.addField('Online (Minecraft)', player_data['online'] ? 'Yes' : 'No', true)
-					.addField('Muted', player_data['muted'] ? 'Yes' : 'No', true)
-					.addField('Banned', player_data['banned'] ? 'Yes' : 'No', true);
+				embed.addFields({name: '\u200b', value: '\u200b'})
+					.addFields({name: player_data['username'], value: 'Nickname: ' + player_data['nick']})
+					.addFields({name: 'Online (Minecraft)', value: player_data['online'] ? 'Yes' : 'No', inline: true})
+					.addFields({name: 'Muted', value: player_data['muted'] ? 'Yes' : 'No', inline: true})
+					.addFields({name: 'Banned', value: player_data['banned'] ? 'Yes' : 'No', inline: true});
 				if(uuids[2] !== undefined) {
 					// collect info up to 3 times, depending on how many uuids are defined.
 					player_util.get_player_info(uuids[2], pool, redis_client, log, (player_data) => {
-						embed.addField('\u200b', '\u200b')
-							.addField(player_data['username'], 'Nickname: ' + player_data['nick'])
-							.addField('Online (Minecraft)', player_data['online'] ? 'Yes' : 'No', true)
-							.addField('Muted', player_data['muted'] ? 'Yes' : 'No', true)
-							.addField('Banned', player_data['banned'] ? 'Yes' : 'No', true);
+						embed.addFields({name: '\u200b', value: '\u200b'})
+							.addFields({name: player_data['username'], value: 'Nickname: ' + player_data['nick']})
+							.addFields({name: 'Online (Minecraft)', value: player_data['online'] ? 'Yes' : 'No', inline: true})
+							.addFields({name: 'Muted', value: player_data['muted'] ? 'Yes' : 'No', inline: true})
+							.addFields({name: 'Banned', value: player_data['banned'] ? 'Yes' : 'No', inline: true});
 						if(uuids[3] !== undefined) {
-							embed.addField('\u200b', '\u200b')
-								.addField('Note', `There were ${uuids.length} matches, but only the top 3 are shown.`);
-							channel.send(embed);
+							embed.addFields({name: '\u200b', value: '\u200b'})
+								.addFields({name: 'Note', value: `There were ${uuids.length} matches, but only the top 3 are shown.`});
+							channel.send({embeds: [embed]});
 						} else {
-							channel.send(embed);
+							channel.send({embeds: [embed]});
 						}
 					});
 				} else {
-					channel.send(embed);
+					channel.send({embeds: [embed]});
 				}
 			});
 		} else {
-			channel.send(embed);
+			channel.send({embeds: [embed]});
 		}
 	});
 

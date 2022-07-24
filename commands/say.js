@@ -22,22 +22,22 @@ module.exports = {
 
 		const text = args.join(' '); 
 
-		message.channel.send(
-			new Discord.MessageEmbed()
-				.setColor(config.colour)
-				.setAuthor(message.author.username, message.author.avatarURL())
+		message.channel.send({embeds: [
+			new Discord.EmbedBuilder()
+				.setColor(config.color.success)
+				.setAuthor({name: message.author.username, iconURL: message.author.avatarURL()})
 				.setDescription(text)
-		);
+		]});
 
-		client.channels.cache.get(config.log_chan_id).send(
-			new Discord.MessageEmbed()
-				.setColor(config.colour)
+		(await client.channels.fetch(config.log_chan_id)).send({embeds: [
+			new Discord.EmbedBuilder()
+				.setColor(config.color.success)
 				.setTitle(`${message.author.username} said`)
-				.setAuthor(message.author.username, message.author.avatarURL())
+				.setAuthor({name: message.author.username, iconURL: message.author.avatarURL()})
 				.setDescription(text)
-				.setFooter(config.name, client.user.avatarURL())
+				.setFooter({text: config.name, iconURL: client.user.avatarURL()})
 				.setTimestamp()
-		); // log channel message
+		]}); // log channel message
 
        
 	}

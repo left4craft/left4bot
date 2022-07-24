@@ -27,18 +27,18 @@ module.exports = {
 
 		// query bungee to update the status category        
 		query(config.ip, config.port)
-			.then((res) => {
+			.then(async (res) => {
 				// console.log(res);
 				log.console(log.f(`${config.name} is &aonline with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}&f, updating status category`)); // log status - online
 
-				client.channels.cache.get(config.status_cat_id).setName(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}`); // cat name
+				(await client.channels.fetch(config.status_cat_id)).setName(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}`); // cat name
 
 				client.user.setStatus('online'); // green status
 			})
-			.catch(() => {
+			.catch(async () => {
 				log.console(log.f(`${config.name} is &coffline`)); // log status - offline
 
-				client.channels.cache.get(config.status_cat_id).setName('server is offline (!status)'); // cat name
+				(await client.channels.fetch(config.status_cat_id)).setName('server is offline (!status)'); // cat name
 
 				client.user.setStatus('dnd'); // red status
 
@@ -64,12 +64,12 @@ module.exports = {
 					`View full system status at [${config.status_page_pretty}](${config.status_page}).`
 				];
 
-				let embed = new Discord.MessageEmbed()
-					.setAuthor(json.summary.description, `https://status.left4craft.org/img/${json.summary.status.short}.png`, config.status_page)
-					.setColor(config.colour)
+				let embed = new Discord.EmbedBuilder()
+					.setAuthor({name: json.summary.description, iconURL: `https://status.left4craft.org/img/${json.summary.status.short}.png`, url: config.status_page})
+					.setColor(config.color.success)
 					.setTitle(`${config.name} is ${json.services.minecraft.proxy.status === 'operational' ? 'online' : 'offline'}`, config.status_page)
 					.setDescription(description[0] + '\n' + description[1] + '\n' + description[2] + '\n' + description[3])
-					.setFooter(`${config.name} | Data could be up to 1 minute old`, client.user.avatarURL())
+					.setFooter({text: `${config.name} | Data could be up to 1 minute old`, iconURL: client.user.avatarURL()})
 					.setTimestamp();
 
 
@@ -80,13 +80,13 @@ module.exports = {
 					let tps = '';
 					if (servers[server].id !== 'proxy') tps = `**TPS:** \`${servers[server].tps}\`\n`;
 					let info = `**Status:** \`${status}\`\n${tps}**Players:** \`${servers[server].player_count}\``;
-					embed.addField(`:${colour}_square: **${servers[server].name}**`, info, true);
+					embed.addFields({name: `:${colour}_square: **${servers[server].name}**`, value: info, inline: true});
 				}
 
 
 
 
-				message.channel.send(embed);
+				message.channel.send({embeds: [embed]});
 
 
 			});

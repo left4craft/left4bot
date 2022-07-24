@@ -19,45 +19,45 @@ module.exports = {
 
 		let suggestion = args.join(' '); // make it a string again
 
-		const channel = client.channels.cache.get(config.suggestion_chan_id);
+		const channel = await client.channels.fetch(config.suggestion_chan_id);
 
  
 		// basic with thumbs up and down
 		log.info(`${message.author.username} submitted a suggestion`);
 
-		const poll = await channel.send(
-			new Discord.MessageEmbed()
-				.setColor(config.colour)
+		const poll = await channel.send({embeds: [
+			new Discord.EmbedBuilder()
+				.setColor(config.color.success)
 				.setTitle(suggestion)
-				.setAuthor(message.author.username + '\'s suggestion', message.author.avatarURL())
+				.setAuthor({name: message.author.username + '\'s suggestion', iconURL: message.author.avatarURL()})
 				.setDescription('Do you like this idea? \n\n:thumbsup: Yes\n\n:thumbsdown: No')
-				.setFooter(config.name, client.user.avatarURL())
+				.setFooter({text: config.name, iconURL: client.user.avatarURL()})
 				.setTimestamp()
-		);
+		]});
 
 		await poll.react('👍');
 		await poll.react('👎');
 
 
-		message.channel.send(
-			new Discord.MessageEmbed()
-				.setColor(config.colour)
+		message.channel.send({embeds: [
+			new Discord.EmbedBuilder()
+				.setColor(config.color.success)
 				.setTitle(':thumbsup: Suggestion submitted')
 				.setDescription(`**»** Go to <#${config.suggestion_chan_id}> to view`)
-				.addField('Suggestion', suggestion, false)
-		); // success message
+				.addFields({name: 'Suggestion', value: suggestion, inline: false})
+		]}); // success message
 
 
-		client.channels.cache.get(config.log_chan_id).send(
-			new Discord.MessageEmbed()
-				.setColor(config.colour)
+		(await client.channels.fetch(config.log_chan_id)).send({embeds: [
+			new Discord.EmbedBuilder()
+				.setColor(config.color.success)
 				.setTitle('Suggestion submitted')
-				.setAuthor(message.author.username, message.author.avatarURL())
-				.addField('By', message.author.tag, true)
-				.addField('Suggestion', suggestion, false)
-				.setFooter(config.name, client.user.avatarURL())
+				.setAuthor({name: message.author.username, iconURL: message.author.avatarURL()})
+				.addFields({name: 'By', value: message.author.tag, inline: true})
+				.addFields({name: 'Suggestion', value: suggestion, inline: false})
+				.setFooter({text: config.name, iconURL: client.user.avatarURL()})
 				.setTimestamp()
-		); // log channel message
+		]}); // log channel message
 
 	}
 };

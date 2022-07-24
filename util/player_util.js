@@ -4,6 +4,7 @@ exports.get_uuid = (input, sql_pool, log, callback) => {
 		input = input.trim();
 
 		if(err) log.error(err);
+
 		if(res[0] !== undefined) {
 			callback(res[0]['uuid']);
 		} else {

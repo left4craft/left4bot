@@ -10,7 +10,15 @@ const emojis = require('./emojis.json');
 const emoji = require('node-emoji');
 const Discord = require('discord.js');
 const client = new Discord.Client({
-	autoReconnect: true
+	autoReconnect: true,
+	intents: [
+		Discord.GatewayIntentBits.Guilds,
+		Discord.GatewayIntentBits.DirectMessages,
+		Discord.GatewayIntentBits.GuildMessages,
+		Discord.GatewayIntentBits.GuildMembers,
+		Discord.GatewayIntentBits.MessageContent
+	],
+	partials: [Discord.Partials.Channel]
 });
 
 const redis = require('redis');
@@ -31,7 +39,7 @@ const log = new Logger({
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 
-const chat_bridge = new Discord.WebhookClient(config.chat_webhook_id, process.env.CHAT_WEBHOOK_TOKEN);
+const chat_bridge = new Discord.WebhookClient({id: config.chat_webhook_id, token: process.env.CHAT_WEBHOOK_TOKEN});
 const redis_client = redis.createClient({
 	host: process.env.REDIS_HOST,
 	port: process.env.REDIS_PORT
@@ -75,10 +83,14 @@ redis_subscriber.on('error', (error) => {
 	log.error(error);
 });
 
-redis_client.auth(process.env.REDIS_PASS);
-redis_subscriber.auth(process.env.REDIS_PASS);
+if(process.REDIS_PASS) {
+	redis_client.auth(process.env.REDIS_PASS);
+	redis_subscriber.auth(process.REDIS_PASS);	
+} else {
+	redis_client.connect();
+}
 
-client.on('ready', () => {
+client.once('ready', async () => {
 	log.success('Connected to Discord API');
 	log.success(`Logged in as ${client.user.tag}`);
 
@@ -126,25 +138,26 @@ client.on('ready', () => {
 	log.console(log.f(`[SUB] > Subscribed to ${subscribe_channels.length} channels: &9${subscribe_channels.join(', ')}`));
 
 	if (config.log_general) {
-		client.channels.cache.get(config.log_chan_id).send(
-			new Discord.MessageEmbed()
-				.setColor(config.colour)
+		const chan = await client.channels.fetch(config.log_chan_id);
+		chan.send({embeds: [
+			new Discord.EmbedBuilder()
+				.setColor(config.color.success)
 				.setTitle('Started')
 				.setDescription(`✅ **»** Started successfully with **${commands.length} commands** and **${subscribe_channels.length} subscribers** loaded.`)
-				.setFooter(config.name, client.user.avatarURL())
+				.setFooter({text: config.name, iconURL: client.user.avatarURL()})
 				.setTimestamp()
+		]}
 		);
 	}
 
 	const updatePresence = () => {
 		let num = Math.floor(Math.random() * config.activities.length);
 		client.user.setPresence({
-			activity: {
+			activities: [{
 				name: config.activities[num] + `  |  ${config.prefix}help`,
 				type: config.activity_types[num]
-			}
-		})
-			.catch(log.error);
+			}]
+		});
 	};
 
 	updatePresence();
@@ -152,9 +165,9 @@ client.on('ready', () => {
 		updatePresence();
 	}, 15000);
 
-	const updateStatusInfo = () => {
+	const updateStatusInfo = async () => {
 		log.info(`Pinging ${config.ip}`);
-		const cat = client.channels.cache.get(config.status_cat_id);
+		const cat = await client.channels.fetch(config.status_cat_id);
 		query(config.ip, config.port)
 			.then((res) => {
 				const status = `online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}`;
@@ -192,26 +205,32 @@ client.on('ready', () => {
 
 });
 
-client.on('message', async message => {
+client.on('messageCreate', async message => {
 	if (message.author.bot && (message.author.id !== '836714577474617346')) return;
 
-	if (message.channel.type === 'dm') {
+	// console.log(JSON.stringify(message));
+
+	// check if message is dm
+	if (message.guild === null) {
+		// console.log('dm');
 		if (message.author.id === client.user.id) return;
 		if (config.log_dm) {
 			if (config.log_general) {
-				client.channels.cache.get(config.log_chan_id).send(
-					new Discord.MessageEmbed()
-						.setAuthor(message.author.username, message.author.avatarURL())
+				(await client.channels.fetch(config.log_chan_id)).send({
+					embeds: [new Discord.EmbedBuilder()
+						.setAuthor({name: message.author.username, iconURL: message.author.avatarURL()})
 						.setTitle('DM Logger')
-						.addField('Username', message.author.tag, true)
-						.addField('Message', message.content, true)
-						.setFooter(config.name, client.user.avatarURL())
-						.setTimestamp()
-				);
+						.addFields({name: 'Username', value: message.author.tag, inline: true})
+						.addFields({name: 'Message', value: message.content, inline: true})
+						.setFooter({text: config.name, iconURL: client.user.avatarURL()})
+						.setTimestamp()]
+				});
 			}
 		}
 
 		sync.sync_message(redis_client, message.channel, message.author.id);
+
+		return;
 	}
 
 	const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|\\${config.prefix})\\s*`);
@@ -287,7 +306,7 @@ client.on('message', async message => {
 					username: name
 				});
 			} else {
-				const admin = client.channels.cache.get(config.admin_chan_id);
+				const admin = await client.channels.fetch(config.admin_chan_id);
 				admin.send(`[DSC] **${name}** said: \`${content.replace(/`/g, '\\`')}\``);
 			}
 			
@@ -380,27 +399,28 @@ client.on('message', async message => {
 	if (!command) return;
 	if (commandName == 'none') return;
 
-	if (command.guildOnly && message.channel.type !== 'text') {
+
+	if (command.guildOnly && message.guild === null) {
 		return message.channel.send('Sorry, this command can only be used in a server.');
 	}
 
 	// if ((command.permission && !message.member.hasPermission(command.permission)) || (command.adminOnly === true && !message.member.roles.cache.has(config.admin_role_id))) {
 	if ((command.permission && !message.member.hasPermission(command.permission)) || (command.staffOnly === true && !message.member.roles.cache.some(r => config.staff_ranks.includes(r.name.toLowerCase()))) || (command.adminOnly === true && !message.member.roles.cache.some(r => config.admin_roles.includes(r.name.toLowerCase())))) {
 		log.console(`${message.author.tag} tried to use the '${command.name}' command without permission`);
-		return message.channel.send(
-			new Discord.MessageEmbed()
-				.setColor('RED')
-				.setDescription(`\n❌ **You do not have permission to use the \`${command.name}\` command.**`)
-		);
+		return message.channel.send({
+			embeds: [new Discord.EmbedBuilder()
+				.setColor(config.color.fail)
+				.setDescription(`\n❌ **You do not have permission to use the \`${command.name}\` command.**`)]
+		});
 	}
 
 	if (command.args && !args.length) {
-		return message.channel.send(
-			new Discord.MessageEmbed()
-				.setColor('RED')
-				.addField('Usage', `\`${config.prefix}${command.name} ${command.usage}\`\n`)
-				.addField('Help', `Type \`${config.prefix}help ${command.name}\` for more information`)
-		);
+		return message.channel.send({
+			embeds: [new Discord.EmbedBuilder()
+				.setColor(config.color.fail)
+				.addFields({name: 'Usage', value: `\`${config.prefix}${command.name} ${command.usage}\`\n`})
+				.addFields({name: 'Help', value: `Type \`${config.prefix}help ${command.name}\` for more information`})]
+		});
 	}
 
 
@@ -420,11 +440,11 @@ client.on('message', async message => {
 		if (now < expirationTime) {
 			const timeLeft = (expirationTime - now) / 1000;
 			log.console(`${message.author.tag} attempted to use the '${command.name}' command before the cooldown was over`);
-			return message.channel.send(
-				new Discord.MessageEmbed()
-					.setColor('RED')
-					.setDescription(`❌ **Please do not spam commands.**\nWait ${timeLeft.toFixed(1)} second(s) before reusing the \`${command.name}\` command.`)
-			);
+			return message.channel.send({
+				embeds: [new Discord.EmbedBuilder()
+					.setColor(config.color.fail)
+					.setDescription(`❌ **Please do not spam commands.**\nWait ${timeLeft.toFixed(1)} second(s) before reusing the \`${command.name}\` command.`)]
+			});
 		}
 	}
 

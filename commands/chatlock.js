@@ -20,14 +20,14 @@ module.exports = {
 		
 		redis_client.publish('minecraft.console.hub.in', 'chatlock');
 		log.info(`${message.author.username} has locked/unlocked chat`);
-		message.channel.send(
-			new Discord.MessageEmbed()
-				.setColor(config.colour)
+		message.channel.send({
+			embeds: [new Discord.EmbedBuilder()
+				.setColor(config.color.success)
 				.setTitle('✅ Sent chatlock command')
 				.setDescription('Chat has been locked/unlocked')
-				.setFooter(config.name, client.user.avatarURL())
-				.setTimestamp()
-		);
+				.setFooter({text: config.name, iconURL: client.user.avatarURL()})
+				.setTimestamp()]
+		});
 
 	}
 };

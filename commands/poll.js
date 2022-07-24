@@ -41,15 +41,16 @@ module.exports = {
 		let question = split.shift(); // this is the question
 		let options = split; // array of the options
 
-		const channel = client.channels.cache.get(config.poll_chan_id);
+		const channel = await client.channels.fetch(config.poll_chan_id);
 
 		if (options.length > 26) {
-			return message.channel.send(
-				new Discord.MessageEmbed()
+			return message.channel.send({embeds:[
+				new Discord.EmbedBuilder()
 					.setTitle('Error')
-					.setColor('RED')
-					.addField('Too many options', 'Polls are limited to maximum of 26 options')
-					.addField('Information', `\`${config.prefix}help ${this.name}\` for more information`)
+					.setColor(config.color.fail)
+					.addFields({name: 'Too many options', value: 'Polls are limited to maximum of 26 options'})
+					.addFields({name: 'Information', value: `\`${config.prefix}help ${this.name}\` for more information`})
+			]}
 			);
 		}
 
@@ -59,16 +60,16 @@ module.exports = {
 			log.info(`${message.author.username} created a basic poll`);
 
 			channel.send(`<@&${config.subscription_roles.polls.role}>`);
-			const poll = await channel.send(
-				new Discord.MessageEmbed()
-					.setColor(config.colour)
+			const poll = await channel.send({
+				embeds: [new Discord.EmbedBuilder()
+					.setColor(config.color.success)
 					.setTitle(question)
-					.setAuthor(message.author.username, message.author.avatarURL())
+					.setAuthor({name: message.author.username, iconURL: message.author.avatarURL()})
 					.setDescription('Please react with your choice: \n\n:thumbsup: Yes\n\n:thumbsdown: No\n\nPlease only react once.')
-				// .addField("Options", `\n\n:thumbsup: Yes\n\n:thumbsdown: No\n\n`, true)
-					.setFooter(config.name, client.user.avatarURL())
-					.setTimestamp()
-			);
+				// .addFields({name: "Options", value: `\n\n:thumbsup: Yes\n\n:thumbsdown: No\n\n`, inline: true})
+					.setFooter({text: config.name, iconURL: client.user.avatarURL()})
+					.setTimestamp()]
+			});
 
 			await poll.react('👍');
 			await poll.react('👎');
@@ -84,14 +85,14 @@ module.exports = {
 				options_string += `:regional_indicator_${alphabet[i]}: ${options[i]}\n\n`;
 			}
 			channel.send(`<@&${config.subscription_roles.polls.role}>`);
-			const poll = await channel.send(
-				new Discord.MessageEmbed()
-					.setColor(config.colour)
+			const poll = await channel.send({embeds: [
+				new Discord.EmbedBuilder()
+					.setColor(config.color.success)
 					.setTitle(question)
-					.setAuthor(message.author.username, message.author.avatarURL())
+					.setAuthor({name: message.author.username, iconURL: message.author.avatarURL()})
 					.setDescription(`Please react with your choice: \n\n${options_string}`)
-					.setFooter(config.name, client.user.avatarURL())
-					.setTimestamp()
+					.setFooter({text: config.name, iconURL: client.user.avatarURL()})
+					.setTimestamp()]}
 			);
 
 			for (let i = 0; i < options.length; i++) {
@@ -105,26 +106,26 @@ module.exports = {
 
 		}
 
-		message.channel.send(
-			new Discord.MessageEmbed()
-				.setColor(config.colour)
+		message.channel.send({embeds: [
+			new Discord.EmbedBuilder()
+				.setColor(config.color.success)
 				.setTitle(':thumbsup: Poll created')
 				.setDescription(`**»** Go to <#${config.poll_chan_id}> to view`)
-				.addField('Question', question, false)
-		); // success message
+				.addFields({name: 'Question', value: question, inline: false})
+		]}); // success message
 
 
-		client.channels.cache.get(config.log_chan_id).send(
-			new Discord.MessageEmbed()
-				.setColor(config.colour)
+		(await client.channels.fetch(config.log_chan_id)).send({embeds: [
+			new Discord.EmbedBuilder()
+				.setColor(config.color.success)
 				.setTitle('Poll created')
-				.setAuthor(message.author.username, message.author.avatarURL())
-				.addField('By', message.author.tag, true)
-				.addField('Question', question, false)
-				.addField('Options', options.length, true)
-				.setFooter(config.name, client.user.avatarURL())
+				.setAuthor({name: message.author.username, iconURL: message.author.avatarURL()})
+				.addFields({name: 'By', value: message.author.tag, inline: true})
+				.addFields({name: 'Question', value: question, inline: false})
+				.addFields({name: 'Options', value: options.length, inline: true})
+				.setFooter({text: config.name, iconURL: client.user.avatarURL()})
 				.setTimestamp()
-		); // log channel message
+		]}); // log channel message
 
 	}
 };

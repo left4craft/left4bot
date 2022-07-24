@@ -24,18 +24,18 @@ module.exports = {
 		const links = config.links; 
 
 
-		let embed = new Discord.MessageEmbed()
-			.setColor(config.colour)
+		let embed = new Discord.EmbedBuilder()
+			.setColor(config.color.success)
 			.setTitle('Links')
-			.setFooter(config.name, client.user.avatarURL())
+			.setFooter({text: config.name, iconURL: client.user.avatarURL()})
 			.setTimestamp();
 
 		for (let link of links) {
-			embed.addField(link.name, `[${link.pretty}](${link.url})`, true);
+			embed.addFields({name: link.name, value: `[${link.pretty}](${link.url})`, inline: true});
 		}
 
 
-		message.channel.send(embed);
+		message.channel.send({embeds: [embed]});
 
 
 
