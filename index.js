@@ -51,7 +51,6 @@ const redis_subscriber = redis.createClient({
 
 
 const mysql = require('mysql');
-const { async } = require('crypto-random-string');
 const sql_pool = mysql.createPool({
 	host: process.env.DB_HOST,
 	port: process.env.DB_PORT,
