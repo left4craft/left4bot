@@ -33,8 +33,9 @@ module.exports = {
 			switch (message.type) {
 			case 'chat':
 				log.console(`[CHAT IN] ${message.name}: ${clean_content}`);
-				webhook.send(clean_content, {
+				webhook.send({
 					avatarURL: 'https://crafatar.com/avatars/' + message.uuid,
+					content: clean_content,
 					username: strip(message.webhook_name)
 				});
 				admin_chat.send(`[MC] **${strip(message.nick)}** said: \`${clean_content.replace(/`/g, '\\`')}\``);
