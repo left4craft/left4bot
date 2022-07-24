@@ -83,11 +83,11 @@ redis_subscriber.on('error', (error) => {
 	log.error(error);
 });
 
+redis_client.connect();
+
 if(process.env.REDIS_PASS) {
 	redis_client.auth(process.env.REDIS_PASS);
 	redis_subscriber.auth(process.env.REDIS_PASS);	
-} else {
-	redis_client.connect();
 }
 
 client.once('ready', async () => {
