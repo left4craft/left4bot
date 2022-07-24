@@ -50,7 +50,7 @@ module.exports = {
 
 						embed.addFields({name: 'UUID', value: uuid, inline: false})
 							.setTimestamp()
-							.setFooter({text: '', iconURL: message.client.user.avatarURL});
+							.setFooter({text: config.name, iconURL: message.client.user.avatarURL()});
 
 						message.channel.send({embeds: [embed]});
 					}
