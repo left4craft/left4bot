@@ -83,17 +83,18 @@ redis_subscriber.on('error', (error) => {
 	log.error(error);
 });
 
-async function connect_redis() {
-	await redis_client.connect();
-	await redis_subscriber.connect();
+// async function connect_redis() {
+// 	await redis_client.connect();
+// 	await redis_subscriber.connect();
 
-	if(process.env.REDIS_PASS) {
-		redis_client.auth(process.env.REDIS_PASS);
-		redis_subscriber.auth(process.env.REDIS_PASS);	
-	}
-}
+// 	if(process.env.REDIS_PASS) {
+// 		redis_client.auth(process.env.REDIS_PASS);
+// 		redis_subscriber.auth(process.env.REDIS_PASS);	
+// 	}
+// }
 
-connect_redis();
+redis_client.auth(process.env.REDIS_PASS);
+redis_subscriber.auth(process.env.REDIS_PASS);	
 
 client.once('ready', async () => {
 	log.success('Connected to Discord API');
