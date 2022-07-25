@@ -158,12 +158,14 @@ client.once('ready', async () => {
 
 	const updatePresence = () => {
 		let num = Math.floor(Math.random() * config.activities.length);
-		client.user.setPresence({
-			activities: [{
-				name: config.activities[num] + `  |  ${config.prefix}help`,
-				type: config.activity_types[num]
-			}]
-		});
+		client.user.setActivity(config.activities[num]);
+		// "type" option broke the bot presence for some reason, so just leaving it at "PLAYING" for now
+		// client.user.setPresence({
+		// 	activities: [{
+		// 		name: config.activities[num] + `  |  ${config.prefix}help`,
+		// 		type: config.activity_types[num]
+		// 	}]
+		// });
 	};
 
 	updatePresence();

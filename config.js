@@ -18,8 +18,8 @@ module.exports = {
 	ip: 'mc.left4craft.org',
 	port: 25565,
 	guild_id: '424571587413540874',
-	activities: ['Minecraft', 'on mc.left4craft.org', 'with nuclear launch codes', 'chat', 'Minecraft on mc.left4craft.org'],
-	activity_types: ['PLAYING', 'PLAYING', 'PLAYING', 'WATCHING', 'PLAYING'],
+	activities: ['Minecraft', 'on mc.left4craft.org', 'with nuclear launch codes', 'Minecraft on mc.left4craft.org'],
+	activity_types: ['PLAYING', 'PLAYING', 'PLAYING', 'PLAYING'],
 	// default (in seconds), can be different for each command
 
 	/**
