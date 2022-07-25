@@ -92,7 +92,7 @@ exports.get_player_info = (uuid, sql_pool, redis_client, log, callback) => {
 								online: online,
 								muted: muted,
 								banned: banned,
-								history_url: require('../config.js').litebans_base_url + 'history.php?uuid=' + uuid,
+								history_url: require('../config.js').litebans_base_url + uuid,
 								nick: res[0] === undefined ? null : res[0]['nick'].replace(/§[0-9A-FK-ORa-fk-or]/g, '').replace(/&[0-9A-FK-ORa-fk-or]/g, '') // strip color codes
 							});
     
