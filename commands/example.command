@@ -14,7 +14,8 @@ module.exports = {
     async execute(message, args) {
         const client = message.client;
         // command starts here
-        // if (message.channel.permissionsFor(message.channel.guild.me).has('MANAGE_MESSAGES')) {
+		// const guild_self = await message.guild.members.fetch(client.user.id);
+		// if (message.channel.permissionsFor(guild_self).has(Discord.PermissionsBitField.ManageMessages)) {
         //     message.delete()
         // };
 

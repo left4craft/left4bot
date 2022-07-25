@@ -12,7 +12,8 @@ module.exports = {
 		const {config, discord_lib: Discord, log } = depend;
 
 		// command starts here
-		// if (message.channel.permissionsFor(message.channel.guild.me).has('MANAGE_MESSAGES')) {
+		// const guild_self = await message.guild.members.fetch(client.user.id);
+		// if (message.channel.permissionsFor(guild_self).has(Discord.PermissionsBitField.ManageMessages)) {
 		//     message.delete()
 		// };
 
