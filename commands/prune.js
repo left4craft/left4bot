@@ -21,9 +21,9 @@ module.exports = {
 		// command starts here
 		const guild_self = await message.guild.members.fetch(client.user.id);
 		if (message.channel.permissionsFor(guild_self).has(Discord.PermissionsBitField.ManageMessages)) {
-			message.delete();
-
-			let amount = parseInt(args[0]);
+			
+			// add 1 to delete the original message
+			let amount = parseInt(args[0]) + 1;
 
 			if (isNaN(amount)) {
 				return message.channel.send({embeds: [
@@ -47,7 +47,7 @@ module.exports = {
 					new Discord.EmbedBuilder()
 						.setColor(config.color.success)
 						.setTitle('Messages pruned')
-						.setDescription(`✅ **»** Deleted ${amount} messages`)
+						.setDescription(`✅ **»** Deleted ${amount-1} messages`)
 				]});
 
 				(await client.channels.fetch(config.log_chan_id)).send({embeds: [
@@ -55,8 +55,8 @@ module.exports = {
 						.setAuthor({name: message.author.username, iconURL: message.author.avatarURL()})
 						.setColor(config.color.success)
 						.setTitle('Messages pruned')
-						.addFields({name: 'By', value: message.author, inline: true})
-						.addFields({name: 'Messages', value: amount, inline: true})
+						.addFields({name: 'By', value: message.author.toString(), inline: true})
+						.addFields({name: 'Messages', value: amount.toString(), inline: true})
 						.setFooter({text: config.name, iconURL: client.user.avatarURL()})
 						.setTimestamp()
 				]});
