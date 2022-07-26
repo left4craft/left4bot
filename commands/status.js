@@ -29,7 +29,6 @@ module.exports = {
 		// query bungee to update the status category        
 		query(config.ip, config.port)
 			.then(async (res) => {
-				// console.log(res);
 				log.console(log.f(`${config.name} is &aonline with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}&f, updating status category`)); // log status - online
 
 				(await client.channels.fetch(config.status_cat_id)).setName(`online with ${res.onlinePlayers} ${res.onlinePlayers === 1 ? 'player' : 'players'}`); // cat name
@@ -54,7 +53,6 @@ module.exports = {
 			.then(json => {
 
 				let servers = Object.keys(json);
-				console.log(servers);
 				let players = json.bungee?.status?.players || 0;
 				// Type \`list\` in <#${config.chat_bridge_chan_id}> for a list of online players.
 				// let player_list = json.services.minecraft.proxy.players.replace(/,/g, ', ').trim();
@@ -77,8 +75,6 @@ module.exports = {
 
 				for (let server of servers) {
 					if(server.startsWith('cached') || json[server].type === 'website') continue;
-
-					console.log(json[server]);
 
 					let colour = json[server].status?.online ? 'green' : 'red';
 					let status = json[server].status?.online ? 'online' : 'offline';
