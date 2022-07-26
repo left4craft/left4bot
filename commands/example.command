@@ -1,12 +1,13 @@
-const Discord = require("discord.js");
-const config = require("../config.js");
-const log = require("leekslazylogger");
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
     name: 'example',
     description: 'desc',
     usage: 'dont include cmd',
-    aliases: ['none'],
     example: 'example usage',
+	getSlashCommandBuilder: () => new SlashCommandBuilder()
+		.setName(module.exports.name)
+		.setDescription(this.description),
     args: false,
     cooldown: config.cooldown,
     guildOnly: true,

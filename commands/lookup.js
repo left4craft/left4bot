@@ -1,11 +1,18 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
 	name: 'lookup',
 	description: 'Lookup a player\'s history',
 	usage: '<username/Discord tag/Discord id/uuid>',
-	aliases: ['history', 'punishments'],
 	example: 'lookup Captain_Sisko',
+	getSlashCommandBuilder: () => new SlashCommandBuilder()
+		.setName(module.exports.name)
+		.setDescription(module.exports.description)
+		.addStringOption(option => 
+			option.setName('player')
+				.setDescription('Enter a Username, Discord Tag, Discord ID, or UUID')
+				.setRequired(true)),
 	args: true,
-    
 	guildOnly: true,
 	adminOnly: false,
 	async execute(message, args, depend) {

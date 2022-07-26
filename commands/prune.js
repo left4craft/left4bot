@@ -1,12 +1,18 @@
+const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
 	name: 'prune',
 	description: 'Bulk-delete messages',
 	usage: '<1-100>',
-	aliases: ['purge'],
 	example: 'prune 100',
+	getSlashCommandBuilder: () => new SlashCommandBuilder()
+		.setName(module.exports.name)
+		.setDescription(module.exports.description)
+		.addIntegerOption(option => 
+			option.setName('messages')
+				.setDescription('Enter the number of messages to delete')
+				.setRequired(true)),
 	args: true,
-    
 	guildOnly: true,
 	adminOnly: true,
 	async execute(message, args, depend) {

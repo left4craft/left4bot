@@ -1,9 +1,14 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
 	name: 'links',
 	description: 'Useful pages',
 	usage: '',
-	aliases: ['web', 'website', 'shop', 'store', 'donate', 'forums', 'invite', 'discord', 'bans'],
 	example: 'links',
+	getSlashCommandBuilder: () => new SlashCommandBuilder()
+		.setName(module.exports.name)
+		.setDescription(module.exports.description),
+
 	args: false,
 	cooldown: 10,
 	guildOnly: true,

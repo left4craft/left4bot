@@ -1,9 +1,13 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
 	name: 'chatlock',
-	description: 'Lock in-game chat and require unverified players to verify',
+	description: 'Locks in-game chat and require unverified players to verify',
 	usage: '',
-	aliases: ['lockdown'],
 	example: 'chatlock',
+	getSlashCommandBuilder: () => new SlashCommandBuilder()
+		.setName(module.exports.name)
+		.setDescription(module.exports.description),
 	args: false,
 	guildOnly: true,
 	staffOnly: true,

@@ -1,11 +1,18 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
 	name: 'realname',
 	description: 'Identifies the possible real names of a given search query',
 	usage: '<nickname/username/Discord tag/Discord id/uuid>',
-	aliases: ['whois'],
 	example: 'realname Captain_Sisko',
+	getSlashCommandBuilder: () => new SlashCommandBuilder()
+		.setName(module.exports.name)
+		.setDescription(module.exports.description)
+		.addStringOption(option => 
+			option.setName('player')
+				.setDescription('Enter a Username, Discord Tag, Discord ID, or UUID')
+				.setRequired(true)),
 	args: true,
-    
 	guildOnly: true,
 	staffOnly: true,
 	async execute(message, args, depend) {

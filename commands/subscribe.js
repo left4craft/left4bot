@@ -1,9 +1,24 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
 	name: 'subscribe',
 	description: 'Subscribe to a role',
 	usage: '<role>',
-	aliases: ['unsubscribe', 'role', 'roles'],
 	example: 'subscribe status',
+	getSlashCommandBuilder: () => {
+		const subscription_roles = require('../config').subscription_roles;
+		const choices = Object.keys(subscription_roles).map(role => {
+			return {name: subscription_roles[role].title, value: role};
+		});
+		return new SlashCommandBuilder()
+			.setName(module.exports.name)
+			.setDescription(module.exports.description)
+			.addStringOption(option => 
+				option.setName('role')
+					.setDescription('Enter a role to subscribe to')
+					.addChoices(...choices)
+					.setRequired(true));
+	},
 	args: false,
 	cooldown: 5,
 	guildOnly: true,
@@ -68,8 +83,8 @@ module.exports = {
 				new Discord.EmbedBuilder()
 					.setTitle('Error')
 					.setColor(config.color.fail)
-					.addFields({name: 'Unkown role', value: `Type \`${config.prefix}${this.name}\` for a list of roles`})
-					.addFields({name: 'Information', value: `\`${config.prefix}help ${this.name}\` for more information`})
+					.addFields({name: 'Unkown role', value: `Type \`${config.prefix}${module.exports.name}\` for a list of roles`})
+					.addFields({name: 'Information', value: `\`${config.prefix}help ${module.exports.name}\` for more information`})
 			]});
 		}
 

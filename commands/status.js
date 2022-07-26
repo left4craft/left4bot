@@ -1,9 +1,13 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
 	name: 'status',
 	description: 'Get server status information',
 	usage: '',
-	aliases: ['info', 'serverInfo'],
 	example: 'status',
+	getSlashCommandBuilder: () => new SlashCommandBuilder()
+		.setName(module.exports.name)
+		.setDescription(module.exports.description),
 	args: false,
 	cooldown: 60,
 	guildOnly: true,

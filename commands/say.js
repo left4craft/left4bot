@@ -1,9 +1,17 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
 	name: 'say',
 	description: 'Make the bot say something',
 	usage: '<message>',
-	aliases: ['echo'],
 	example: 'say ok',
+	getSlashCommandBuilder: () => new SlashCommandBuilder()
+		.setName(module.exports.name)
+		.setDescription(module.exports.description)
+		.addStringOption(option => 
+			option.setName('message')
+				.setDescription('Enter a message for the bot to say')
+				.setRequired(true)),
 	args: true,
     
 	guildOnly: true,

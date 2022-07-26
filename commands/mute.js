@@ -1,11 +1,26 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
 	name: 'mute',
 	description: 'Mutes a player in-game and in Discord',
 	usage: '<username/Discord tag/Discord id/uuid> [time] <reason>',
-	aliases: ['tempmute'],
 	example: 'mute Captain_Sisko 1m test',
+	getSlashCommandBuilder: () => new SlashCommandBuilder()
+		.setName(module.exports.name)
+		.setDescription(module.exports.description)
+		.addStringOption(option => 
+			option.setName('player')
+				.setDescription('Enter a Username, Discord Tag, Discord ID, or UUID')
+				.setRequired(true))
+		.addStringOption(option => 
+			option.setName('reason')
+				.setDescription('Enter the mute reason')
+				.setRequired(true))
+		.addStringOption(option => 
+			option.setName('duration')
+				.setDescription('Enter the mute duration')
+				.setRequired(false)),
 	args: true,
-    
 	guildOnly: true,
 	staffOnly: true,
 	async execute(message, args, depend) {

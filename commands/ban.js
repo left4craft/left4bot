@@ -1,9 +1,27 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
 	name: 'ban',
 	description: 'Bans a player in-game and in Discord',
 	usage: '<username/Discord tag/Discord id/uuid> [time] <reason>',
-	aliases: ['tempban'],
 	example: 'ban Captain_Sisko 1m test',
+	getSlashCommandBuilder: () => {
+		return new SlashCommandBuilder()
+			.setName(module.exports.name)
+			.setDescription(module.exports.description)
+			.addStringOption(option => 
+				option.setName('player')
+					.setDescription('Enter a Username, Discord Tag, Discord ID, or UUID')
+					.setRequired(true))
+			.addStringOption(option => 
+				option.setName('reason')
+					.setDescription('Enter the ban reason')
+					.setRequired(true))
+			.addStringOption(option => 
+				option.setName('duration')
+					.setDescription('Enter the ban duration')
+					.setRequired(false));
+	},
 	args: true,
 	guildOnly: true,
 	staffOnly: true,

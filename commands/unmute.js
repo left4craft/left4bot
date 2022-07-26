@@ -1,9 +1,17 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
 	name: 'unmute',
 	description: 'Unmutes a player in-game and in Discord',
 	usage: '<username/Discord tag/Discord id/uuid>',
-	aliases: ['none'],
 	example: 'unmute Captain_Sisko',
+	getSlashCommandBuilder: () => new SlashCommandBuilder()
+		.setName(module.exports.name)
+		.setDescription(module.exports.description)
+		.addStringOption(option => 
+			option.setName('player')
+				.setDescription('Enter a Username, Discord Tag, Discord ID, or UUID')
+				.setRequired(true)),
 	args: true,
     
 	guildOnly: true,

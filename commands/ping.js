@@ -1,9 +1,13 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
 	name: 'ping',
 	description: 'Calculate latency',
 	usage: '',
-	aliases: ['none'],
 	example: 'ping',
+	getSlashCommandBuilder: () => new SlashCommandBuilder()
+		.setName(module.exports.name)
+		.setDescription(module.exports.description),
 	args: false,
 	cooldown: 10,
 	guildOnly: true,

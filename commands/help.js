@@ -1,9 +1,18 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
 	name: 'help',
 	description: 'Displays help menu',
 	usage: '[command]',
-	aliases: ['command', 'commands'],
 	example: 'help poll',
+	// note: this is a special getSlashCommandBuilder()
+	getSlashCommandBuilder: (commands) => new SlashCommandBuilder()
+		.setName(module.exports.name)
+		.setDescription(module.exports.description)
+		.addStringOption(option => option.setName('command')
+			.setDescription('Enter a command')
+			.addChoices(...commands.map(cmd => {return {name: cmd, value: cmd};}))
+			.setRequired(false)),
 	args: false,
 	guildOnly: true,
 	adminOnly: false,

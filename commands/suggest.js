@@ -1,11 +1,18 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
 	name: 'suggest',
 	description: 'Make a suggestion',
 	usage: '<suggestion>',
-	aliases: ['request'],
 	example: 'suggest add this feature',
+	getSlashCommandBuilder: () => new SlashCommandBuilder()
+		.setName(module.exports.name)
+		.setDescription(module.exports.description)
+		.addStringOption(option => 
+			option.setName('suggestion')
+				.setDescription('Enter your suggestion')
+				.setRequired(true)),
 	args: true,
-    
 	guildOnly: true,
 	adminOnly: false,
 	async execute(message, args, depend) {

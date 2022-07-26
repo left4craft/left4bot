@@ -1,11 +1,22 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
 	name: 'poll',
 	description: 'Create a poll',
-	usage: '<question> |OR| <question>; <option1;option2;etc>',
-	aliases: ['newPoll', 'createPoll', 'ask'],
+	usage: '<question> |OR| <question> <option1;option2;etc>',
 	example: 'poll Which colour? Blue; Orange; Red',
+	getSlashCommandBuilder: () => new SlashCommandBuilder()
+		.setName(module.exports.name)
+		.setDescription(module.exports.description)
+		.addStringOption(option => 
+			option.setName('question')
+				.setDescription('Enter a question')
+				.setRequired(true))
+		.addStringOption(option => 
+			option.setName('options')
+				.setDescription('Enter options separated by semicolons')
+				.setRequired(false)),
 	args: true,
-    
 	guildOnly: true,
 	adminOnly: true,
 	async execute(message, args, depend) {
@@ -50,7 +61,7 @@ module.exports = {
 					.setTitle('Error')
 					.setColor(config.color.fail)
 					.addFields({name: 'Too many options', value: 'Polls are limited to maximum of 26 options'})
-					.addFields({name: 'Information', value: `\`${config.prefix}help ${this.name}\` for more information`})
+					.addFields({name: 'Information', value: `\`${config.prefix}help ${module.exports.name}\` for more information`})
 			]}
 			);
 		}

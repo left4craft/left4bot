@@ -33,6 +33,7 @@ module.exports = {
 	/**
 	 * Basic bot features
 	 */
+	client_id: '425381177646383124',
 	welcome_chan_id: '424571587413540876',
 	poll_chan_id: '697485686688710786',
 	suggestion_chan_id: '734407921311416331',
