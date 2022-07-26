@@ -141,8 +141,8 @@ module.exports = {
 	},
 	{
 		name: 'Punishments',
-		url: 'https://www.left4craft.org/bans',
-		pretty: 'www.left4craft.org/bans'
+		url: 'https://www.left4craft.org/punishments',
+		pretty: 'www.left4craft.org/punishments'
 	},
 	{
 		name: 'Status',

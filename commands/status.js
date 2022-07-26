@@ -49,39 +49,43 @@ module.exports = {
 
 
 		// get data from api for embed
-		fetch('https://status.left4craft.org/api/status')
+		fetch('https://statusapi.l4c.link/status')
 			.then(res => res.json())
 			.then(json => {
 
-				let servers = json.services.minecraft;
-				let players = servers.proxy.player_count;
+				let servers = Object.keys(json);
+				console.log(servers);
+				let players = json.bungee?.status?.players || 0;
 				// Type \`list\` in <#${config.chat_bridge_chan_id}> for a list of online players.
-				let player_list = json.services.minecraft.proxy.players.replace(/,/g, ', ').trim();
+				// let player_list = json.services.minecraft.proxy.players.replace(/,/g, ', ').trim();
 
 				let description = [
-					`**${players}** ${players === 1 ? 'person' : 'people'} ${players === 1 ? 'is' : 'are'} currently playing on **${config.ip}**:`,
-					`\`${player_list || 'no one is online'}\`.\nCommunicate with these players in <#${config.chat_bridge_chan_id}>.`,
+					`**${players}** ${players === 1 ? 'person' : 'people'} ${players === 1 ? 'is' : 'are'} currently playing on **${config.ip}**.`,
+					`\nCommunicate with these players in <#${config.chat_bridge_chan_id}>.`,
 					`\nYou can subscribe to status update notifications by using \`${config.prefix}subscribe status\`.`,
 					`View full system status at [${config.status_page_pretty}](${config.status_page}).`
 				];
 
 				let embed = new Discord.EmbedBuilder()
-					.setAuthor({name: json.summary.description, iconURL: `https://status.left4craft.org/img/${json.summary.status.short}.png`, url: config.status_page})
+					.setAuthor({name: 'Status', iconURL: 'https://status.left4craft.org/icons/online.png', url: config.status_page})
 					.setColor(config.color.success)
-					.setTitle(`${config.name} is ${json.services.minecraft.proxy.status === 'operational' ? 'online' : 'offline'}`, config.status_page)
+					.setTitle(`${config.name} is ${json.bungee?.status?.online ? 'online' : 'offline'}`, config.status_page)
 					.setDescription(description[0] + '\n' + description[1] + '\n' + description[2] + '\n' + description[3])
-					.setFooter({text: `${config.name} | Data could be up to 1 minute old`, iconURL: client.user.avatarURL()})
+					.setFooter({text: `${config.name} | Data could be up to 5 minutes old`, iconURL: client.user.avatarURL()})
 					.setTimestamp();
 
 
-				for (let server in servers) {
-					let colour = servers[server].status === 'operational' ? 'green' : servers[server].status === 'degraded' ? 'orange' : 'red';
-					let status = servers[server].status === 'operational' ? 'online' : servers[server].status === 'degraded' ? 'degraded' : 'offline';
-					if (servers[server].id === 'proxy') servers[server].name = 'Bungee';
+				for (let server of servers) {
+					if(server.startsWith('cached') || json[server].type === 'website') continue;
+
+					console.log(json[server]);
+
+					let colour = json[server].status?.online ? 'green' : 'red';
+					let status = json[server].status?.online ? 'online' : 'offline';
 					let tps = '';
-					if (servers[server].id !== 'proxy') tps = `**TPS:** \`${servers[server].tps}\`\n`;
-					let info = `**Status:** \`${status}\`\n${tps}**Players:** \`${servers[server].player_count}\``;
-					embed.addFields({name: `:${colour}_square: **${servers[server].name}**`, value: info, inline: true});
+					if (json[server].status?.tps) tps = `**TPS:** \`${json[server].status.tps}\`\n`;
+					let info = `**Status:** \`${status}\`\n${tps}**Players:** \`${json[server].status?.players || 0}\``;
+					embed.addFields({name: `:${colour}_square: **${json[server].display_name}**`, value: info, inline: true});
 				}
 
 
