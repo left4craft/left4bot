@@ -13,8 +13,8 @@ module.exports = {
 	cooldown: 10,
 	guildOnly: true,
 	adminOnly: false,
-	async execute(message, args, depend) {
-		const client = message.client;
+	async execute(interaction, depend) {
+		const client = interaction.client;
 
 		const {
 			config,
@@ -41,7 +41,7 @@ module.exports = {
 		}
 
 
-		message.channel.send({embeds: [embed]});
+		interaction.reply({embeds: [embed]});
 
 
 

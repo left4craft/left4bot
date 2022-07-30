@@ -19,8 +19,8 @@ module.exports = {
 	args: true,
 	guildOnly: true,
 	adminOnly: true,
-	async execute(message, args, depend) {
-		const client = message.client;
+	async execute(interaction, depend) {
+		const client = interaction.client;
 
 		const {
 			config,
@@ -28,55 +28,51 @@ module.exports = {
 			log,
 		} = depend;
 
-		// command starts here
-		// const guild_self = await message.guild.members.fetch(client.user.id);
-		// if (message.channel.permissionsFor(guild_self).has(Discord.PermissionsBitField.ManageMessages)) {
-		//     message.delete()
-		// };
-
 		const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 		// const unicode = "🇦🇧🇨🇩🇪🇫🇬🇭🇮🇯🇰🇱🇲🇳🇴🇵🇶🇷🇸🇹🇺🇻🇼🇽🇾🇿";
 		const unicode = '🇦 🇧 🇨 🇩 🇪 🇫 🇬 🇭 🇮 🇯 🇰 🇱 🇲 🇳 🇴 🇵 🇶 🇷 🇸 🇹 🇺 🇻 🇼 🇽 🇾 🇿'.split(' ');
 
-		let joined = args.join(' '); // make it a string again
+		// let joined = args.join(' '); // make it a string again
 
-		let split = joined.trim().split(';'); // array of question and options, no type, split at the ;
+		// let split = joined.trim().split(';'); // array of question and options, no type, split at the ;
 
 
-		for (let i = 0; i < split.length; i++) {
-			let newStr = split[i].trim(); // remove whitespace
-			if (newStr[newStr.length - 1] == ';') newStr = newStr.substring(0, newStr.length - 1); // remove semicolons
-			split[i] = newStr;
-			if (newStr.length < 1) split.pop();
-		}
+		// for (let i = 0; i < split.length; i++) {
+		// 	let newStr = split[i].trim(); // remove whitespace
+		// 	if (newStr[newStr.length - 1] == ';') newStr = newStr.substring(0, newStr.length - 1); // remove semicolons
+		// 	split[i] = newStr;
+		// 	if (newStr.length < 1) split.pop();
+		// }
 
-		let question = split.shift(); // this is the question
-		let options = split; // array of the options
+		let question = interaction.options.getString('question');
+		let options = interaction.options.getString('options') && interaction.options.getString('options').split(';'); // array of the options
 
-		const channel = await client.channels.fetch(config.poll_chan_id);
 
-		if (options.length > 26) {
-			return message.channel.send({embeds:[
+		if (options && options.length > 26) {
+			await interaction.reply({embeds:[
 				new Discord.EmbedBuilder()
 					.setTitle('Error')
 					.setColor(config.color.fail)
 					.addFields({name: 'Too many options', value: 'Polls are limited to maximum of 26 options'})
-					.addFields({name: 'Information', value: `\`${config.prefix}help ${module.exports.name}\` for more information`})
+					.addFields({name: 'Information', value: `\`/help ${module.exports.name}\` for more information`})
 			]}
 			);
+			return;
 		}
 
+		await interaction.deferReply();
+		const channel = await client.channels.fetch(config.poll_chan_id);
 
-		if (options.length < 1) {
+		if (!options || options.length < 1) {
 			// basic with thumbs up and down
-			log.info(`${message.author.username} created a basic poll`);
+			log.info(`${interaction.member.displayName} created a basic poll`);
 
 			channel.send(`<@&${config.subscription_roles.polls.role}>`);
 			const poll = await channel.send({
 				embeds: [new Discord.EmbedBuilder()
 					.setColor(config.color.success)
 					.setTitle(question)
-					.setAuthor({name: message.author.username, iconURL: message.author.avatarURL()})
+					.setAuthor({name: interaction.member.displayName, iconURL: interaction.user.avatarURL()})
 					.setDescription('Please react with your choice: \n\n:thumbsup: Yes\n\n:thumbsdown: No\n\nPlease only react once.')
 				// .addFields({name: "Options", value: `\n\n:thumbsup: Yes\n\n:thumbsdown: No\n\n`, inline: true})
 					.setFooter({text: config.name, iconURL: client.user.avatarURL()})
@@ -90,7 +86,7 @@ module.exports = {
 
 		} else {
 			// advanced with A-Z (26 max options) 
-			log.info(`${message.author.username} created an advanced poll with ${options.length} options`);
+			log.info(`${interaction.member.displayName} created an advanced poll with ${options.length} options`);
 
 			let options_string = '';
 			for (let i = 0; i < options.length; i++) {
@@ -101,7 +97,7 @@ module.exports = {
 				new Discord.EmbedBuilder()
 					.setColor(config.color.success)
 					.setTitle(question)
-					.setAuthor({name: message.author.username, iconURL: message.author.avatarURL()})
+					.setAuthor({name: interaction.member.displayName, iconURL: interaction.user.avatarURL()})
 					.setDescription(`Please react with your choice: \n\n${options_string}`)
 					.setFooter({text: config.name, iconURL: client.user.avatarURL()})
 					.setTimestamp()]}
@@ -118,7 +114,7 @@ module.exports = {
 
 		}
 
-		message.channel.send({embeds: [
+		interaction.editReply({embeds: [
 			new Discord.EmbedBuilder()
 				.setColor(config.color.success)
 				.setTitle(':thumbsup: Poll created')
@@ -131,10 +127,10 @@ module.exports = {
 			new Discord.EmbedBuilder()
 				.setColor(config.color.success)
 				.setTitle('Poll created')
-				.setAuthor({name: message.author.username, iconURL: message.author.avatarURL()})
-				.addFields({name: 'By', value: message.author.tag, inline: true})
+				.setAuthor({name: interaction.member.displayName, iconURL: interaction.user.avatarURL()})
+				.addFields({name: 'By', value: interaction.member.displayName, inline: true})
 				.addFields({name: 'Question', value: question, inline: false})
-				.addFields({name: 'Options', value: options.length, inline: true})
+				.addFields({name: 'Options', value: options === null ? '2' : '' + options.length, inline: true})
 				.setFooter({text: config.name, iconURL: client.user.avatarURL()})
 				.setTimestamp()
 		]}); // log channel message

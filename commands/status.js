@@ -12,8 +12,8 @@ module.exports = {
 	cooldown: 60,
 	guildOnly: true,
 	adminOnly: false,
-	async execute(message, args, depend) {
-		const client = message.client;
+	async execute(interaction, depend) {
+		const client = interaction.client;
 
 		const {
 			config,
@@ -23,12 +23,7 @@ module.exports = {
 			minecraft_server_util: query,
 		} = depend;
 
-
-		// command starts here
-		// const guild_self = await message.guild.members.fetch(client.user.id);
-		// if (message.channel.permissionsFor(guild_self).has(Discord.PermissionsBitField.ManageMessages)) {
-		//     message.delete()
-		// };
+		await interaction.deferReply();
 
 		// query bungee to update the status category        
 		query(config.ip, config.port)
@@ -64,7 +59,7 @@ module.exports = {
 				let description = [
 					`**${players}** ${players === 1 ? 'person' : 'people'} ${players === 1 ? 'is' : 'are'} currently playing on **${config.ip}**.`,
 					`\nCommunicate with these players in <#${config.chat_bridge_chan_id}>.`,
-					`\nYou can subscribe to status update notifications by using \`${config.prefix}subscribe status\`.`,
+					'\nYou can subscribe to status update notifications by using `/subscribe status`.',
 					`View full system status at [${config.status_page_pretty}](${config.status_page}).`
 				];
 
@@ -88,12 +83,7 @@ module.exports = {
 					embed.addFields({name: `:${colour}_square: **${json[server].display_name}**`, value: info, inline: true});
 				}
 
-
-
-
-				message.channel.send({embeds: [embed]});
-
-
+				interaction.editReply({embeds: [embed]});
 			});
 
 	}

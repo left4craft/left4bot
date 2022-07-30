@@ -7,7 +7,7 @@ module.exports = {
     example: 'example usage',
 	getSlashCommandBuilder: () => new SlashCommandBuilder()
 		.setName(module.exports.name)
-		.setDescription(this.description),
+		.setDescription(module.exports.descriptions),
     args: false,
     cooldown: config.cooldown,
     guildOnly: true,

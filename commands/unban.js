@@ -15,7 +15,7 @@ module.exports = {
 	args: true,
 	guildOnly: true,
 	staffOnly: true,
-	async execute(message, args, depend) {
+	async execute(interaction, depend) {
 
 		const {
 			config,
@@ -26,18 +26,21 @@ module.exports = {
 			redis_client,
 		} = depend;
 
-		player_util.get_uuid(args[0], pool, log, (uuid) => {
+		const player_query = interaction.options.getString('player');
+
+		await interaction.deferReply();
+		player_util.get_uuid(player_query, pool, log, async (uuid) => {
 			if(uuid === null) {
-				message.channel.send({embeds: [
+				await interaction.editReply({embeds: [
 					new Discord.EmbedBuilder()
 						.setColor(config.color.fail)
-						.setDescription(`\n❌ **Could not find player by \`${args[0]}\`.`
+						.setDescription(`\n❌ **Could not find player by \`${player_query}\`.`
 						+ ' Please use a Minecraft username, Minecraft UUID, Discord tag, or Discord user id**')
 				]});    
 			} else {
-				player_util.get_player_info(uuid, pool, redis_client, log, (player_data) => {
+				player_util.get_player_info(uuid, pool, redis_client, log, async (player_data) => {
 					if(player_data === null) {
-						message.channel.send({embeds: [
+						await interaction.editReply({embeds: [
 							new Discord.EmbedBuilder()
 								.setColor(config.color.fail)
 								.setDescription(`\n❌ **Error getting data for uuid \`${uuid}\`.`)
@@ -45,14 +48,14 @@ module.exports = {
 					} else {
 						if(player_data['banned']) {
 							redis_client.publish('minecraft.console.hub.in', 'unban ' + uuid);
-							message.channel.send({embeds: [
+							await interaction.editReply({embeds: [
 								new Discord.EmbedBuilder()
 									.setColor(config.color.success)
 									.setDescription(`✅ ** ${player_data['username']} has been unbaned.**`)
 									.setTimestamp()
 							]});
 						} else {
-							message.channel.send({embeds: [
+							await interaction.editReply({embeds: [
 								new Discord.EmbedBuilder()
 									.setColor(config.color.fail)
 									.setDescription(`\n❌ **Error: ${player_data['username']} is not banned.**`)

@@ -11,9 +11,9 @@ const command_names = [];
 const command_files = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 for (const file of command_files) {
-    const command = require(`./commands/${file}`);
-    command_names.push(command.name);
-    if(command.name !== 'help') commands.push(command.getSlashCommandBuilder().toJSON());
+	const command = require(`./commands/${file}`);
+	command_names.push(command.name);
+	if(command.name !== 'help') commands.push(command.getSlashCommandBuilder().toJSON());
 }
 
 // register help command

@@ -15,7 +15,7 @@ module.exports = {
 	args: true,
 	guildOnly: true,
 	adminOnly: false,
-	async execute(message, args, depend) {
+	async execute(interaction, depend) {
 		
 		const {
 			config,
@@ -27,18 +27,19 @@ module.exports = {
 		} = depend;
 
 
-		const lookup_query = args[0];
+		const lookup_query = interaction.options.getString('player');
 
-		player_util.get_uuid(lookup_query, pool, log, (uuid) => {
+		await interaction.deferReply();
+		player_util.get_uuid(lookup_query, pool, log, async (uuid) => {
 			if(uuid === null) {
-				message.channel.send({embeds: [new Discord.EmbedBuilder()
+				await interaction.editReply({embeds: [new Discord.EmbedBuilder()
 					.setColor(config.color.fail)
 					.setDescription(`\n❌ **Could not find player by \`${lookup_query}\`.`
                  + ' Please use a Minecraft username, Minecraft UUID, Discord tag, or Discord user id**')]});    
 			} else {
-				player_util.get_player_info(uuid, pool, redis_client, log, (player_data) => {
+				player_util.get_player_info(uuid, pool, redis_client, log, async (player_data) => {
 					if(player_data === null) {
-						message.channel.send({embeds: [new Discord.EmbedBuilder()
+						await interaction.editReply({embeds: [new Discord.EmbedBuilder()
 							.setColor(config.color.fail)
 							.setDescription(`\n❌ **Error getting data for uuid \`${uuid}\`.`)]});
 					} else {
@@ -57,14 +58,12 @@ module.exports = {
 
 						embed.addFields({name: 'UUID', value: uuid, inline: false})
 							.setTimestamp()
-							.setFooter({text: config.name, iconURL: message.client.user.avatarURL()});
+							.setFooter({text: config.name, iconURL: interaction.client.user.avatarURL()});
 
-						message.channel.send({embeds: [embed]});
+						await interaction.editReply({embeds: [embed]});
 					}
 				});
 			}
 		});
-
-       
 	}
 };

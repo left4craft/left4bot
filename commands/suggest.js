@@ -15,8 +15,8 @@ module.exports = {
 	args: true,
 	guildOnly: true,
 	adminOnly: false,
-	async execute(message, args, depend) {
-		const client = message.client;
+	async execute(interaction, depend) {
+		const client = interaction.client;
 
 		const {
 			config,
@@ -24,19 +24,21 @@ module.exports = {
 			log,
 		} = depend;
 
-		let suggestion = args.join(' '); // make it a string again
+		let suggestion = interaction.options.getString('suggestion');
 
+
+		await interaction.deferReply();
 		const channel = await client.channels.fetch(config.suggestion_chan_id);
 
  
 		// basic with thumbs up and down
-		log.info(`${message.author.username} submitted a suggestion`);
+		log.info(`${interaction.member.displayName} submitted a suggestion`);
 
 		const poll = await channel.send({embeds: [
 			new Discord.EmbedBuilder()
 				.setColor(config.color.success)
 				.setTitle(suggestion)
-				.setAuthor({name: message.author.username + '\'s suggestion', iconURL: message.author.avatarURL()})
+				.setAuthor({name: interaction.member.displayName + '\'s suggestion', iconURL: interaction.user.avatarURL()})
 				.setDescription('Do you like this idea? \n\n:thumbsup: Yes\n\n:thumbsdown: No')
 				.setFooter({text: config.name, iconURL: client.user.avatarURL()})
 				.setTimestamp()
@@ -46,7 +48,7 @@ module.exports = {
 		await poll.react('👎');
 
 
-		message.channel.send({embeds: [
+		await interaction.editReply({embeds: [
 			new Discord.EmbedBuilder()
 				.setColor(config.color.success)
 				.setTitle(':thumbsup: Suggestion submitted')
@@ -59,8 +61,8 @@ module.exports = {
 			new Discord.EmbedBuilder()
 				.setColor(config.color.success)
 				.setTitle('Suggestion submitted')
-				.setAuthor({name: message.author.username, iconURL: message.author.avatarURL()})
-				.addFields({name: 'By', value: message.author.tag, inline: true})
+				.setAuthor({name: interaction.member.displayName, iconURL: interaction.user.avatarURL()})
+				.addFields({name: 'By', value: interaction.member.displayName, inline: true})
 				.addFields({name: 'Suggestion', value: suggestion, inline: false})
 				.setFooter({text: config.name, iconURL: client.user.avatarURL()})
 				.setTimestamp()

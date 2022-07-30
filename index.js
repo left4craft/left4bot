@@ -105,7 +105,7 @@ client.once('ready', async () => {
 	for (const file of commands) {
 		const command = require(`./commands/${file}`);
 		client.commands.set(command.name, command);
-		log.console(`[CMD] > Loaded '${config.prefix}${command.name}' command`);
+		log.console(`[CMD] > Loaded '/${command.name}' command`);
 	}
 
 	log.info(`Finished loading ${commands.length} commands`);
@@ -162,7 +162,7 @@ client.once('ready', async () => {
 		// "type" option broke the bot presence for some reason, so just leaving it at "PLAYING" for now
 		// client.user.setPresence({
 		// 	activities: [{
-		// 		name: config.activities[num] + `  |  ${config.prefix}help`,
+		// 		name: config.activities[num] + `  |  /help`,
 		// 		type: config.activity_types[num]
 		// 	}]
 		// });
@@ -213,6 +213,70 @@ client.once('ready', async () => {
 
 });
 
+client.on('interactionCreate', async interaction => {
+	if (!interaction.isChatInputCommand()) return;
+	const command = client.commands.get(interaction.commandName);
+	if(!command) {
+		await interaction.reply('Error: Command not found.');
+		return;
+	}
+
+	if(command.guildOnly && interaction.guild === null) {
+		await interaction.reply('Sorry, this command can only be used in a server.');
+		return;
+	}
+
+	// @TODO improve permissions
+	if ((command.permission && !interaction.member.hasPermission(command.permission)) || (command.staffOnly === true && !interaction.member.roles.cache.some(r => config.staff_ranks.includes(r.name.toLowerCase()))) || (command.adminOnly === true && !interaction.member.roles.cache.some(r => config.admin_roles.includes(r.name.toLowerCase())))) {
+		await interaction.reply({
+			embeds: [new Discord.EmbedBuilder()
+				.setColor(config.color.fail)
+				.setDescription(`\n❌ **You do not have permission to use the \`${command.name}\` command.**`)]
+		});
+		return;
+	}
+
+	if (!cooldowns.has(command.name)) {
+		cooldowns.set(command.name, new Discord.Collection());
+	}
+
+	const now = Date.now();
+	const timestamps = cooldowns.get(command.name);
+	const cooldownAmount = (command.cooldown || config.cooldown) * 1000;
+
+	if (timestamps.has(interaction.member.id)) {
+		const expirationTime = timestamps.get(interaction.member.id) + cooldownAmount;
+
+		if (now < expirationTime) {
+			const timeLeft = (expirationTime - now) / 1000;
+			log.console(`${interaction.member.displayName} attempted to use the '${command.name}' command before the cooldown was over`);
+			await interaction.reply({
+				embeds: [new Discord.EmbedBuilder()
+					.setColor(config.color.fail)
+					.setDescription(`❌ **Please do not spam commands.**\nWait ${timeLeft.toFixed(1)} second(s) before reusing the \`${command.name}\` command.`)]
+			});
+			return;
+		}
+	}
+
+	timestamps.set(interaction.member.id, now);
+	setTimeout(() => timestamps.delete(interaction.member.id), cooldownAmount);
+
+	try {
+		log.console(`${interaction.member.displayName} used the '${command.name}' command`);
+		await command.execute(interaction, dependencies);
+	} catch (error) {
+		log.error(`An error occurred whilst executing the '${command.name}' command`);
+		log.error(error);
+		if(interaction.replied) {
+			await interaction.followUp(`❌ An error occurred whilst executing the \`${command.name}\` command.\nThis issue has been reported.`);
+		} else {
+			await interaction.reply(`❌ An error occurred whilst executing the \`${command.name}\` command.\nThis issue has been reported.`);
+		}
+	}
+
+});
+
 client.on('messageCreate', async message => {
 	if (message.author.bot && (message.author.id !== '836714577474617346')) return;
 
@@ -241,9 +305,8 @@ client.on('messageCreate', async message => {
 		return;
 	}
 
-	const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|\\${config.prefix})\\s*`);
 	const is_linked_channel = message.channel.id === config.chat_bridge_chan_id || message.channel.id === config.admin_chan_id;
-	if (is_linked_channel && !prefixRegex.test(message.content)) {
+	if (is_linked_channel) {
 		if (message.content.length > 256) {
 			message.reply('your chat message was not sent because the length is >256');
 		} else if (message.content.toLowerCase() === 'list') {
@@ -369,110 +432,7 @@ client.on('messageCreate', async message => {
 				}
 			}
 		});
-		// message.channel.messages.fetch({ limit: 10 }).then(messages => {
-		// 	console.log(messages);
-
-		// 	let last_numbers = [0];
-		// 	let num_author_map = {};
-		// 	for(old_message of messages.entries()) {
-		// 		let n = parseInt(old_message[1].content.split(' ')[0]);
-		// 		if(n !== NaN && old_message[1].id !== message.id) {
-		// 			last_numbers.push(n);
-		// 			num_author_map[n] = old_message[1].author.id;
-		// 		}
-		// 	}
-
-		// 	console.log(last_numbers);
-		// 	console.log(num_author_map);
-		// 	let last_num = Math.max(...last_numbers);
-
-		// 	let this_num = parseInt(message.content.split(' ')[0]);
-		// 	console.log(last_num);
-		// 	console.log(this_num);
-		// 	if(this_num === NaN || last_num === NaN || this_num !== last_num + 1 || num_author_map[last_num] === message.author.id) {
-		// 		message.delete();
-		// 	} else {
-				
-		// 	}
-		// });
 	}
-
-	if (!prefixRegex.test(message.content) || message.channel.id === config.count_chan_id) return;
-	const [, matchedPrefix] = message.content.match(prefixRegex);
-	const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
-	const commandName = args.shift().toLowerCase();
-
-	const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-
-	if (!command) return;
-	if (commandName == 'none') return;
-
-
-	if (command.guildOnly && message.guild === null) {
-		return message.channel.send('Sorry, this command can only be used in a server.');
-	}
-
-	// if ((command.permission && !message.member.hasPermission(command.permission)) || (command.adminOnly === true && !message.member.roles.cache.has(config.admin_role_id))) {
-	if ((command.permission && !message.member.hasPermission(command.permission)) || (command.staffOnly === true && !message.member.roles.cache.some(r => config.staff_ranks.includes(r.name.toLowerCase()))) || (command.adminOnly === true && !message.member.roles.cache.some(r => config.admin_roles.includes(r.name.toLowerCase())))) {
-		log.console(`${message.author.tag} tried to use the '${command.name}' command without permission`);
-		return message.channel.send({
-			embeds: [new Discord.EmbedBuilder()
-				.setColor(config.color.fail)
-				.setDescription(`\n❌ **You do not have permission to use the \`${command.name}\` command.**`)]
-		});
-	}
-
-	if (command.args && !args.length) {
-		return message.channel.send({
-			embeds: [new Discord.EmbedBuilder()
-				.setColor(config.color.fail)
-				.addFields({name: 'Usage', value: `\`${config.prefix}${command.name} ${command.usage}\`\n`})
-				.addFields({name: 'Help', value: `Type \`${config.prefix}help ${command.name}\` for more information`})]
-		});
-	}
-
-
-
-
-	if (!cooldowns.has(command.name)) {
-		cooldowns.set(command.name, new Discord.Collection());
-	}
-
-	const now = Date.now();
-	const timestamps = cooldowns.get(command.name);
-	const cooldownAmount = (command.cooldown || config.cooldown) * 1000;
-
-	if (timestamps.has(message.author.id)) {
-		const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
-
-		if (now < expirationTime) {
-			const timeLeft = (expirationTime - now) / 1000;
-			log.console(`${message.author.tag} attempted to use the '${command.name}' command before the cooldown was over`);
-			return message.channel.send({
-				embeds: [new Discord.EmbedBuilder()
-					.setColor(config.color.fail)
-					.setDescription(`❌ **Please do not spam commands.**\nWait ${timeLeft.toFixed(1)} second(s) before reusing the \`${command.name}\` command.`)]
-			});
-		}
-	}
-
-	timestamps.set(message.author.id, now);
-	setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
-
-
-
-
-
-	try {
-		command.execute(message, args, dependencies);
-
-		log.console(`${message.author.tag} used the '${command.name}' command`);
-	} catch (error) {
-		log.error(error);
-		message.channel.send(`❌ An error occurred whilst executing the \`${command.name}\` command.\nThe issue has been reported.`);
-		log.error(`An error occurred whilst executing the '${command.name}' command`);
-	}
-
 });
 
 client.on('guildMemberAdd', member => {

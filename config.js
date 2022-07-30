@@ -10,7 +10,6 @@ module.exports = {
 	 * General
 	 */
 	name: 'Left4Craft',
-	prefix: '!', // prefix commands with this
 	color: {
 		success: 0x4CAF50, // for embeds
 		fail: 0xD65A49
@@ -20,7 +19,7 @@ module.exports = {
 	guild_id: '424571587413540874',
 	activities: ['Minecraft', 'on mc.left4craft.org', 'with nuclear launch codes', 'Minecraft on mc.left4craft.org'],
 	activity_types: ['PLAYING', 'PLAYING', 'PLAYING', 'PLAYING'],
-	// default (in seconds), can be different for each command
+	cooldown: 3,// default (in seconds), can be different for each command
 
 	/**
 	 * Logs
@@ -80,7 +79,7 @@ module.exports = {
 	 */
 	update_punishment_interval: 60, // how often to check whether to mute / unmute people, in seconds
 	muted_channel_id: '587122816797769788',
-	litebans_base_url: 'https://left4craft.org/punishments/for/', // WITH trailing slash
+	litebans_base_url: 'https://www.left4craft.org/punishments/for/', // WITH trailing slash
 
 	/**
 	 * Role sync

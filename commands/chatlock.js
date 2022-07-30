@@ -11,8 +11,8 @@ module.exports = {
 	args: false,
 	guildOnly: true,
 	staffOnly: true,
-	async execute(message, args, depend) {
-		const client = message.client;
+	async execute(interaction, depend) {
+		const client = interaction.client;
 
 		const {
 			config,
@@ -23,8 +23,8 @@ module.exports = {
 
 		
 		redis_client.publish('minecraft.console.hub.in', 'chatlock');
-		log.info(`${message.author.username} has locked/unlocked chat`);
-		message.channel.send({
+		log.info(`${interaction.member.displayName} has locked/unlocked chat`);
+		interaction.reply({
 			embeds: [new Discord.EmbedBuilder()
 				.setColor(config.color.success)
 				.setTitle('✅ Sent chatlock command')
