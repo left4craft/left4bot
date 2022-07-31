@@ -37,8 +37,9 @@ module.exports = {
 							chan.send(`${member.displayName}'s punishment has expired.`);
 						});
 
-						member.createDM().then(dm => {
-							dm.send('Your punishment has expired, so you have been unmuted from the Discord server. You will need to rejoin the Minecraft server to regain your Discord rank.');
+						const support_chan = client.channels.fetch(config.support_channel_id);
+						support_chan.then(chan => {
+							chan.send(`<@${member.id}>, your punishment has expired, so you have been unmuted from the Discord server. You will need to rejoin the Minecraft server to regain your Discord rank.`);
 						});
 					}
 				});

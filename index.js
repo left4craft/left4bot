@@ -206,14 +206,23 @@ client.once('ready', async () => {
 		redis_client.publish('minecraft.punish', 'update');
 	}, config.update_punishment_interval * 1000);
 
-	sync.expire_tokens(redis_client, client);
+	sync.expire_tokens(redis_client);
 	setInterval(() => {
-		sync.expire_tokens(redis_client, client);
+		sync.expire_tokens(redis_client);
 	}, config.code_expire_interval * 1000);
 
 });
 
 client.on('interactionCreate', async interaction => {
+	// handle button inputs
+	if(interaction.isButton()) {
+		if(interaction.customId === 'sync') {
+			await sync.sync_message(redis_client, interaction);
+		}
+		return;
+	}
+
+	// handle chat inputs
 	if (!interaction.isChatInputCommand()) return;
 	const command = client.commands.get(interaction.commandName);
 	if(!command) {
@@ -283,27 +292,27 @@ client.on('messageCreate', async message => {
 	// console.log(JSON.stringify(message));
 
 	// check if message is dm
-	if (message.guild === null) {
-		// console.log('dm');
-		if (message.author.id === client.user.id) return;
-		if (config.log_dm) {
-			if (config.log_general) {
-				(await client.channels.fetch(config.log_chan_id)).send({
-					embeds: [new Discord.EmbedBuilder()
-						.setAuthor({name: message.author.username, iconURL: message.author.avatarURL()})
-						.setTitle('DM Logger')
-						.addFields({name: 'Username', value: message.author.tag, inline: true})
-						.addFields({name: 'Message', value: message.content, inline: true})
-						.setFooter({text: config.name, iconURL: client.user.avatarURL()})
-						.setTimestamp()]
-				});
-			}
-		}
+	// if (message.guild === null) {
+	// 	// console.log('dm');
+	// 	if (message.author.id === client.user.id) return;
+	// 	if (config.log_dm) {
+	// 		if (config.log_general) {
+	// 			(await client.channels.fetch(config.log_chan_id)).send({
+	// 				embeds: [new Discord.EmbedBuilder()
+	// 					.setAuthor({name: message.author.username, iconURL: message.author.avatarURL()})
+	// 					.setTitle('DM Logger')
+	// 					.addFields({name: 'Username', value: message.author.tag, inline: true})
+	// 					.addFields({name: 'Message', value: message.content, inline: true})
+	// 					.setFooter({text: config.name, iconURL: client.user.avatarURL()})
+	// 					.setTimestamp()]
+	// 			});
+	// 		}
+	// 	}
 
-		sync.sync_message(redis_client, message.channel, message.author.id);
+	// 	sync.sync_message(redis_client, message.channel, message.author.id);
 
-		return;
-	}
+	// 	return;
+	// }
 
 	const is_linked_channel = message.channel.id === config.chat_bridge_chan_id || message.channel.id === config.admin_chan_id;
 	if (is_linked_channel) {
@@ -435,12 +444,12 @@ client.on('messageCreate', async message => {
 	}
 });
 
-client.on('guildMemberAdd', member => {
-	member.createDM(dm => {
-		dm.send(`Welcome to ${config.name}. Please read the information in <#${config.welcome_chan_id}> *(scroll up!).*`);
-		sync.sync_message(redis_client, dm, member.id);
-	});
-});
+// client.on('guildMemberAdd', member => {
+// 	member.createDM(dm => {
+// 		dm.send(`Welcome to ${config.name}. Please read the information in <#${config.welcome_chan_id}> *(scroll up!).*`);
+// 		sync.sync_message(redis_client, dm, member.id);
+// 	});
+// });
 
 client.on('rateLimit', limit => {
 	log.warn('Rate-limited!');

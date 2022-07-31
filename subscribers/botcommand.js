@@ -59,22 +59,31 @@ module.exports = {
 						dm.send('This Discord account has already been linked to your in-game account.');
 					}).catch(() => {
 						log.warn('[BOT CMD] Failed to send message user');
+						const support_chan = client.channels.fetch(config.support_channel_id);
+						support_chan.then(chan => {
+							chan.send(`<@${user.id}>, your punishment has expired, so you have been unmuted from the Discord server. You will need to rejoin the Minecraft server to regain your Discord rank.`);
+						});
 					});
 				});
 			} else {
 				client.users.fetch(oldId).then((user) => {
-					user.createDM().then((dm) => {
-						dm.send('Your account has been demoted on Discord because you linked another account from in game.\n' +
-							'If this was not you, your Minecraft account may have been compromised.\n' +
-							'New account: `' + user.tag + '`');
-					});
 					// remove all roles from old account
 					client.guilds.cache.get(config.guild_id).members.fetch(oldId).then((member) => {
 						member.roles.set([]);
 					});
 
+					user.createDM().then((dm) => {
+						dm.send('Your account has been demoted on Discord because you linked another account from in game.\n' +
+							'If this was not you, your Minecraft account may have been compromised.\n' +
+							'New account id: `' + newId + '`');
+					});
 				}).catch(() => {
 					log.warn('[BOT CMD] Failed to send message to old account, they probably left the server.');
+					const support_chan = client.channels.fetch(config.support_channel_id);
+					support_chan.then(chan => {
+						chan.send(`<@${oldId}>, Your account has been demoted on Discord because you linked another account from in game.\n` + 
+						'If this was not you, your Minecraft account may have been compromised.');
+					});
 				});
 			}
 		} else {

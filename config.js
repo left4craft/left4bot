@@ -79,6 +79,7 @@ module.exports = {
 	 */
 	update_punishment_interval: 60, // how often to check whether to mute / unmute people, in seconds
 	muted_channel_id: '587122816797769788',
+	support_channel_id: '424868800509509633',
 	litebans_base_url: 'https://www.left4craft.org/punishments/for/', // WITH trailing slash
 
 	/**
