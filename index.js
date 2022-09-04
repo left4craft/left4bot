@@ -398,7 +398,7 @@ client.on('messageCreate', async message => {
 		) {
 			let this_num = parseInt(message.content.split(' ')[0]);
 			redis_client.set('minecraft.countinggame', JSON.stringify({ 'last_num': this_num, 'last_author': message.author.id }));
-			return;
+			return message.react('✅');
 		}
 		redis_client.get('minecraft.countinggame', (err, response) => {
 			let last_num = 0;
