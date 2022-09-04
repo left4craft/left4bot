@@ -392,6 +392,14 @@ client.on('messageCreate', async message => {
 			
 		}
 	} else if (message.channel.id === config.count_chan_id && message.author.id !== client.user.id) {
+		if (
+			/^\d+!$/.test(message.content.trim()) && // match "123!"
+			interaction.member.roles.cache.some(r => config.admin_roles.includes(r.name.toLowerCase())) // is admin
+		) {
+			let this_num = parseInt(message.content.split(' ')[0]);
+			redis_client.set('minecraft.countinggame', JSON.stringify({ 'last_num': this_num, 'last_author': message.author.id }));
+			return;
+		}
 		redis_client.get('minecraft.countinggame', (err, response) => {
 			let last_num = 0;
 			let last_author = 0;
