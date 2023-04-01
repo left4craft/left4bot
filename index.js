@@ -425,7 +425,7 @@ client.on('messageCreate', async message => {
 				redis_client.set('minecraft.countinggame', JSON.stringify({'last_num': this_num, 'last_author': message.author.id}));
 
 				if (Math.random() < 0.4) {
-					message.reply('You just won **$2,500** in game for counting ' + String(this_num));
+					message.reply('You just lost **$2,500** in game for counting ' + String(this_num));
 					player_util.get_uuid(message.author.id, sql_pool, log, (uuid) => {
 						if (uuid != null) {
 							redis_client.publish('minecraft.console.survival.in', `eco give ${uuid} 5`);
