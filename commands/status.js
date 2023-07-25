@@ -47,7 +47,7 @@ module.exports = {
 
 
 		// get data from api for embed
-		fetch('https://statusapi.l4c.link/status')
+		fetch('https://api.status.left4craft.org/status')
 			.then(res => res.json())
 			.then(json => {
 
